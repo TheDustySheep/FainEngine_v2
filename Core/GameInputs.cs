@@ -7,10 +7,10 @@ public static class GameInputs
 {
     private static IWindow? Window;
 
-    static HashSet<Key> KeysDown = new();
-    static HashSet<Key> KeysHeld = new();
-    static HashSet<Key> KeysUp   = new();
-    
+    static readonly HashSet<Key> KeysDown = new();
+    static readonly HashSet<Key> KeysHeld = new();
+    static readonly HashSet<Key> KeysUp = new();
+
     public static Vector2 ScrollDelta { get; private set; } = Vector2.Zero;
 
     private static Vector2 _lastMousePosition = Vector2.Zero;
@@ -35,7 +35,7 @@ public static class GameInputs
         }
     }
 
-    public static void Tick()
+    public static void Reset()
     {
         KeysDown.Clear();
         KeysUp.Clear();
@@ -65,10 +65,12 @@ public static class GameInputs
         }
 
         KeysHeld.Add(key);
+        KeysDown.Add(key);
     }
 
     private static void KeyUp(IKeyboard keyboard, Key key, int arg3)
     {
+        KeysUp.Add(key);
         KeysHeld.Remove(key);
     }
 

@@ -4,7 +4,7 @@ namespace FainEngine_v2.Core;
 
 public static class EntityManager
 {
-    static HashSet<IEntity> entities = new();
+    static readonly HashSet<IEntity> entities = new();
 
     public static T SpawnEntity<T>() where T : IEntity, new()
     {

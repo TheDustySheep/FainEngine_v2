@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace FainEngine_v2.Core;
+﻿namespace FainEngine_v2.Core;
 public class GameTime
 {
     public static float TotalTime { get; private set; } = 0f;

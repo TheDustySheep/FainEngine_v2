@@ -1,5 +1,4 @@
-﻿using Silk.NET.Maths;
-using System.Numerics;
+﻿using System.Numerics;
 
 namespace FainEngine_v2.Extensions;
 public static class Matrix4x4Extensions

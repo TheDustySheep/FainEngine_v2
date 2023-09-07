@@ -1,9 +1,9 @@
 using Silk.NET.Maths;
 using System.Numerics;
 
-namespace FainEngine_v2.Physics;
+namespace FainEngine_v2.Physics.Obsolete;
 
-public struct AABB
+public struct OldAABB
 {
     public float CenterX;
     public float CenterY;
@@ -51,9 +51,9 @@ public struct AABB
     public Vector3 Min => new Vector3(MinX, MinY, MinZ);
     public Vector3 Max => new Vector3(MaxX, MaxY, MaxZ);
 
-    public static AABB FromCenterExtents(Vector3 center, Vector3 extents)
+    public static OldAABB FromCenterExtents(Vector3 center, Vector3 extents)
     {
-        return new AABB()
+        return new OldAABB()
         {
             CenterX = center.X,
             CenterY = center.Y,
@@ -64,9 +64,9 @@ public struct AABB
         };
     }
 
-    public static AABB FromCenterSize(Vector3 center, Vector3 size)
+    public static OldAABB FromCenterSize(Vector3 center, Vector3 size)
     {
-        return new AABB()
+        return new OldAABB()
         {
             CenterX = center.X,
             CenterY = center.Y,
@@ -77,9 +77,9 @@ public struct AABB
         };
     }
 
-    public static AABB FromCenterHalfWidth(float centerX, float centerY, float centerZ, float halfWidthX, float halfWidthY, float halfWidthZ)
+    public static OldAABB FromCenterHalfWidth(float centerX, float centerY, float centerZ, float halfWidthX, float halfWidthY, float halfWidthZ)
     {
-        return new AABB()
+        return new OldAABB()
         {
             CenterX = centerX,
             CenterY = centerY,
@@ -90,9 +90,9 @@ public struct AABB
         };
     }
 
-    public static AABB FromMinMax(float xMin, float yMin, float zMin, float xMax, float yMax, float zMax)
+    public static OldAABB FromMinMax(float xMin, float yMin, float zMin, float xMax, float yMax, float zMax)
     {
-        AABB result = new()
+        OldAABB result = new()
         {
             CenterX = (xMin + xMax) * 0.5f,
             CenterY = (yMin + yMax) * 0.5f,
@@ -106,9 +106,24 @@ public struct AABB
         return result;
     }
 
-    public static AABB FromVoxel(Vector3D<int> voxPos)
+    public static OldAABB FromVoxel(int x, int y, int z)
     {
-        AABB result = new()
+        OldAABB result = new()
+        {
+            CenterX = x + 0.5f,
+            CenterY = y + 0.5f,
+            CenterZ = z + 0.5f,
+            HalfWidthX = 0.5f,
+            HalfWidthY = 0.5f,
+            HalfWidthZ = 0.5f,
+        };
+
+        return result;
+    }
+
+    public static OldAABB FromVoxel(Vector3D<int> voxPos)
+    {
+        OldAABB result = new()
         {
             CenterX = voxPos.X + 0.5f,
             CenterY = voxPos.Y + 0.5f,
@@ -119,5 +134,10 @@ public struct AABB
         };
 
         return result;
+    }
+
+    public override string ToString()
+    {
+        return $"AABB Center: {Center} Size: {Size}";
     }
 }

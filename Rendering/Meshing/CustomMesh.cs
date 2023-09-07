@@ -3,7 +3,7 @@ using System.Numerics;
 using System.Runtime.InteropServices;
 
 namespace FainEngine_v2.Rendering.Meshing;
-public class CustomMesh<TVertexType, TIndexType> : AMesh<TVertexType, TIndexType> 
+public class CustomMesh<TVertexType, TIndexType> : AMesh<TVertexType, TIndexType>
     where TVertexType : unmanaged
     where TIndexType : unmanaged
 {
@@ -62,7 +62,7 @@ public class CustomMesh<TVertexType, TIndexType> : AMesh<TVertexType, TIndexType
             }
 
             VAO.VertexAttributePointer(index, data_count, type, normalized, stride, runningOffset);
-            
+
             // Update Running Offset
             runningOffset += gl_meta.Size;
         }

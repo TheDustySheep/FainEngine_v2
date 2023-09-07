@@ -7,7 +7,7 @@ using System.Numerics;
 namespace FainEngine_v2.Core;
 public static class GameGraphics
 {
-    static List<RenderInstance> renderQueue = new();
+    static readonly List<RenderInstance> renderQueue = new();
     private static GL? _gl;
     public static GL GL => _gl ?? throw new Exception("OpenGL Not Set");
 
@@ -40,11 +40,11 @@ public static class GameGraphics
 
     public static void DrawMesh(IMesh mesh, Material material, Matrix4x4 model)
     {
-        renderQueue.Add(new RenderInstance() 
-        { 
+        renderQueue.Add(new RenderInstance()
+        {
             mesh = mesh,
             material = material,
-            model = model, 
+            model = model,
         });
     }
 

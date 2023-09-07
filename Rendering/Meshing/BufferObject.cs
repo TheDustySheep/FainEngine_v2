@@ -1,14 +1,13 @@
 using Silk.NET.OpenGL;
-using System;
 
 namespace FainEngine_v2.Rendering.Meshing;
 
 public class BufferObject<TDataType> : IDisposable
     where TDataType : unmanaged
 {
-    private uint _handle;
-    private BufferTargetARB _bufferType;
-    private GL _gl;
+    private readonly uint _handle;
+    private readonly BufferTargetARB _bufferType;
+    private readonly GL _gl;
 
     public unsafe BufferObject(GL gl, BufferTargetARB bufferType)
     {

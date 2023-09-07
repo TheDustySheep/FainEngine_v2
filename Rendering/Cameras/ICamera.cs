@@ -1,5 +1,4 @@
-﻿using Silk.NET.SDL;
-using Silk.NET.Windowing;
+﻿using Silk.NET.Windowing;
 using System.Numerics;
 
 namespace FainEngine_v2.Rendering.Cameras;

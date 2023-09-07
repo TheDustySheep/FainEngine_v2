@@ -7,13 +7,13 @@ using Silk.NET.Windowing;
 namespace FainEngine_v2.Core;
 public class FainGameEngine
 {
-    private IWindow window;
+    private readonly IWindow window;
     private GL? _gl;
 
     public FainGameEngine(
-        int windowWidth = 1600, 
+        int windowWidth = 1600,
         int windowHeight = 900,
-        string windowTitle = "New Game Engine") 
+        string windowTitle = "New Game Engine")
     {
         var options = WindowOptions.Default;
         options.Size = new Vector2D<int>(windowWidth, windowHeight);
@@ -59,7 +59,6 @@ public class FainGameEngine
     private void OnUpdate(double deltaTime)
     {
         GameTime.Tick((float)deltaTime);
-        GameInputs.Tick();
         EntityManager.Update();
         Update();
 
@@ -69,6 +68,8 @@ public class FainGameEngine
             EntityManager.FixedUpdate();
             FixedUpdate();
         }
+
+        GameInputs.Reset();
     }
 
     private void OnRender(double deltaTime)

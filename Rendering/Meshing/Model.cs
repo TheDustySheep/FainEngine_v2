@@ -1,7 +1,6 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using FainEngine_v2.Rendering.Materials;
 using FainEngine_v2.Rendering.Meshing;
 using Silk.NET.Assimp;
 using Silk.NET.OpenGL;
@@ -23,7 +22,7 @@ public class Model : IDisposable
     }
 
     private readonly GL _gl;
-    private Assimp _assimp;
+    private readonly Assimp _assimp;
     private List<Texture> _texturesLoaded = new List<Texture>();
     public string Directory { get; protected set; } = string.Empty;
     public List<IMesh> Meshes { get; protected set; } = new List<IMesh>();

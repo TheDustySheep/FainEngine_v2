@@ -3,7 +3,7 @@
 namespace FainEngine_v2.Collections;
 public class HashQueue<T> : IEnumerable<T>
 {
-    HashSet<T> hash = new();
+    readonly HashSet<T> hash = new();
     Queue<T> queue = new();
 
     public int Count => hash.Count;

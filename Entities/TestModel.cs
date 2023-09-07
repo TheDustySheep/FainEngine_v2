@@ -8,8 +8,8 @@ using System.Numerics;
 namespace FainEngine_v2.Entities;
 public class TestModel : IEntity
 {
-    Material material;
-    Model model;
+    readonly Material material;
+    readonly Model model;
 
     public TestModel()
     {
@@ -22,7 +22,7 @@ public class TestModel : IEntity
     {
         var difference = (float)(GameTime.TotalTime * 100);
 
-        var modelMat = Matrix4x4.CreateRotationY(MathHelper.DegreesToRadians(difference)) * Matrix4x4.CreateRotationX(MathHelper.DegreesToRadians(difference));
+        var modelMat = Matrix4x4.CreateRotationY(MathUtils.DegreesToRadians(difference)) * Matrix4x4.CreateRotationX(MathUtils.DegreesToRadians(difference));
 
         GameGraphics.DrawMesh(model.Meshes[0], material, modelMat);
     }

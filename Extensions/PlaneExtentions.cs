@@ -7,7 +7,7 @@ public static class PlaneExtentions
     {
         return new Plane()
         {
-            Normal = normal.Normalize(),
+            Normal = normal.Normalized(),
             D = Vector3.Dot(normal, point),
         };
     }

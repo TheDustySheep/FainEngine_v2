@@ -16,7 +16,7 @@ public class CameraEntity : GameObject, ICamera, IEntity
     public Matrix4x4 ProjectionMatrix => projectionMatrix;
 
     //Setup the camera's location, directions, and movement speed
-    private Vector3 CameraPosition = new Vector3(-1.0f, 36.0f,-1.0f);
+    private Vector3 CameraPosition = new Vector3(-1.0f, 36.0f, -1.0f);
     private Vector3 CameraFront = new Vector3(0.0f, 0.0f, -1.0f);
     private Vector3 CameraUp = Vector3.UnitY;
     private Vector3 CameraDirection = Vector3.Zero;
@@ -38,7 +38,7 @@ public class CameraEntity : GameObject, ICamera, IEntity
     private void UpdateMatrix()
     {
         viewMatrix = Matrix4x4.CreateLookAt(CameraPosition, CameraPosition + CameraFront, CameraUp);
-        projectionMatrix = Matrix4x4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(CameraZoom), ICamera.WindowAspect, 0.1f, 10_000.0f);
+        projectionMatrix = Matrix4x4.CreatePerspectiveFieldOfView(MathUtils.DegreesToRadians(CameraZoom), ICamera.WindowAspect, 0.1f, 10_000.0f);
     }
 
     private void UpdatePosition()
@@ -70,7 +70,7 @@ public class CameraEntity : GameObject, ICamera, IEntity
         targetDelta.Y = 0f;
         if (targetDelta != default)
         {
-            targetDelta = targetDelta.Normalize();
+            targetDelta = targetDelta.Normalized();
         }
 
         if (GameInputs.IsKeyHeld(Key.Space))
@@ -109,9 +109,9 @@ public class CameraEntity : GameObject, ICamera, IEntity
             //We don't want to be able to look behind us by going over our head or under our feet so make sure it stays within these bounds
             CameraPitch = Math.Clamp(CameraPitch, -89.0f, 89.0f);
 
-            CameraDirection.X = MathF.Cos(MathHelper.DegreesToRadians(CameraYaw)) * MathF.Cos(MathHelper.DegreesToRadians(CameraPitch));
-            CameraDirection.Y = MathF.Sin(MathHelper.DegreesToRadians(CameraPitch));
-            CameraDirection.Z = MathF.Sin(MathHelper.DegreesToRadians(CameraYaw)) * MathF.Cos(MathHelper.DegreesToRadians(CameraPitch));
+            CameraDirection.X = MathF.Cos(MathUtils.DegreesToRadians(CameraYaw)) * MathF.Cos(MathUtils.DegreesToRadians(CameraPitch));
+            CameraDirection.Y = MathF.Sin(MathUtils.DegreesToRadians(CameraPitch));
+            CameraDirection.Z = MathF.Sin(MathUtils.DegreesToRadians(CameraYaw)) * MathF.Cos(MathUtils.DegreesToRadians(CameraPitch));
             CameraFront = Vector3.Normalize(CameraDirection);
         }
     }

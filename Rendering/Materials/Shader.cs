@@ -1,13 +1,12 @@
-using System.Numerics;
-using System.Xml.Linq;
 using Silk.NET.OpenGL;
+using System.Numerics;
 
 namespace FainEngine_v2.Rendering.Materials;
 
 public class Shader : IDisposable
 {
-    private uint _handle;
-    private GL GL;
+    private readonly uint _handle;
+    private readonly GL GL;
 
     public Shader(GL gl, string vertexSrc, string fragmentSrc)
     {

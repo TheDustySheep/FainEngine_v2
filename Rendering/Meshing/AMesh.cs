@@ -2,7 +2,7 @@ using Silk.NET.OpenGL;
 
 namespace FainEngine_v2.Rendering.Meshing;
 
-public abstract class AMesh<TVertexType, TIndexType> : IMesh 
+public abstract class AMesh<TVertexType, TIndexType> : IMesh
     where TVertexType : unmanaged
     where TIndexType : unmanaged
 {
@@ -49,7 +49,7 @@ public abstract class AMesh<TVertexType, TIndexType> : IMesh
 
     public unsafe void Draw()
     {
-        if (Triangles is null)
+        if (Triangles is null || Triangles.Length == 0 || VertexCount == 0)
             return;
 
         VAO.Bind();

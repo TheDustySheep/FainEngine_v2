@@ -1,10 +1,10 @@
 using System.Numerics;
 
-namespace FainEngine_v2.Physics;
+namespace FainEngine_v2.Physics.Obsolete;
 
 public static class AABBSolver
 {
-    public static bool AreOverlapping(AABB a, AABB b)
+    public static bool AreOverlapping(OldAABB a, OldAABB b)
     {
         bool x = Math.Abs(a.CenterX - b.CenterX) <= a.HalfWidthX + b.HalfWidthX;
         bool y = Math.Abs(a.CenterY - b.CenterY) <= a.HalfWidthY + b.HalfWidthY;
@@ -13,9 +13,9 @@ public static class AABBSolver
         return x && y && z;
     }
 
-    public static AABB CalculateOverlap(AABB a, AABB b)
+    public static OldAABB CalculateOverlap(OldAABB a, OldAABB b)
     {
-        return AABB.FromMinMax
+        return OldAABB.FromMinMax
         (
             Math.Max(a.MinX, b.MinX),
             Math.Max(a.MinY, b.MinY),
@@ -26,7 +26,7 @@ public static class AABBSolver
         );
     }
 
-    public static Vector3 ResolveOverlap(AABB a, AABB overlap)
+    public static Vector3 ResolveOverlap(OldAABB a, OldAABB overlap)
     {
         if (overlap.WidthX < overlap.WidthY)
         {

@@ -1,7 +1,7 @@
 ﻿namespace FainEngine_v2.Utils;
 public class WorkerThread
 {
-    Thread thread;
+    readonly Thread thread;
 
     public WorkerThread(Action action)
     {

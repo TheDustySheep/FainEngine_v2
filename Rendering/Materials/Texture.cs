@@ -1,4 +1,3 @@
-using Silk.NET.Assimp;
 using Silk.NET.OpenGL;
 
 namespace FainEngine_v2.Rendering.Materials;
