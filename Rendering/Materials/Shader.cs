@@ -37,10 +37,10 @@ public class Shader : IDisposable
     private int GetUniformLocation(string name)
     {
         int location = GL.GetUniformLocation(_handle, name);
-        if (location == -1)
-        {
-            throw new Exception($"{name} uniform not found on shader.");
-        }
+        //if (location == -1)
+        //{
+        //    throw new Exception($"{name} uniform not found on shader.");
+        //}
         return location;
     }
 

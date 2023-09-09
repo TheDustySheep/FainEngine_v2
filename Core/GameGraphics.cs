@@ -29,6 +29,7 @@ public static class GameGraphics
 
             var mat = render.material;
             mat.Use();
+            mat.UpdateAdditionalUniforms();
             mat.SetProjectionMatrix(camera.ProjectionMatrix);
             mat.SetViewMatrix(camera.ViewMatrix);
             mat.SetModelMatrix(render.model);

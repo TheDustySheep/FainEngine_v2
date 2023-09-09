@@ -5,9 +5,9 @@ public class GameTime
     public static float DeltaTime { get; private set; } = 0f;
     public static long TotalTicks { get; private set; }
 
-    public static float FixedUpdate { get; private set; } = 1f / 50f;
-    internal static float LastFixedUpdate { get; private set; } = float.MinValue;
-    internal static bool FixedUpdateDue => TotalTime - LastFixedUpdate > FixedUpdate;
+    public const float FixedDeltaTime = 1f / 60f;
+    public static float LastFixedUpdate { get; private set; } = float.MinValue;
+    internal static bool FixedUpdateDue => TotalTime - LastFixedUpdate >= FixedDeltaTime;
 
     public static void TickFixedUpdate()
     {

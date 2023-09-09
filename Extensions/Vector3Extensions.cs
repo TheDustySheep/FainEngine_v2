@@ -17,4 +17,11 @@ public static class Vector3Extensions
             MathF.Floor(vec.Z)
         );
     }
+
+
+    public static Vector3 Lerp(Vector3 a, Vector3 b, float t)
+    {
+        return a * (1 - t) + b * t;
+    }
+
 }

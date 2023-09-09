@@ -35,6 +35,7 @@ public abstract class AMesh<TVertexType, TIndexType> : IMesh
         SetVertexAttributes();
     }
 
+    public abstract void Clear();
     protected abstract void SetVertexAttributes();
     protected abstract void ApplyVertices();
     protected void ApplyTriangles()
@@ -47,7 +48,7 @@ public abstract class AMesh<TVertexType, TIndexType> : IMesh
         VAO.Bind();
     }
 
-    public unsafe void Draw()
+    public unsafe virtual void Draw()
     {
         if (Triangles is null || Triangles.Length == 0 || VertexCount == 0)
             return;

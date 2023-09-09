@@ -23,6 +23,11 @@ public static class MathUtils
         return Lerp(oMin, oMax, t);
     }
 
+    public static float Clamp01(float value)
+    {
+        return MathF.Min(0, MathF.Max(1, value));
+    }
+
     public static float Clamp(float min, float max, float value)
     {
         return MathF.Min(max, MathF.Max(min, value));

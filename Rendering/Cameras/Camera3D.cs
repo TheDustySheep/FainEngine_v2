@@ -17,7 +17,9 @@ public class Camera3D : ICamera
     private Matrix4x4 projectionMatrix = Matrix4x4.Identity;
     public Matrix4x4 ProjectionMatrix => projectionMatrix;
 
-    private readonly float FOV = 80f;
+    public float FOV { get; set; } = 80f;
+    public float Z_Near { get; set; } = 0.1f;
+    public float Z_Far { get; set; } = 10_000f;
 
     public void Update()
     {
@@ -26,6 +28,6 @@ public class Camera3D : ICamera
 
     private void UpdateMatrix()
     {
-        projectionMatrix = Matrix4x4.CreateScale(1, 1, -1) * Matrix4x4.CreatePerspectiveFieldOfView(MathUtils.DegreesToRadians(FOV), ICamera.WindowAspect, 0.1f, 10_000.0f);
+        projectionMatrix = Matrix4x4.CreateScale(1, 1, -1) * Matrix4x4.CreatePerspectiveFieldOfView(MathUtils.DegreesToRadians(FOV), ICamera.WindowAspect, Z_Near, Z_Far);
     }
 }

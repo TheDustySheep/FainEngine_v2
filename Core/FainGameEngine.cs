@@ -51,6 +51,7 @@ public class FainGameEngine
 
         GameGraphics.SetGL(_gl);
         ResourceLoader.SetGL(_gl);
+        Gizmos.Init(_gl);
         GameInputs.SetWindow(window);
         ICamera.SetWindow(window);
         Load();
@@ -70,6 +71,8 @@ public class FainGameEngine
         }
 
         GameInputs.Reset();
+
+        Gizmos.Tick();
     }
 
     private void OnRender(double deltaTime)

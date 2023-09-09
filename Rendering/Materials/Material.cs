@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using FainEngine_v2.Core;
+using System.Numerics;
 
 namespace FainEngine_v2.Rendering.Materials;
 
@@ -11,6 +12,11 @@ public class Material
     public Material(Shader shader)
     {
         this.shader = shader;
+    }
+
+    public void Use()
+    {
+        shader.Use();
     }
 
     public void SetViewMatrix(Matrix4x4 mat)
@@ -28,9 +34,9 @@ public class Material
         shader.SetUniform("uModel", mat);
     }
 
-    public void Use()
+    public void UpdateAdditionalUniforms()
     {
-        shader.Use();
+        shader.SetUniform("time", GameTime.TotalTime);
     }
 
     public void SetUniforms()

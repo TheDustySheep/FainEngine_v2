@@ -11,11 +11,17 @@ public static class GameInputs
     static readonly HashSet<Key> KeysHeld = new();
     static readonly HashSet<Key> KeysUp = new();
 
+    static readonly HashSet<MouseButton> MouseDown = new();
+    static readonly HashSet<MouseButton> MouseHeld = new();
+    static readonly HashSet<MouseButton> MouseUp = new();
+
     public static Vector2 ScrollDelta { get; private set; } = Vector2.Zero;
 
     private static Vector2 _lastMousePosition = Vector2.Zero;
     public static Vector2 MousePosition { get; private set; } = Vector2.Zero;
     public static Vector2 MouseDelta { get; private set; } = Vector2.Zero;
+
+    public static CursorMode CursorMode { get; set; } = CursorMode.Raw;
 
     internal static void SetWindow(IWindow window)
     {
@@ -29,16 +35,32 @@ public static class GameInputs
         }
         for (int i = 0; i < input.Mice.Count; i++)
         {
-            input.Mice[i].Cursor.CursorMode = CursorMode.Raw;
+            input.Mice[i].Cursor.CursorMode = CursorMode;
             input.Mice[i].MouseMove += OnMouseMove;
-            input.Mice[i].Scroll += OnMouseWheel;
+            input.Mice[i].Scroll    += OnMouseWheel;
+            input.Mice[i].MouseDown += OnMouseDown;
+            input.Mice[i].MouseUp   += OnMouseUp;
         }
+    }
+
+    private static void OnMouseDown(IMouse mouse, MouseButton button)
+    {
+        MouseHeld.Add(button);
+        MouseDown.Add(button);
+    }
+
+    private static void OnMouseUp(IMouse mouse, MouseButton button)
+    {
+        MouseUp.Add(button);
+        MouseHeld.Remove(button);
     }
 
     public static void Reset()
     {
         KeysDown.Clear();
         KeysUp.Clear();
+        MouseDown.Clear();
+        MouseUp.Clear();
         MouseDelta = MousePosition - _lastMousePosition;
         _lastMousePosition = MousePosition;
     }
@@ -46,6 +68,10 @@ public static class GameInputs
     public static bool IsKeyDown(Key key) => KeysDown.Contains(key);
     public static bool IsKeyHeld(Key key) => KeysHeld.Contains(key);
     public static bool IsKeyUp(Key key) => KeysUp.Contains(key);
+
+    public static bool IsMouseDown(MouseButton key) => MouseDown.Contains(key);
+    public static bool IsMouseHeld(MouseButton key) => MouseHeld.Contains(key);
+    public static bool IsMouseUp(MouseButton key) => MouseUp.Contains(key);
 
     private static unsafe void OnMouseMove(IMouse mouse, Vector2 position)
     {

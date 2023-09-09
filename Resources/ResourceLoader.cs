@@ -1,5 +1,6 @@
 ﻿using FainEngine_v2.Rendering;
 using FainEngine_v2.Rendering.Materials;
+using static FainEngine_v2.Rendering.Materials.Texture2D;
 using GL = Silk.NET.OpenGL.GL;
 
 namespace FainEngine_v2.Resources;
@@ -12,12 +13,16 @@ public static class ResourceLoader
         _gl = gl;
     }
 
-    public static Texture2D LoadTexture2D(string filePath)
+    public static Texture2D LoadTexture2D(
+        string filePath,
+        WrappingModes wrapMode = WrappingModes.Clamp_To_Edge,
+        FilterModes filterMode = FilterModes.Nearest,
+        MipMapModes mipMapMode = MipMapModes.None)
     {
         if (_gl is null)
             throw new Exception("OpenGL is not set");
 
-        return new Texture2D(_gl, filePath);
+        return new Texture2D(_gl, filePath, wrapMode, filterMode, mipMapMode);
     }
 
     public static Shader LoadShader(string folder)

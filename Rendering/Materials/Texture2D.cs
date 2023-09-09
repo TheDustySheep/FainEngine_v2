@@ -10,8 +10,17 @@ public class Texture2D : Texture
     public FilterModes FilterMode { get; init; } = FilterModes.Nearest;
     public MipMapModes MipMapMode { get; init; } = MipMapModes.None;
 
-    public unsafe Texture2D(GL gl, string path) : base(gl)
+    public unsafe Texture2D(
+        GL gl, 
+        string path, 
+        WrappingModes wrapMode = WrappingModes.Clamp_To_Edge,
+        FilterModes filterMode = FilterModes.Nearest,
+        MipMapModes mipMapMode = MipMapModes.None) : base(gl)
     {
+        WrapMode = wrapMode;
+        FilterMode = filterMode;
+        MipMapMode = mipMapMode;
+
         _gl = gl;
         _handle = _gl.GenTexture();
         Use();

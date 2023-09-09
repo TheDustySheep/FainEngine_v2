@@ -30,19 +30,30 @@ public class Transform
         Parent = parent;
     }
 
-    public Vector3 Forward => Vector3.TransformNormal(Vector3.UnitZ, Matrix4x4.CreateFromQuaternion(Rotation));
-    public Vector3 Up => Vector3.TransformNormal(Vector3.UnitY, Matrix4x4.CreateFromQuaternion(Rotation));
-    public Vector3 Right => Vector3.TransformNormal(Vector3.UnitX, Matrix4x4.CreateFromQuaternion(Rotation));
+    public Vector3 Forward => Vector3.TransformNormal(Vector3.UnitZ, ModelMatrix);
+    public Vector3 Up => Vector3.TransformNormal(Vector3.UnitY, ModelMatrix);
+    public Vector3 Right => Vector3.TransformNormal(Vector3.UnitX, ModelMatrix);
 
-    public Vector3 Position { get; set; } = new Vector3(0, 0, 0);
+    public Vector3 GlobalPosition => Vector3.Transform(LocalPosition, ModelMatrix);
+    public Vector3 LocalPosition { get; set; } = new Vector3(0, 0, 0);
     public float Scale { get; set; } = 1f;
-    public Quaternion Rotation { get; set; } = Quaternion.Identity;
+    public Quaternion LocalRotation { get; set; } = Quaternion.Identity;
+
+    private Matrix4x4 RotationMatrix
+    {
+        get
+        {
+            Matrix4x4 matrix = Matrix4x4.CreateFromQuaternion(LocalRotation);
+
+            return Parent is null ? matrix : matrix * Parent.RotationMatrix;
+        }
+    }
 
     public Matrix4x4 ModelMatrix
     {
         get
         {
-            Matrix4x4 matrix = Matrix4x4.CreateScale(Scale) * Matrix4x4.CreateFromQuaternion(Rotation) * Matrix4x4.CreateTranslation(Position);
+            Matrix4x4 matrix = Matrix4x4.CreateScale(Scale) * Matrix4x4.CreateFromQuaternion(LocalRotation) * Matrix4x4.CreateTranslation(LocalPosition);
 
             return Parent is null ? matrix : matrix * Parent.ModelMatrix;
         }

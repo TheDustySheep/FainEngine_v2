@@ -19,7 +19,21 @@ public class CustomMesh<TVertexType, TIndexType> : AMesh<TVertexType, TIndexType
     {
         Vertices = vertices;
         Triangles = trianges;
-        Apply();
+
+        Bind();
+        ApplyVertices();
+        ApplyTriangles();
+        SetVertexAttributes();
+    }
+
+    public override void Clear()
+    {
+        Vertices = null;
+        Triangles = null;
+
+        VAO.Bind();
+        VBO.SetData(Span<TVertexType>.Empty);
+        EBO.SetData(Span<TIndexType>.Empty);
     }
 
     public void SetVertices(TVertexType[] data)
