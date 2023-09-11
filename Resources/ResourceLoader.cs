@@ -1,6 +1,6 @@
 ﻿using FainEngine_v2.Rendering;
 using FainEngine_v2.Rendering.Materials;
-using static FainEngine_v2.Rendering.Materials.Texture2D;
+using static FainEngine_v2.Rendering.Materials.Texture;
 using GL = Silk.NET.OpenGL.GL;
 
 namespace FainEngine_v2.Resources;
@@ -25,6 +25,18 @@ public static class ResourceLoader
         return new Texture2D(_gl, filePath, wrapMode, filterMode, mipMapMode);
     }
 
+    public static Texture2DArray LoadTextureAtlas(
+        string filePath,
+        uint atlasSize,
+        WrappingModes wrapMode = WrappingModes.Clamp_To_Edge,
+        FilterModes filterMode = FilterModes.Nearest,
+        MipMapModes mipMapMode = MipMapModes.None)
+    {
+        if (_gl is null)
+            throw new Exception("OpenGL is not set");
+
+        return new Texture2DArray(_gl, filePath, atlasSize, wrapMode, filterMode, mipMapMode);
+    }
     public static Shader LoadShader(string folder)
     {
         if (_gl is null)

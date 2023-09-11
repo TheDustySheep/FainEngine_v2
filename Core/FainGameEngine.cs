@@ -18,6 +18,7 @@ public class FainGameEngine
         var options = WindowOptions.Default;
         options.Size = new Vector2D<int>(windowWidth, windowHeight);
         options.Title = windowTitle;
+        options.Samples = 4;
         window = Window.Create(options);
 
         window.Load += OnLoad;
@@ -48,6 +49,7 @@ public class FainGameEngine
         _gl.Enable(EnableCap.CullFace);
         _gl.FrontFace(FrontFaceDirection.CW);
         _gl.CullFace(TriangleFace.Back);
+        _gl.Enable(EnableCap.Multisample);
 
         GameGraphics.SetGL(_gl);
         ResourceLoader.SetGL(_gl);
@@ -60,12 +62,12 @@ public class FainGameEngine
     private void OnUpdate(double deltaTime)
     {
         GameTime.Tick((float)deltaTime);
+
         EntityManager.Update();
         Update();
 
-        if (GameTime.FixedUpdateDue)
+        if (GameTime.TickFixedUpdate())
         {
-            GameTime.TickFixedUpdate();
             EntityManager.FixedUpdate();
             FixedUpdate();
         }

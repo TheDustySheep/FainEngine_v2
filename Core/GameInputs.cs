@@ -37,9 +37,9 @@ public static class GameInputs
         {
             input.Mice[i].Cursor.CursorMode = CursorMode;
             input.Mice[i].MouseMove += OnMouseMove;
-            input.Mice[i].Scroll    += OnMouseWheel;
+            input.Mice[i].Scroll += OnMouseWheel;
             input.Mice[i].MouseDown += OnMouseDown;
-            input.Mice[i].MouseUp   += OnMouseUp;
+            input.Mice[i].MouseUp += OnMouseUp;
         }
     }
 

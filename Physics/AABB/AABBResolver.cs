@@ -2,7 +2,7 @@
 using System.Numerics;
 
 namespace FainEngine_v2.Physics.AABB;
-public static class CollisionResolver
+public static class AABBResolver
 {
     public static DynamicAABB ResolveCollision(DynamicAABB player, List<StaticAABB> colliders, CollisionMode mode)
     {
@@ -15,18 +15,18 @@ public static class CollisionResolver
             {
                 var aabb = colliders[i];
                 float colTime = SweptCollision(player, aabb, out var normal);
-        
+
                 if (colTime < closestTime && IsOverlapping(GetSweptBroadphaseBox(player), aabb))
                 {
                     closestTime = colTime;
                     closestIndex = i;
                 }
             }
-        
+
             // No impending collisions
             if (closestIndex == -1)
                 break;
-        
+
             StaticAABB voxelAABB = colliders[closestIndex];
             colliders.RemoveAt(closestIndex);
             player = Collide(player, voxelAABB, mode);
@@ -37,11 +37,11 @@ public static class CollisionResolver
 
     public static bool IsOverlapping(StaticAABB a, StaticAABB b)
     {
-        return 
+        return
         !(
-            a.Position.X + a.Size.X < b.Position.X || 
-            a.Position.X > b.Position.X + b.Size.X || 
-            a.Position.Y + a.Size.Y < b.Position.Y || 
+            a.Position.X + a.Size.X < b.Position.X ||
+            a.Position.X > b.Position.X + b.Size.X ||
+            a.Position.Y + a.Size.Y < b.Position.Y ||
             a.Position.Y > b.Position.Y + b.Size.Y ||
             a.Position.Z + a.Size.Z < b.Position.Z ||
             a.Position.Z > b.Position.Z + b.Size.Z
@@ -88,7 +88,7 @@ public static class CollisionResolver
 
     public static Vector3 ResolveOverlap(StaticAABB a, OverlapAABB overlap)
     {
-        if (overlap.Size.X < overlap.Size.Y && 
+        if (overlap.Size.X < overlap.Size.Y &&
             overlap.Size.X < overlap.Size.Z)
         {
             // X is smallest overlap

@@ -33,8 +33,8 @@ public static class Gizmos
         }
     }
 
-    static List<Vertex> Vertices = new();
-    static List<uint> Triangles = new();
+    static readonly List<Vertex> Vertices = new();
+    static readonly List<uint> Triangles = new();
     static GizmoMesh? Mesh;
 
     static Material? material;
@@ -109,7 +109,7 @@ public static class Gizmos
             Matrix4x4.CreateTranslation((Vector3)pos + (Vector3.One * -offset));
 
         uint vertCount = (uint)Vertices.Count;
-        for(int face = 0; face < 6; face++)
+        for (int face = 0; face < 6; face++)
         {
             for (int vertIndex = 0; vertIndex < 4; vertIndex++)
             {

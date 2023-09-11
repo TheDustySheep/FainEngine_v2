@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections;
 
 namespace FainEngine_v2.Collections;
 public class OrderedSet<T> : ICollection<T> where T : notnull
@@ -32,7 +27,7 @@ public class OrderedSet<T> : ICollection<T> where T : notnull
 
     public bool AddLast(T item)
     {
-        if (m_Dictionary.ContainsKey(item)) 
+        if (m_Dictionary.ContainsKey(item))
             return false;
 
         var node = m_LinkedList.AddLast(item);
@@ -65,7 +60,7 @@ public class OrderedSet<T> : ICollection<T> where T : notnull
     public T? Dequeue()
     {
         LinkedListNode<T>? node = m_LinkedList.First;
-        
+
         if (node is null)
             return default;
 
@@ -94,10 +89,10 @@ public class OrderedSet<T> : ICollection<T> where T : notnull
 
     public bool Remove(T item)
     {
-        if (item == null) 
+        if (item == null)
             return false;
 
-        if (!m_Dictionary.TryGetValue(item, out var node)) 
+        if (!m_Dictionary.TryGetValue(item, out var node))
             return false;
 
         m_Dictionary.Remove(item);

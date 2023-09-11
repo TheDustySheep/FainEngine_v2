@@ -24,4 +24,18 @@ public static class Vector3Extensions
         return a * (1 - t) + b * t;
     }
 
+    public static Vector2 ToXY(this Vector3 vec)
+    {
+        return new Vector2(vec.X, vec.Y);
+    }
+
+    public static Vector2 ToXZ(this Vector3 vec)
+    {
+        return new Vector2(vec.X, vec.Z);
+    }
+
+    public static Vector2 ToYZ(this Vector3 vec)
+    {
+        return new Vector2(vec.Y, vec.Z);
+    }
 }

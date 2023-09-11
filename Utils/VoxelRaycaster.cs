@@ -1,6 +1,5 @@
 ﻿using FainEngine_v2.Physics;
 using Silk.NET.Maths;
-using System;
 using System.Numerics;
 
 namespace FainEngine_v2.Utils;
@@ -136,12 +135,12 @@ public static class VoxelRaycaster
 
             Vector3D<int> normal = direction switch
             {
-                VoxelFace.NegativeX => new Vector3D<int>(-1,  0,  0),
-                VoxelFace.PositiveX => new Vector3D<int>( 1,  0,  0),
-                VoxelFace.NegativeY => new Vector3D<int>( 0, -1,  0),
-                VoxelFace.PositiveY => new Vector3D<int>( 0,  1,  0),
-                VoxelFace.NegativeZ => new Vector3D<int>( 0,  0, -1),
-                VoxelFace.PositiveZ => new Vector3D<int>( 0,  0,  1),
+                VoxelFace.NegativeX => new Vector3D<int>(-1, 0, 0),
+                VoxelFace.PositiveX => new Vector3D<int>(1, 0, 0),
+                VoxelFace.NegativeY => new Vector3D<int>(0, -1, 0),
+                VoxelFace.PositiveY => new Vector3D<int>(0, 1, 0),
+                VoxelFace.NegativeZ => new Vector3D<int>(0, 0, -1),
+                VoxelFace.PositiveZ => new Vector3D<int>(0, 0, 1),
                 _ => default
             };
 

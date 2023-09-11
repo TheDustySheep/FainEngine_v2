@@ -34,7 +34,7 @@ public class Transform
     public Vector3 Up => Vector3.TransformNormal(Vector3.UnitY, ModelMatrix);
     public Vector3 Right => Vector3.TransformNormal(Vector3.UnitX, ModelMatrix);
 
-    public Vector3 GlobalPosition => Vector3.Transform(LocalPosition, ModelMatrix);
+    public Vector3 GlobalPosition => Vector3.Transform(Vector3.Zero, ModelMatrix);
     public Vector3 LocalPosition { get; set; } = new Vector3(0, 0, 0);
     public float Scale { get; set; } = 1f;
     public Quaternion LocalRotation { get; set; } = Quaternion.Identity;
