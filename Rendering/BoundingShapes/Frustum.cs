@@ -34,12 +34,12 @@ public struct Frustum
         };
 
         // If ALL the corners are below ANY plane then they don't intersect
-        foreach (Plane plane in planes) 
+        foreach (Plane plane in planes)
         {
             int inCount = 8;
             foreach (Vector3 corner in corners)
             {
-                if (!plane.IsAbove(corner)) 
+                if (!plane.IsAbove(corner))
                 {
                     inCount -= 1;
                 }

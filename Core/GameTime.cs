@@ -1,6 +1,4 @@
-﻿using FainEngine_v2.Utils;
-
-namespace FainEngine_v2.Core;
+﻿namespace FainEngine_v2.Core;
 public static class GameTime
 {
     public static float TotalTime { get; private set; } = 0f;

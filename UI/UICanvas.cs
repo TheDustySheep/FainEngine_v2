@@ -7,9 +7,9 @@ using System.Numerics;
 namespace FainEngine_v2.UI;
 public class UICanvas : IEntity
 {
-    List<UIElement> Elements = new List<UIElement>();
-    UIMesh uiMesh;
-    Material material;
+    readonly List<UIElement> Elements = new List<UIElement>();
+    readonly UIMesh uiMesh;
+    readonly Material material;
     Matrix4x4 model = Matrix4x4.Identity;
 
     public UICanvas()
@@ -35,11 +35,11 @@ public class UICanvas : IEntity
         {
             var segment = element.GetMeshSegment();
 
-            for (int i = 0; i < segment.Triangles.Length;  i++)
+            for (int i = 0; i < segment.Triangles.Length; i++)
             {
                 segment.Triangles[i] += vertCount;
             }
-            
+
             vertices.AddRange(segment.Vertices);
             triangles.AddRange(segment.Triangles);
 
