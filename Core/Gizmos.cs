@@ -15,10 +15,15 @@ public static class Gizmos
         public Vector3 Color;
     }
 
-    class GizmoMesh : CustomMesh<Vertex, uint>
+    class GizmoMesh : CustomVertexMesh<Vertex, uint>
     {
         public GizmoMesh(GL gl) : base(gl)
         {
+            Bounds = new Rendering.BoundingShapes.BoundingBox()
+            {
+                Max = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue),
+                Min = new Vector3(float.MinValue, float.MinValue, float.MinValue)
+            };
         }
 
         public override unsafe void Draw()
@@ -30,6 +35,11 @@ public static class Gizmos
             _gl.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Line);
             _gl.DrawElements(PrimitiveType.Triangles, (uint)Triangles.Length, DrawElementsType.UnsignedInt, (void*)0);
             _gl.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Fill);
+        }
+
+        protected override Vector3 GetVertexPosition(Vertex vertex)
+        {
+            return vertex.Position;
         }
     }
 

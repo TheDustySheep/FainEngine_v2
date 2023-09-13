@@ -1,3 +1,4 @@
+using FainEngine_v2.Rendering.BoundingShapes;
 using Silk.NET.OpenGL;
 
 namespace FainEngine_v2.Rendering.Meshing;
@@ -13,6 +14,8 @@ public abstract class AMesh<TVertexType, TIndexType> : IMesh
     protected BufferObject<TVertexType> VBO { get; set; }
     protected BufferObject<TIndexType> EBO { get; set; }
     public TIndexType[]? Triangles { get; set; }
+
+    public BoundingBox Bounds { get; set; }
 
     public AMesh(GL gl)
     {

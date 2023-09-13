@@ -1,4 +1,5 @@
-﻿using Silk.NET.Windowing;
+﻿using FainEngine_v2.Rendering.BoundingShapes;
+using Silk.NET.Windowing;
 using System.Numerics;
 
 namespace FainEngine_v2.Rendering.Cameras;
@@ -10,6 +11,8 @@ public interface ICamera
     public static ICamera Main { get; private set; } = new NullCamera();
     public static Vector2 WindowSize = new Vector2(100, 100);
     public static float WindowAspect => WindowSize.X / WindowSize.Y;
+
+    Frustum Frustum { get; }
 
     public static void SetWindow(IWindow window)
     {

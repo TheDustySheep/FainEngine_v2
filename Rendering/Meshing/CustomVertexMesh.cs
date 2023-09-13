@@ -1,9 +1,10 @@
-﻿using Silk.NET.OpenGL;
+﻿using FainEngine_v2.Rendering.BoundingShapes;
+using Silk.NET.OpenGL;
 using System.Numerics;
 using System.Runtime.InteropServices;
 
 namespace FainEngine_v2.Rendering.Meshing;
-public class CustomMesh<TVertexType, TIndexType> : AMesh<TVertexType, TIndexType>
+public class CustomVertexMesh<TVertexType, TIndexType> : AMesh<TVertexType, TIndexType>
     where TVertexType : unmanaged
     where TIndexType : unmanaged
 {
@@ -11,11 +12,11 @@ public class CustomMesh<TVertexType, TIndexType> : AMesh<TVertexType, TIndexType
 
     public TVertexType[]? Vertices { get; set; }
 
-    public CustomMesh(GL gl) : base(gl)
+    public CustomVertexMesh(GL gl) : base(gl)
     {
     }
 
-    public CustomMesh(GL gl, TVertexType[] vertices, TIndexType[] trianges) : base(gl)
+    public CustomVertexMesh(GL gl, TVertexType[] vertices, TIndexType[] trianges) : base(gl)
     {
         Vertices = vertices;
         Triangles = trianges;
@@ -87,6 +88,30 @@ public class CustomMesh<TVertexType, TIndexType> : AMesh<TVertexType, TIndexType
     {
         VBO.SetData(Vertices);
     }
+
+    public void RecalculateBounds()
+    {
+        if (Vertices == null || Vertices.Length == 0)
+        {
+            Bounds = default;
+            return;
+        }
+
+        Vector3 pos = GetVertexPosition(Vertices[0]);
+        Vector3 min = pos;
+        Vector3 max = pos;
+
+        for (int i = 1; i < Vertices.Length; i++)
+        {
+            pos = GetVertexPosition(Vertices[0]);
+            min = Vector3.Min(min, pos);
+            max = Vector3.Max(max, pos);
+        }
+
+        Bounds = new BoundingBox(min, max);
+    }
+
+    protected virtual Vector3 GetVertexPosition(TVertexType vertex) => Vector3.Zero;
 
     #region Vertex Attribute Lookup
     private static readonly Dictionary<Type, VertexAttribData> GL_Meta_Lookup = new()

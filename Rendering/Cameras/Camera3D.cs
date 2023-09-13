@@ -1,6 +1,8 @@
 ﻿using FainEngine_v2.Core.GameObjects;
+using FainEngine_v2.Rendering.BoundingShapes;
 using FainEngine_v2.Utils;
 using System.Numerics;
+using Plane = FainEngine_v2.Rendering.BoundingShapes.Plane;
 
 namespace FainEngine_v2.Rendering.Cameras;
 public class Camera3D : ICamera
@@ -20,6 +22,38 @@ public class Camera3D : ICamera
     public float FOV { get; set; } = 80f;
     public float Z_Near { get; set; } = 0.1f;
     public float Z_Far { get; set; } = 10_000f;
+
+    public Frustum Frustum
+    {
+        get
+        {
+            float fovY = MathUtils.DegreesToRadians(FOV);
+            float zFar = Z_Far;
+            float zNear = Z_Near;
+            float aspect = ICamera.WindowAspect;
+
+            float halfVSide = zFar * MathF.Tan(fovY * .5f);
+            float halfHSide = halfVSide * aspect;
+            Vector3 frontMultFar = zFar * transform.Forward;
+
+            Vector3 globalPos = transform.GlobalPosition;
+            Vector3 forward = transform.Forward;
+            Vector3 right = transform.Right;
+            Vector3 up = transform.Up;
+
+            Frustum frustum = new Frustum
+            {
+                NearPlane = new Plane(globalPos + zNear * forward, forward),
+                FarPlane = new Plane(globalPos + frontMultFar, -forward),
+                RightPlane = new Plane(globalPos, Vector3.Cross(frontMultFar + right * halfHSide, up)),
+                LeftPlane = new Plane(globalPos, Vector3.Cross(up, frontMultFar - right * halfHSide)),
+                TopPlane = new Plane(globalPos, Vector3.Cross(right, frontMultFar + up * halfVSide)),
+                BottomPlane = new Plane(globalPos, Vector3.Cross(frontMultFar - up * halfVSide, right))
+            };
+
+            return frustum;
+        }
+    }
 
     public void Update()
     {
