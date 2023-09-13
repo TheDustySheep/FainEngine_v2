@@ -11,17 +11,17 @@ public static class Vector2Extensions
         return Vector2.Normalize(vec);
     }
 
-    public static Vector3 FromXY(this Vector2 vec)
+    public static Vector3 ToXY(this Vector2 vec)
     {
         return new Vector3(vec.X, vec.Y, 0f);
     }
 
-    public static Vector3 FromXZ(this Vector2 vec)
+    public static Vector3 ToXZ(this Vector2 vec)
     {
         return new Vector3(vec.X, 0f, vec.Y);
     }
 
-    public static Vector3 FromYZ(this Vector2 vec)
+    public static Vector3 ToYZ(this Vector2 vec)
     {
         return new Vector3(0, vec.X, vec.Y);
     }

@@ -63,14 +63,16 @@ public class FainGameEngine
     {
         GameTime.Tick((float)deltaTime);
 
-        EntityManager.Update();
-        Update();
-
-        if (GameTime.TickFixedUpdate())
+        // Fixed update loop
+        while (GameTime.TickFixedUpdate())
         {
             EntityManager.FixedUpdate();
             FixedUpdate();
         }
+
+        // Update loop
+        EntityManager.Update();
+        Update();
 
         GameInputs.Reset();
 

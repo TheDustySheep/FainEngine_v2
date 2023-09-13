@@ -25,7 +25,7 @@ public static class MathUtils
 
     public static float Clamp01(float value)
     {
-        return MathF.Min(0, MathF.Max(1, value));
+        return MathF.Max(0, MathF.Min(1, value));
     }
 
     public static float Clamp(float min, float max, float value)

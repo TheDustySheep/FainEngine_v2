@@ -8,6 +8,14 @@ public static class Vector3Extensions
         return Vector3.Normalize(vec);
     }
 
+    public static Vector3 ClampMagnitude(this Vector3 vec, float maxMagnitude)
+    {
+        if (vec.LengthSquared() > maxMagnitude * maxMagnitude)
+            return vec.Normalized() * maxMagnitude;
+
+        return vec;
+    }
+
     public static Vector3 Floor(this Vector3 vec)
     {
         return new Vector3
