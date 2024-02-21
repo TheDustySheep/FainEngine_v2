@@ -2,20 +2,29 @@
 using FainEngine_v2.Rendering.Cameras;
 using FainEngine_v2.Rendering.Materials;
 using FainEngine_v2.Rendering.Meshing;
+using FainEngine_v2.UI;
+using Silk.NET.Maths;
 using Silk.NET.OpenGL;
+using Silk.NET.Windowing;
 using System.Numerics;
 
 namespace FainEngine_v2.Core;
 public static class GameGraphics
 {
-    static RenderInstance? UI;
-    static readonly List<RenderInstance> renderQueue = new();
+    static IWindow? _window;
+    static IWindow Window => _window ?? throw new Exception("Window Not Set");
+
+    public static float WindowAspect => Window.Size.X / (float)Window.Size.Y;
+
     private static GL? _gl;
     public static GL GL => _gl ?? throw new Exception("OpenGL Not Set");
 
-    internal static void SetGL(GL gl)
+    readonly static Dictionary<Material, List<RenderInstance>> RenderQueue = new();
+
+    internal static void SetGL(GL gl, IWindow window)
     {
         _gl = gl;
+        _window = window;
     }
 
     public static void Render()
@@ -29,72 +38,54 @@ public static class GameGraphics
         int totalMeshes = 0;
         int renderedMeshes = 0;
 
-        foreach (var render in renderQueue)
+        foreach ((var mat, var queue) in RenderQueue)
         {
-            IMesh mesh = render.Mesh;
-            Matrix4x4 modelMatrix = render.ModelMatrix;
-            BoundingBox bounds = mesh.Bounds;
-            bounds = bounds.Transform(modelMatrix);
-
-            totalMeshes++;
-
-            if (!frustum.Intersects(bounds))
-                continue;
-
-            renderedMeshes++;
-
-            render.Mesh.Bind();
-
-            var mat = render.Material;
             mat.Use();
             mat.UpdateAdditionalUniforms();
             mat.SetProjectionMatrix(camera.ProjectionMatrix);
             mat.SetViewMatrix(camera.ViewMatrix);
-            mat.SetModelMatrix(modelMatrix);
 
-            render.Mesh.Draw();
+            foreach (var render in queue)
+            {
+                IMesh mesh = render.Mesh;
+                Matrix4x4 modelMatrix = render.ModelMatrix;
+                BoundingBox bounds = mesh.Bounds.Transform(modelMatrix);
+
+                // Skip meshes outside camera frustum
+                totalMeshes++;
+                if (mesh.ClipBounds && !frustum.Intersects(bounds))
+                    continue;
+                renderedMeshes++;
+
+                mat.SetModelMatrix(modelMatrix);
+
+                mesh.Bind();
+                mesh.Draw();
+            }
         }
-        renderQueue.Clear();
+
+        RenderQueue.Clear();
         //Console.WriteLine($"Total Meshes: {totalMeshes} Rendered: {renderedMeshes}");
-
-        if (UI is not null)
-        {
-            RenderInstance ui = UI.Value;
-
-            var mat = ui.Material;
-            mat.Use();
-            mat.UpdateAdditionalUniforms();
-            mat.SetModelMatrix(ui.ModelMatrix);
-            ui.Mesh.Draw();
-
-            UI = null;
-        }
     }
 
-    public static void DrawMesh(IMesh mesh, Material material, Matrix4x4 model)
+    public static void DrawMesh(IMesh mesh, Material mat, Matrix4x4 model)
     {
-        renderQueue.Add(new RenderInstance()
+        if (!RenderQueue.TryGetValue(mat, out var queue))
+        {
+            queue = new List<RenderInstance>();
+            RenderQueue.Add(mat, queue);
+        }
+
+        queue.Add(new RenderInstance()
         {
             Mesh = mesh,
-            Material = material,
             ModelMatrix = model,
         });
-    }
-
-    internal static void DrawUIMesh(IMesh mesh, Material material, Matrix4x4 model)
-    {
-        UI = new RenderInstance()
-        {
-            Mesh = mesh,
-            Material = material,
-            ModelMatrix = model,
-        };
     }
 
     private struct RenderInstance
     {
         public required IMesh Mesh;
-        public required Material Material;
         public required Matrix4x4 ModelMatrix;
     }
 }

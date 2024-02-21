@@ -9,16 +9,7 @@ public interface ICamera
     public Matrix4x4 ProjectionMatrix { get; }
 
     public static ICamera Main { get; private set; } = new NullCamera();
-    public static Vector2 WindowSize = new Vector2(100, 100);
-    public static float WindowAspect => WindowSize.X / WindowSize.Y;
-
     Frustum Frustum { get; }
-
-    public static void SetWindow(IWindow window)
-    {
-        WindowSize.X = window.Size.X;
-        WindowSize.Y = window.Size.Y;
-    }
 
     public static void SetMainCamera(ICamera? camera)
     {

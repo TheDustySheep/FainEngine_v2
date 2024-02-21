@@ -1,4 +1,5 @@
-﻿using FainEngine_v2.Core.GameObjects;
+﻿using FainEngine_v2.Core;
+using FainEngine_v2.Core.GameObjects;
 using FainEngine_v2.Rendering.BoundingShapes;
 using FainEngine_v2.Utils;
 using System.Numerics;
@@ -30,7 +31,7 @@ public class Camera3D : ICamera
             float fovY = MathUtils.DegreesToRadians(FOV);
             float zFar = Z_Far;
             float zNear = Z_Near;
-            float aspect = ICamera.WindowAspect;
+            float aspect = GameGraphics.WindowAspect;
 
             float halfVSide = zFar * MathF.Tan(fovY * .5f);
             float halfHSide = halfVSide * aspect;
@@ -62,6 +63,6 @@ public class Camera3D : ICamera
 
     private void UpdateMatrix()
     {
-        projectionMatrix = Matrix4x4.CreateScale(1, 1, -1) * Matrix4x4.CreatePerspectiveFieldOfView(MathUtils.DegreesToRadians(FOV), ICamera.WindowAspect, Z_Near, Z_Far);
+        projectionMatrix = Matrix4x4.CreateScale(1, 1, -1) * Matrix4x4.CreatePerspectiveFieldOfView(MathUtils.DegreesToRadians(FOV), GameGraphics.WindowAspect, Z_Near, Z_Far);
     }
 }

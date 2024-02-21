@@ -2,27 +2,28 @@
 using FainEngine_v2.Entities;
 using FainEngine_v2.Rendering.Materials;
 using FainEngine_v2.Resources;
+using FainEngine_v2.UI.FontSystem;
+using FainEngine_v2.UI.UIElements;
 using System.Numerics;
 
 namespace FainEngine_v2.UI;
 public class UICanvas : IEntity
 {
-    readonly List<UIElement> Elements = new List<UIElement>();
+    readonly List<IUIElement> Elements = new List<IUIElement>();
     readonly UIMesh uiMesh;
     readonly Material material;
     Matrix4x4 model = Matrix4x4.Identity;
 
     public UICanvas()
     {
-        Elements.Add(new UIElement()
-        {
-            Position = new Vector2(0, 0),
-            Size = new Vector2(1, 1),
-            Depth = -1,
-        });
+        FontLoader fontLoader = new FontLoader();
+        var font = fontLoader.LoadFont();
+
+        //Elements.Add(new UIColoredBox());
+        Elements.Add(new TextElement(font));
         uiMesh = new UIMesh();
 
-        material = new Material(ResourceLoader.LoadShader("Resources/GizmoShader"));
+        material = new UIMaterial(ResourceLoader.LoadShader("Resources/UI"), font.Texture);
     }
 
     public void Update()
@@ -31,24 +32,29 @@ public class UICanvas : IEntity
         List<uint> triangles = new List<uint>();
 
         uint vertCount = 0;
-        foreach (UIElement element in Elements)
+        foreach (IUIElement element in Elements)
         {
-            var segment = element.GetMeshSegment();
+            var fragment = element.GetMeshSegment(new Rect(-0.5f, -0.5f, 1, 1), 0);
+            var segments = fragment.Segments;
 
-            for (int i = 0; i < segment.Triangles.Length; i++)
+            foreach (var segment in segments)
             {
-                segment.Triangles[i] += vertCount;
+                for (int i = 0; i < segment.Triangles.Length; i++)
+                {
+                    segment.Triangles[i] += vertCount;
+                }
+
+                vertices.AddRange(segment.Vertices);
+                triangles.AddRange(segment.Triangles);
+
+                vertCount += (uint)segment.Vertices.Length;
             }
-
-            vertices.AddRange(segment.Vertices);
-            triangles.AddRange(segment.Triangles);
-
-            vertCount += (uint)segment.Vertices.Length;
         }
 
         uiMesh.SetVertices(vertices.ToArray());
         uiMesh.SetTriangles(triangles.ToArray());
         uiMesh.Apply();
-        GameGraphics.DrawUIMesh(uiMesh, material, model);
+
+        GameGraphics.DrawMesh(uiMesh, material, model);
     }
 }

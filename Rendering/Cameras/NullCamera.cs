@@ -4,9 +4,9 @@ using System.Numerics;
 namespace FainEngine_v2.Rendering.Cameras;
 public class NullCamera : ICamera
 {
-    public Matrix4x4 ViewMatrix => throw new NotImplementedException();
+    public Matrix4x4 ViewMatrix => Matrix4x4.Identity;
 
-    public Matrix4x4 ProjectionMatrix => throw new NotImplementedException();
+    public Matrix4x4 ProjectionMatrix => Matrix4x4.Identity;
 
-    public Frustum Frustum => default;
+    public Frustum Frustum => Frustum.Cube;
 }

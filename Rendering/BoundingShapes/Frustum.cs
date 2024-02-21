@@ -10,6 +10,18 @@ public struct Frustum
     public Plane NearPlane;
     public Plane FarPlane;
 
+    public static Frustum Cube = new Frustum()
+    {
+        LeftPlane = new Plane(Vector3.UnitX,-1f),
+        RightPlane = new Plane(-Vector3.UnitX, 1f),
+
+        TopPlane = new Plane(-Vector3.UnitY, 1f),
+        BottomPlane = new Plane(Vector3.UnitZ,-1f),
+
+        NearPlane = new Plane(Vector3.UnitZ, -1f),
+        FarPlane = new Plane(-Vector3.UnitZ, 1f)
+    };
+
     public Frustum(Plane[] planes)
     {
         for (int i = 0; i < 6; i++)

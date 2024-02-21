@@ -8,6 +8,8 @@ public abstract class AMesh<TVertexType, TIndexType> : IMesh
     where TVertexType : unmanaged
     where TIndexType : unmanaged
 {
+    public bool ClipBounds { get; set; } = true;
+
     protected abstract uint VertexCount { get; }
 
     protected GL _gl { get; }

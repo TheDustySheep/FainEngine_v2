@@ -13,7 +13,9 @@
     <PackageReference Include="Silk.NET.Input" Version="2.17.1" />
     <PackageReference Include="Silk.NET.OpenGL" Version="2.17.1" />
     <PackageReference Include="Silk.NET.Windowing" Version="2.17.1" />
+    <PackageReference Include="SixLabors.Fonts" Version="2.0.0" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.0.2" />
+    <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.0.0" />
     <PackageReference Include="StbImageSharp" Version="2.27.13" />
   </ItemGroup>
 
@@ -30,6 +32,9 @@
     <None Update="Resources\DefaultShader\shader.vert">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Resources\Fonts\Montserrat\Montserrat-Regular.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Resources\GizmoShader\shader.frag">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -42,6 +47,10 @@
     <None Update="Resources\UI\shader.vert">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Resources\Fonts\Montserrat\" />
   </ItemGroup>
 
 </Project>

@@ -51,11 +51,10 @@ public class FainGameEngine
         _gl.CullFace(TriangleFace.Back);
         _gl.Enable(EnableCap.Multisample);
 
-        GameGraphics.SetGL(_gl);
+        GameGraphics.SetGL(_gl, window);
         ResourceLoader.SetGL(_gl);
         Gizmos.Init(_gl);
         GameInputs.SetWindow(window);
-        ICamera.SetWindow(window);
         Load();
     }
 

@@ -3,5 +3,8 @@
 namespace FainEngine_v2.UI;
 internal class UIMesh : CustomVertexMesh<Vertex, uint>
 {
-
+    public UIMesh()
+    {
+        ClipBounds = false;
+    }
 }
