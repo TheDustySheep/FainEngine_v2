@@ -33,15 +33,12 @@ public class Texture2DArray : Texture
                 {
                     img.ProcessPixelRows(accessor =>
                     {
-                        for (int x = 0; x < width; x++)
+                        for (int y = 0; y < height; y++)
                         {
-                            for (int y = 0; y < height; y++)
+                            var slice = accessor.GetRowSpan((int)(j * height + y)).Slice((int)(i * width), (int)width);
+                            fixed (void* data = slice)
                             {
-                                var slice = accessor.GetRowSpan((int)(j * height + y)).Slice((int)(i * width + x), 1);
-                                fixed (void* data = slice)
-                                {
-                                    gl.TexSubImage3D(Target, 0, y, x, i_depth, 1, 1, 1, PixelFormat.Rgba, PixelType.UnsignedByte, data);
-                                }
+                                gl.TexSubImage3D(Target, 0, y, 0, i_depth, 1, width, 1, PixelFormat.Rgba, PixelType.UnsignedByte, data);
                             }
                         }
                     });
