@@ -1,5 +1,4 @@
-﻿using FainEngine_v2.Rendering.Cameras;
-using FainEngine_v2.Resources;
+﻿using FainEngine_v2.Resources;
 using Silk.NET.Maths;
 using Silk.NET.OpenGL;
 using Silk.NET.Windowing;
@@ -19,6 +18,7 @@ public class FainGameEngine
         options.Size = new Vector2D<int>(windowWidth, windowHeight);
         options.Title = windowTitle;
         options.Samples = 4;
+        options.PreferredDepthBufferBits = 24;
         window = Window.Create(options);
 
         window.Load += OnLoad;
@@ -42,9 +42,6 @@ public class FainGameEngine
     private void OnLoad()
     {
         _gl = GL.GetApi(window);
-
-
-        _gl.ClearColor(52.9f / 100f, 80.8f / 100f, 92.2f / 100f, 0);
 
         _gl.Enable(EnableCap.CullFace);
         _gl.FrontFace(FrontFaceDirection.CW);
@@ -73,9 +70,9 @@ public class FainGameEngine
         EntityManager.Update();
         Update();
 
-        GameInputs.Reset();
-
         Gizmos.Tick();
+
+        GameInputs.Reset();
     }
 
     private void OnRender(double deltaTime)

@@ -18,7 +18,7 @@ public class Shader : IDisposable
         GL.AttachShader(_handle, vertex);
         GL.AttachShader(_handle, fragment);
         GL.LinkProgram(_handle);
-        GL.GetProgram(_handle, GLEnum.LinkStatus, out var status);
+        GL.GetProgram(_handle, ProgramPropertyARB.LinkStatus, out var status);
         if (status == 0)
         {
             throw new Exception($"Program failed to link with error: {GL.GetProgramInfoLog(_handle)}");

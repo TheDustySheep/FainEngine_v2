@@ -1,11 +1,9 @@
-﻿using System.Numerics;
-
-namespace FainEngine_v2.UI;
+﻿namespace FainEngine_v2.UI;
 public struct Rect
 {
     public float X;
     public float Y;
-    public float W; 
+    public float W;
     public float H;
 
     public readonly float Width => W;

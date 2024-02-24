@@ -4,21 +4,20 @@ namespace FainEngine_v2.UI;
 public struct Vertex
 {
     public Vector2 Position;
-    public float Depth;
-    public Vector2 TextUVCoords;
     public Vector4 Color;
+    public Vector2 TexCoords;
 
-    public Vertex(float depth, Vector2 position, Vector2 textUVCoords)
+    public Vertex(Vector2 position, Vector4 color, Vector2 texCoords)
     {
         Position = position;
-        Depth = depth;
-        TextUVCoords = textUVCoords;
+        Color = color;
+        TexCoords = texCoords;
     }
 
-    public Vertex(float depth, Vector2 position, Vector4 color)
+    public Vertex(Vector2 position, Color color, Vector2 texCoords)
     {
         Position = position;
-        Depth = depth;
-        Color = color;
+        Color = (Vector4)color;
+        TexCoords = texCoords;
     }
 }

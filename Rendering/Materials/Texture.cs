@@ -2,12 +2,8 @@ using Silk.NET.OpenGL;
 
 namespace FainEngine_v2.Rendering.Materials;
 
-public abstract class Texture : IDisposable
+public abstract class Texture : TextureObject, IDisposable
 {
-    protected uint _handle;
-    protected GL _gl;
-    protected abstract TextureTarget Target { get; }
-
     public const int MAX_TEXTURE_COUNT = 32;
 
     public WrappingModes WrapMode { get; init; } = WrappingModes.Clamp_To_Edge;
@@ -15,15 +11,12 @@ public abstract class Texture : IDisposable
     public MipMapModes MipMapMode { get; init; } = MipMapModes.None;
 
 
-    protected Texture(GL gl, WrappingModes wrapMode, FilterModes filterMode, MipMapModes mipMapMode)
+    protected Texture(GL gl, WrappingModes wrapMode, FilterModes filterMode, MipMapModes mipMapMode) : base(gl)
     {
         WrapMode = wrapMode;
         FilterMode = filterMode;
         MipMapMode = mipMapMode;
 
-
-        _gl = gl;
-        _handle = _gl.GenTexture();
         Use();
     }
 
@@ -44,12 +37,6 @@ public abstract class Texture : IDisposable
         _gl.BindTexture(Target, _handle);
     }
 
-    public void Dispose()
-    {
-        _gl.DeleteTexture(_handle);
-    }
-
-
     protected void SetParameters()
     {
         _gl.TexParameter(Target, TextureParameterName.TextureWrapS, (int)WrapMode); // X
@@ -60,7 +47,6 @@ public abstract class Texture : IDisposable
         _gl.TexParameter(Target, TextureParameterName.TextureMaxLevel, 8);
         _gl.GenerateMipmap(Target);
     }
-
 
     protected GLEnum GetFilterMode()
     {

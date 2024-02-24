@@ -1,5 +1,4 @@
 ﻿using FainEngine_v2.Rendering.BoundingShapes;
-using Silk.NET.Windowing;
 using System.Numerics;
 
 namespace FainEngine_v2.Rendering.Cameras;

@@ -1,9 +1,9 @@
-﻿using FainEngine_v2.Rendering.BoundingShapes;
+﻿using FainCraft.Resources.Shaders.PostProcessing;
+using FainEngine_v2.Rendering.BoundingShapes;
 using FainEngine_v2.Rendering.Cameras;
 using FainEngine_v2.Rendering.Materials;
 using FainEngine_v2.Rendering.Meshing;
-using FainEngine_v2.UI;
-using Silk.NET.Maths;
+using FainEngine_v2.Rendering.PostProcessing;
 using Silk.NET.OpenGL;
 using Silk.NET.Windowing;
 using System.Numerics;
@@ -12,7 +12,7 @@ namespace FainEngine_v2.Core;
 public static class GameGraphics
 {
     static IWindow? _window;
-    static IWindow Window => _window ?? throw new Exception("Window Not Set");
+    public static IWindow Window => _window ?? throw new Exception("Window Not Set");
 
     public static float WindowAspect => Window.Size.X / (float)Window.Size.Y;
 
@@ -20,6 +20,8 @@ public static class GameGraphics
     public static GL GL => _gl ?? throw new Exception("OpenGL Not Set");
 
     readonly static Dictionary<Material, List<RenderInstance>> RenderQueue = new();
+
+    static PostProcess? _postProcess;
 
     internal static void SetGL(GL gl, IWindow window)
     {
@@ -29,8 +31,14 @@ public static class GameGraphics
 
     public static void Render()
     {
+        // Bind Frame Buffer
+        _postProcess?.BindFBO();
+
+        // Render Opaque
         GL.Enable(EnableCap.DepthTest);
+        GL.ClearColor(52.9f / 100f, 80.8f / 100f, 92.2f / 100f, 0);
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+        GL.DepthFunc(DepthFunction.Less);
 
         ICamera camera = ICamera.Main;
         Frustum frustum = camera.Frustum;
@@ -41,7 +49,7 @@ public static class GameGraphics
         foreach ((var mat, var queue) in RenderQueue)
         {
             mat.Use();
-            mat.UpdateAdditionalUniforms();
+            mat.SetUniforms();
             mat.SetProjectionMatrix(camera.ProjectionMatrix);
             mat.SetViewMatrix(camera.ViewMatrix);
 
@@ -64,8 +72,15 @@ public static class GameGraphics
             }
         }
 
+        // TODO Render Transparent
+
+        // Unbind frame buffer
+        GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+
+        // Draw post process effects
+        _postProcess?.Draw();
+
         RenderQueue.Clear();
-        //Console.WriteLine($"Total Meshes: {totalMeshes} Rendered: {renderedMeshes}");
     }
 
     public static void DrawMesh(IMesh mesh, Material mat, Matrix4x4 model)
@@ -81,6 +96,11 @@ public static class GameGraphics
             Mesh = mesh,
             ModelMatrix = model,
         });
+    }
+
+    public static void SetPostProcess(PostProcess postProcess)
+    {
+        _postProcess = postProcess;
     }
 
     private struct RenderInstance

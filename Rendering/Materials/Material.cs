@@ -60,6 +60,7 @@ public class Material
 
     protected void SetTexture(Texture texture, string textureName)
     {
+        Use();
         int index = FindTextureIndex(textureName);
         Textures[index] = new TextureSlot() { Texture = texture, Name = textureName };
         shader.SetUniform(textureName, index);

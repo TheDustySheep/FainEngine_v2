@@ -58,4 +58,36 @@ public class Texture2D : Texture
 
         SetParameters();
     }
+
+    public unsafe Texture2D(
+        GL gl,
+        int width,
+        int height,
+        InternalFormat internalFormat = InternalFormat.Rgba8,
+        PixelFormat pixelFormat = PixelFormat.Rgba,
+        PixelType pixelType = PixelType.UnsignedByte,
+        WrappingModes wrapMode = WrappingModes.Clamp_To_Edge,
+        FilterModes filterMode = FilterModes.Nearest,
+        MipMapModes mipMapMode = MipMapModes.None) : base(gl, wrapMode, filterMode, mipMapMode)
+    {
+        _gl = gl;
+        Bind();
+        gl.TexImage2D(
+            Target,
+            0,
+            internalFormat,
+            (uint)width,
+            (uint)height,
+            0,
+            pixelFormat,
+            pixelType,
+            null);
+
+        SetParameters();
+    }
+
+    public void FrameBufferTexture(FramebufferAttachment attachment)
+    {
+        _gl.FramebufferTexture2D(FramebufferTarget.Framebuffer, attachment, Target, _handle, 0);
+    }
 }

@@ -24,9 +24,6 @@ public class Texture2DArray : Texture
 
             img.Mutate(i => i.Rotate(RotateMode.Rotate90));
 
-            Span<Rgba32> pixels = stackalloc Rgba32[1];
-            pixels[0] = Rgba32.ParseHex("FF0000");
-
             for (int i = 0, i_depth = 0; i < atlasSize; i++)
             {
                 for (int j = 0; j < atlasSize; j++, i_depth++)
