@@ -45,7 +45,7 @@ namespace FainEngine_v2.Rendering.PostProcessing
             public Vector2 TexCoord;
         }
 
-        internal void BindFBO()
+        internal void Bind()
         {
             rt.BindFBO();
         }
@@ -54,6 +54,7 @@ namespace FainEngine_v2.Rendering.PostProcessing
         {
             GameGraphics.GL.Disable(EnableCap.DepthTest);
             mat.Use();
+            mat.SetUniforms();
             mesh.Bind();
             mesh.Draw();
         }

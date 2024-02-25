@@ -50,7 +50,7 @@ public class Material
             if (texSlot is null)
                 continue;
 
-            texSlot.Texture.Use();
+            texSlot.Texture.Use(i);
         }
 
         SetAdditionalUniforms();

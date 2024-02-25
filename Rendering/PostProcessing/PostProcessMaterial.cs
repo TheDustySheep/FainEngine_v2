@@ -7,7 +7,8 @@ namespace FainCraft.Resources.Shaders.PostProcessing
     {
         public PostProcessMaterial(Shader shader, RenderTexture rt) : base(shader)
         {
-            SetTexture(rt.Texture, "screenTexture");
+            SetTexture(rt.ColorTexture, "colorTexture");
+            SetTexture(rt.DepthTexture, "depthTexture");
         }
     }
 }

@@ -32,7 +32,7 @@ public static class GameGraphics
     public static void Render()
     {
         // Bind Frame Buffer
-        _postProcess?.BindFBO();
+        _postProcess?.Bind();
 
         // Render Opaque
         GL.Enable(EnableCap.DepthTest);

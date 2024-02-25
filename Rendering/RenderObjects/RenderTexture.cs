@@ -7,11 +7,13 @@ public class RenderTexture
 {
     GL _gl;
 
-    public Texture2D Texture => tex;
+    public Texture2D ColorTexture => color_tex;
+    public Texture2D DepthTexture => depth_tex;
 
-    Texture2D tex;
+    Texture2D color_tex;
+    Texture2D depth_tex;
     FrameBufferObject fbo;
-    RenderBufferObject rbo;
+    //RenderBufferObject rbo;
 
     public readonly int Height;
     public readonly int Width;
@@ -24,7 +26,7 @@ public class RenderTexture
 
         fbo = new FrameBufferObject(_gl);
 
-        tex = new Texture2D(
+        color_tex = new Texture2D(
             gl,
             width,
             height,
@@ -32,17 +34,26 @@ public class RenderTexture
             PixelFormat.Rgba,
             PixelType.UnsignedByte);
 
-        tex.FrameBufferTexture(FramebufferAttachment.ColorAttachment0);
+        color_tex.FrameBufferTexture(FramebufferAttachment.ColorAttachment0);
 
-        rbo = new RenderBufferObject(_gl, width, height, InternalFormat.Depth24Stencil8);
-        rbo.FrameBufferRenderBuffer(FramebufferAttachment.DepthStencilAttachment);
+        depth_tex = new Texture2D(
+            gl,
+            width,
+            height,
+            InternalFormat.DepthComponent,
+            PixelFormat.DepthComponent,
+            PixelType.UnsignedByte);
+
+        depth_tex.FrameBufferTexture(FramebufferAttachment.DepthAttachment);
+
+        //rbo = new RenderBufferObject(_gl, width, height, InternalFormat.Depth24Stencil8);
+        //rbo.FrameBufferRenderBuffer(FramebufferAttachment.DepthStencilAttachment);
 
         fbo.CheckStatus();
     }
 
     public void BindFBO()
     {
-        tex.Bind();
         fbo.Bind();
     }
 }
