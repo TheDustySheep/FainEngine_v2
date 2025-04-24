@@ -1,9 +1,9 @@
-﻿using FainCraft.Resources.Shaders.PostProcessing;
-using FainEngine_v2.Rendering.BoundingShapes;
+﻿using FainEngine_v2.Rendering.BoundingShapes;
 using FainEngine_v2.Rendering.Cameras;
 using FainEngine_v2.Rendering.Materials;
 using FainEngine_v2.Rendering.Meshing;
 using FainEngine_v2.Rendering.PostProcessing;
+using Silk.NET.Maths;
 using Silk.NET.OpenGL;
 using Silk.NET.Windowing;
 using System.Numerics;
@@ -11,10 +11,13 @@ using System.Numerics;
 namespace FainEngine_v2.Core;
 public static class GameGraphics
 {
+    public static event Action<int, int>? OnResized;
+    public static void OnResize(Vector2D<int> newSize) => OnResized?.Invoke(newSize.X, newSize.Y);
+
     static IWindow? _window;
     public static IWindow Window => _window ?? throw new Exception("Window Not Set");
 
-    public static float WindowAspect => Window.Size.X / (float)Window.Size.Y;
+    public static float WindowAspect => Window.FramebufferSize.X / (float)Window.FramebufferSize.Y;
 
     private static GL? _gl;
     public static GL GL => _gl ?? throw new Exception("OpenGL Not Set");

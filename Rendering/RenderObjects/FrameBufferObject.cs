@@ -1,7 +1,7 @@
 ﻿using Silk.NET.OpenGL;
 
 namespace FainEngine_v2.Rendering.RenderObjects;
-public class FrameBufferObject
+public class FrameBufferObject : IDisposable
 {
     protected uint _handle;
     protected GL _gl;
@@ -25,5 +25,10 @@ public class FrameBufferObject
         {
             Console.WriteLine($"Frame Buffer Error {fboStatus}");
         }
+    }
+
+    public void Dispose()
+    {
+        _gl.DeleteFramebuffer(_handle);
     }
 }

@@ -18,11 +18,24 @@ namespace FainEngine_v2.Rendering.PostProcessing
 
         public PostProcess(Shader shader)
         {
-            rt = new RenderTexture(GameGraphics.GL, GameGraphics.Window.Size.X, GameGraphics.Window.Size.Y);
+            rt = new RenderTexture(GameGraphics.GL, GameGraphics.Window.FramebufferSize.X, GameGraphics.Window.FramebufferSize.Y);
             mesh = new CustomVertexMesh<Vertex, int>(FULL_SCREEN_VERTS, TRIANGLES);
             mat = new PostProcessMaterial(shader, rt);
 
             GameGraphics.SetPostProcess(this);
+
+            GameGraphics.OnResized += ResizeRenderTexture;
+        }
+
+        ~PostProcess()
+        {
+            GameGraphics.OnResized -= ResizeRenderTexture;
+        }
+
+        private void ResizeRenderTexture(int x, int y)
+        {
+            rt?.Dispose();
+            rt = new RenderTexture(GameGraphics.GL, x, y);
         }
 
         static readonly Vertex[] FULL_SCREEN_VERTS = new Vertex[]
@@ -47,7 +60,7 @@ namespace FainEngine_v2.Rendering.PostProcessing
 
         internal void Bind()
         {
-            rt.BindFBO();
+            rt.Bind();
         }
 
         internal void Draw()

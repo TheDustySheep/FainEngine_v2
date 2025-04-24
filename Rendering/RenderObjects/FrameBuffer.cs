@@ -1,22 +1,26 @@
 ﻿using FainEngine_v2.Rendering.Materials;
 using Silk.NET.OpenGL;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace FainEngine_v2.Rendering.RenderObjects;
-public sealed class RenderTexture : IFrameBuffer, IDisposable
+public class FrameBuffer : IFrameBuffer, IDisposable
 {
     readonly GL _gl;
 
     public Texture2D ColorTexture => color_tex;
-    public Texture2D DepthTexture => depth_tex;
 
     readonly Texture2D color_tex;
-    readonly Texture2D depth_tex;
     readonly FrameBufferObject fbo;
+    readonly RenderBufferObject rbo;
 
     public readonly int Height;
     public readonly int Width;
 
-    public unsafe RenderTexture(GL gl, int width, int height)
+    public unsafe FrameBuffer(GL gl, int width, int height)
     {
         _gl = gl;
         Width = width;
@@ -34,15 +38,8 @@ public sealed class RenderTexture : IFrameBuffer, IDisposable
 
         color_tex.FrameBufferTexture(FramebufferAttachment.ColorAttachment0);
 
-        depth_tex = new Texture2D(
-            gl,
-            width,
-            height,
-            InternalFormat.DepthComponent,
-            PixelFormat.DepthComponent,
-            PixelType.UnsignedByte);
-
-        depth_tex.FrameBufferTexture(FramebufferAttachment.DepthAttachment);
+        rbo = new RenderBufferObject(_gl, width, height, InternalFormat.Depth24Stencil8);
+        rbo.FrameBufferRenderBuffer(FramebufferAttachment.DepthStencilAttachment);
 
         fbo.CheckStatus();
     }
@@ -56,6 +53,6 @@ public sealed class RenderTexture : IFrameBuffer, IDisposable
     {
         fbo.Dispose();
         color_tex.Dispose();
-        depth_tex.Dispose();
+        rbo.Dispose();
     }
 }

@@ -19,12 +19,14 @@ public class FainGameEngine
         options.Title = windowTitle;
         options.Samples = 4;
         options.PreferredDepthBufferBits = 24;
+
         window = Window.Create(options);
 
         window.Load += OnLoad;
         window.Update += OnUpdate;
         window.Render += OnRender;
         window.Closing += OnClose;
+        window.FramebufferResize += OnResize;
     }
 
     public void Run()
@@ -38,6 +40,12 @@ public class FainGameEngine
     protected virtual void FixedUpdate() { }
     protected virtual void Render() { }
     protected virtual void Close() { }
+
+    private void OnResize(Vector2D<int> newSize) 
+    {
+        _gl?.Viewport(newSize);
+        GameGraphics.OnResize(newSize);
+    }
 
     private void OnLoad()
     {
