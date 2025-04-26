@@ -1,4 +1,7 @@
 ﻿using Silk.NET.OpenGL;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
 
 namespace FainEngine_v2.Rendering.Materials;
 

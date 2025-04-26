@@ -11,6 +11,12 @@ namespace FainEngine_v2.Utils
     public static class EasingFunctions
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Lerp(float x, float yMin, float yMax)
+        {
+            return yMin + (yMax - yMin) * x;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Remap(float x, float fromMin, float fromMax, float toMin, float toMax)
         {
             float t = (x - fromMin) / (fromMax - fromMin); // Normalize to 0–1
@@ -18,9 +24,15 @@ namespace FainEngine_v2.Utils
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float RemapNeg1_1To0_1(float x)
+        public static float RemapNeg1_1To0_1(float t)
         {
-            return (x + 1f) * 0.5f;
+            return (t + 1f) * 0.5f;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Remap0_1ToNeg1_1(float t)
+        {
+            return (t * 2f) - 1f;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

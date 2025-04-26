@@ -3,6 +3,8 @@ using FainEngine_v2.Entities;
 using FainEngine_v2.Rendering.Materials;
 using NuklearDotNet;
 using Silk.NET.OpenGL;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 using System.Numerics;
 
 namespace FainEngine_v2.UI;

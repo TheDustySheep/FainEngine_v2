@@ -13,11 +13,4 @@ public struct Vertex
         Color = color;
         TexCoords = texCoords;
     }
-
-    public Vertex(Vector2 position, Color color, Vector2 texCoords)
-    {
-        Position = position;
-        Color = (Vector4)color;
-        TexCoords = texCoords;
-    }
 }
