@@ -3,7 +3,7 @@ public class WorkerThread
 {
     readonly Thread thread;
 
-    public WorkerThread(Action action)
+    public WorkerThread(string displayName, Action action)
     {
         thread = new Thread(() =>
         {
@@ -14,7 +14,7 @@ public class WorkerThread
                 Thread.Sleep(1);
             }
         });
-
+        thread.Name = displayName;
         thread.Start();
     }
 }
