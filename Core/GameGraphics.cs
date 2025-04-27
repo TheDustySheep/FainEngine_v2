@@ -27,14 +27,12 @@ public static class GameGraphics
 
     static PostProcess? _postProcess;
 
-    static UIManager? UIManager;
+    static UIManager? _uiManager;
 
     internal static void SetGL(GL gl, IWindow window)
     {
         _gl = gl;
         _window = window;
-
-        UIManager = new();
     }
 
     public static void Render()
@@ -88,7 +86,7 @@ public static class GameGraphics
         _postProcess?.Draw();
 
         // Draw UI
-        UIManager?.Draw();
+        _uiManager?.Draw();
     }
 
     public static void DrawMesh(IMesh mesh, Material mat, Matrix4x4 model)
@@ -109,6 +107,11 @@ public static class GameGraphics
     public static void SetPostProcess(PostProcess postProcess)
     {
         _postProcess = postProcess;
+    }
+
+    public static void SetUIManager(UIManager uIManager)
+    {
+        _uiManager = uIManager;
     }
 
     private struct RenderInstance

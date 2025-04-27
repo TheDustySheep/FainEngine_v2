@@ -1,10 +1,37 @@
-﻿namespace FainEngine_v2.UI;
+﻿using System.Drawing;
 
-internal class UIElement
+namespace FainEngine_v2.UI;
+
+public class UIElement
 {
-    public float xMin;
-    public float yMin;
+    public Layout.Size XSize;
+    public Layout.Size YSize;
 
-    public float yMax;
-    public float xMax;
+    public Layout.Direction PrimaryAxis;
+
+    public float PaddingTop;
+    public float PaddingBottom;
+    public float PaddingLeft;
+    public float PaddingRight;
+
+    public float ChildGap;
+
+    public Color BackgroundColour;
+
+    public UIElement? Parent;
+    public List<UIElement> Children = new();
+
+    public UIElement AddChild(UIElement child)
+    {
+        Children.Add(child);
+        child.Parent = this;
+        return this;
+    }
+
+    public UIElement AddChildren(params UIElement[] children)
+    {
+        foreach (UIElement child in children)
+            AddChild(child);
+        return this;
+    }
 }
