@@ -1,6 +1,4 @@
-﻿using System.Numerics;
-
-namespace FainEngine_v2.Utils
+﻿namespace FainEngine_v2.Utils
 {
     public class Array2D<T>
     {
@@ -8,7 +6,7 @@ namespace FainEngine_v2.Utils
 
         public int X_Size { get; init; }
         public int Y_Size { get; init; }
-        public int Size   { get; init; }
+        public int Size { get; init; }
 
         public Array2D(T[] data, int x_size, int y_size)
         {

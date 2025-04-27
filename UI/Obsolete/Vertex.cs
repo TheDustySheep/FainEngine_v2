@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace FainEngine_v2.UI;
+namespace FainEngine_v2.UI.Obsolete;
 public struct Vertex
 {
     public Vector2 Position;

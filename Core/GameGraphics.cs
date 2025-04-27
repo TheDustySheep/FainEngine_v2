@@ -3,6 +3,7 @@ using FainEngine_v2.Rendering.Cameras;
 using FainEngine_v2.Rendering.Materials;
 using FainEngine_v2.Rendering.Meshing;
 using FainEngine_v2.Rendering.PostProcessing;
+using FainEngine_v2.UI;
 using Silk.NET.Maths;
 using Silk.NET.OpenGL;
 using Silk.NET.Windowing;
@@ -26,10 +27,14 @@ public static class GameGraphics
 
     static PostProcess? _postProcess;
 
+    static UIManager? UIManager;
+
     internal static void SetGL(GL gl, IWindow window)
     {
         _gl = gl;
         _window = window;
+
+        UIManager = new();
     }
 
     public static void Render()
@@ -74,16 +79,16 @@ public static class GameGraphics
                 mesh.Draw();
             }
         }
+        RenderQueue.Clear();
 
         // TODO Render Transparent
 
-        // Unbind frame buffer
+        // Draw onto the main screen
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
-
-        // Draw post process effects
         _postProcess?.Draw();
 
-        RenderQueue.Clear();
+        // Draw UI
+        UIManager?.Draw();
     }
 
     public static void DrawMesh(IMesh mesh, Material mat, Matrix4x4 model)

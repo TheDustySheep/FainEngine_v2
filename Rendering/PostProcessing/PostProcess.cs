@@ -46,7 +46,7 @@ namespace FainEngine_v2.Rendering.PostProcessing
             new() { Position = new Vector2( 1.0f,-1.0f), TexCoord = new Vector2(1.0f, 0.0f) },
         };
 
-        static readonly int[] TRIANGLES = new int[]
+        static readonly int[] TRIANGLES =
         {
             0, 1, 2,
             2, 3, 0,

@@ -5,7 +5,7 @@ using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 
-namespace FainEngine_v2.UI.FontSystem;
+namespace FainEngine_v2.UI.Obsolete.FontSystem;
 internal class FontLoader
 {
     public FontType LoadFont()

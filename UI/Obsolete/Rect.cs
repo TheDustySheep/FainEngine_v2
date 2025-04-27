@@ -1,4 +1,4 @@
-﻿namespace FainEngine_v2.UI;
+﻿namespace FainEngine_v2.UI.Obsolete;
 public struct Rect
 {
     public float X;

@@ -1,6 +1,6 @@
 ﻿using FainEngine_v2.Rendering.Materials;
 
-namespace FainEngine_v2.UI.FontSystem;
+namespace FainEngine_v2.UI.Obsolete.FontSystem;
 public class FontType
 {
     public Dictionary<char, FontTypeChar> UVLookup;

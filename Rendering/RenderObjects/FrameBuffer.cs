@@ -1,13 +1,8 @@
 ﻿using FainEngine_v2.Rendering.Materials;
 using Silk.NET.OpenGL;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FainEngine_v2.Rendering.RenderObjects;
-public class FrameBuffer : IFrameBuffer, IDisposable
+public sealed class FrameBuffer : IFrameBuffer, IDisposable
 {
     readonly GL _gl;
 
@@ -20,7 +15,7 @@ public class FrameBuffer : IFrameBuffer, IDisposable
     public readonly int Height;
     public readonly int Width;
 
-    public unsafe FrameBuffer(GL gl, int width, int height)
+    public FrameBuffer(GL gl, int width, int height)
     {
         _gl = gl;
         Width = width;

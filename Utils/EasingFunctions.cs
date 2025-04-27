@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+﻿using System.Runtime.CompilerServices;
 
 namespace FainEngine_v2.Utils
 {
@@ -56,7 +50,7 @@ namespace FainEngine_v2.Utils
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float EaseInOutQuint(float x)
         {
-        return x< 0.5 ? 16 * x* x* x* x* x : 1 - MathF.Pow(-2 * x + 2, 5) / 2;
+            return x < 0.5 ? 16 * x * x * x * x * x : 1 - MathF.Pow(-2 * x + 2, 5) / 2;
 
         }
     }

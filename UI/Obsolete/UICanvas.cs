@@ -7,7 +7,7 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using System.Numerics;
 
-namespace FainEngine_v2.UI;
+namespace FainEngine_v2.UI.Obsolete;
 public class UICanvas : IEntity
 {
     readonly UIMesh uiMesh;
@@ -44,7 +44,7 @@ unsafe class SilkDevice : NuklearDeviceTex<Texture2D>
         Inds = new ushort[0];
     }
 
-    public override Texture2D CreateTexture(int W, int H, IntPtr Data)
+    public override Texture2D CreateTexture(int W, int H, nint Data)
     {
         Image<Rgba32> img = new Image<Rgba32>(W, H);
 

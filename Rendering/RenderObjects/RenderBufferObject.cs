@@ -1,5 +1,4 @@
 ﻿using Silk.NET.OpenGL;
-using System.Net.Mail;
 
 namespace FainEngine_v2.Rendering.RenderObjects
 {
@@ -25,7 +24,7 @@ namespace FainEngine_v2.Rendering.RenderObjects
                 (uint)width,
                 (uint)height);
         }
-        
+
         public void FrameBufferRenderBuffer(FramebufferAttachment attachment = FramebufferAttachment.DepthStencilAttachment)
         {
             _gl.FramebufferRenderbuffer(

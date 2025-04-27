@@ -41,7 +41,7 @@ public class FainGameEngine
     protected virtual void Render() { }
     protected virtual void Close() { }
 
-    private void OnResize(Vector2D<int> newSize) 
+    private void OnResize(Vector2D<int> newSize)
     {
         _gl?.Viewport(newSize);
         GameGraphics.OnResize(newSize);
