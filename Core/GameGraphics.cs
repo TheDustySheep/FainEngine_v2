@@ -27,7 +27,7 @@ public static class GameGraphics
 
     static PostProcess? _postProcess;
 
-    static UIManager? _uiManager;
+    static HashSet<UICanvas> Canvases = new();
 
     internal static void SetGL(GL gl, IWindow window)
     {
@@ -86,7 +86,8 @@ public static class GameGraphics
         _postProcess?.Draw();
 
         // Draw UI
-        _uiManager?.Draw();
+        foreach (var canvas in Canvases.OrderBy(i => i.Priority))
+            canvas.Draw();
     }
 
     public static void DrawMesh(IMesh mesh, Material mat, Matrix4x4 model)
@@ -109,9 +110,14 @@ public static class GameGraphics
         _postProcess = postProcess;
     }
 
-    public static void SetUIManager(UIManager uIManager)
+    public static void RegisterCanvas(UICanvas canvas)
     {
-        _uiManager = uIManager;
+        Canvases.Add(canvas);
+    }
+
+    public static void UnregisterCanvas(UICanvas canvas)
+    {
+        Canvases.Remove(canvas);
     }
 
     private struct RenderInstance

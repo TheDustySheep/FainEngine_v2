@@ -8,23 +8,35 @@ namespace FainEngine_v2.UI
 {
     public class Layout
     {
-        public struct Size(SizeMode mode, float value)
-        {
-            public SizeMode Mode = mode;
-            public float Value = value;
-        }
-
         public enum SizeMode
         {
-            Fit = 0,
-            Fixed,
+            Fit      = 0,
+            Fixed    = 1,
+            Grow     = 2,
+            Shrink   = 3,
+            Flexible = 4,
         }
 
-        public enum Direction
+        public enum Axis
         {
-            Horizontal = 0,
-            Vertical,
+            X = 0,
+            Y = 1,
+        }
+
+        public enum Justify
+        {
+            Start,
+            Center,
+            End,
+            SpaceBetween,
+            SpaceEvenly
+        }
+
+        public enum Align
+        {
+            Start,
+            Center,
+            End,
         }
     }
-
 }

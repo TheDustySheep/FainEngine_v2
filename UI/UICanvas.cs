@@ -1,14 +1,15 @@
 ﻿using FainEngine_v2.Core;
 using FainEngine_v2.Rendering.Materials;
 using FainEngine_v2.Resources;
-using System.Drawing;
 using System.Numerics;
 
 namespace FainEngine_v2.UI;
 
-public class UIManager
+public class UICanvas
 {
-    private UIElement _root;
+    public UIElement Root { get; init; }
+    public float Priority { get; set; }
+
     private UIDrawer  _drawer;
 
     readonly UIMesh _mesh;
@@ -17,16 +18,19 @@ public class UIManager
 
     readonly Material _uiMaterial;
 
-    public UIManager()
+    public UICanvas()
     {
         _mesh = new UIMesh();
         _uiMaterial = new Material(ResourceLoader.LoadShader(@"Resources/UI"));
-        _root = CreateRoot();
         _drawer = new UIDrawer(this);
+        Root = CreateRoot();
     }
 
     public void Draw()
     {
+        Root.XSize = GameGraphics.Window.FramebufferSize.X;
+        Root.YSize = GameGraphics.Window.FramebufferSize.X;
+
         if (_mesh == null)
             return;
 
@@ -37,7 +41,7 @@ public class UIManager
         _mesh.Clear();
 
         // Create Mesh
-        _drawer.Process(_root);
+        _drawer.Process(Root);
 
         // Update mesh
         _mesh.SetVertices(drawVerts.ToArray());
@@ -69,48 +73,14 @@ public class UIManager
         drawIndices.Add(vertCount + 0);
     }
 
-    private UIElement CreateRoot()
+    private static UIElement CreateRoot()
     {
+        // Fixed to the size of the screen
         return new UIElement()
         {
-            PaddingTop = 10,
-            PaddingBottom = 10,
-            PaddingLeft = 10,
-            PaddingRight = 10,
-            ChildGap = 25,
-            BackgroundColour = Color.DarkSalmon,
-        }
-        .AddChildren
-        (
-            new UIElement()
-            {
-                PaddingTop = 10,
-                PaddingBottom = 10,
-                PaddingLeft = 10,
-                PaddingRight = 10,
-
-                XSize = new Layout.Size(Layout.SizeMode.Fixed, 100),
-                YSize = new Layout.Size(Layout.SizeMode.Fixed, 200),
-
-                BackgroundColour = Color.BlanchedAlmond,
-            }
-            .AddChildren
-            (
-                new UIElement()
-                {
-                    XSize = new Layout.Size(Layout.SizeMode.Fixed, 20),
-                    YSize = new Layout.Size(Layout.SizeMode.Fixed, 20),
-
-                    BackgroundColour = Color.Red,
-                }
-            ),
-            new UIElement()
-            {
-                XSize = new Layout.Size(Layout.SizeMode.Fixed, 100),
-                YSize = new Layout.Size(Layout.SizeMode.Fixed, 25),
-            
-                BackgroundColour = Color.Snow,
-            }           
-        );
+            XSizeMode = Layout.SizeMode.Fixed,
+            YSizeMode = Layout.SizeMode.Fixed,
+            IsVisible = false
+        };
     }
 }
