@@ -39,8 +39,8 @@ public abstract class Texture : TextureObject, IDisposable
 
     protected void SetParameters()
     {
-        _gl.TexParameter(Target, TextureParameterName.TextureWrapS, (int)WrapMode); // X
-        _gl.TexParameter(Target, TextureParameterName.TextureWrapT, (int)WrapMode); // Y
+        _gl.TexParameter(Target, TextureParameterName.TextureWrapS, (int)WrapMode); // XPos_px
+        _gl.TexParameter(Target, TextureParameterName.TextureWrapT, (int)WrapMode); // YPox_px
         _gl.TexParameter(Target, TextureParameterName.TextureMinFilter, (int)FilterMode);
         _gl.TexParameter(Target, TextureParameterName.TextureMagFilter, (int)FilterMode);
         _gl.TexParameter(Target, TextureParameterName.TextureBaseLevel, 0);

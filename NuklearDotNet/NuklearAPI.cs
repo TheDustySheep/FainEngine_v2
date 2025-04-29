@@ -201,7 +201,7 @@ namespace NuklearDotNet
                     for (int i = 0; i < NkVerts.Length; i++)
                     {
                         //NkVertex* V = &VertsPtr[i];
-                        //NkVerts[i] = new NkVertex() { Position = new NkVector2f() { X = (int)V->Position.X, Y = (int)V->Position.Y }, Color = V->Color, UV = V->UV };
+                        //NkVerts[i] = new NkVertex() { Position = new NkVector2f() { XPos_px = (int)V->Position.XPos_px, YPox_px = (int)V->Position.YPox_px }, Color = V->Color, UV = V->UV };
 
                         NkVerts[i] = VertsPtr[i];
                     }

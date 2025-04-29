@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
+using System.Numerics;
 
-namespace FainEngine_v2.UI;
+namespace FainEngine_v2.UI.Elements;
 
 public class UIElement
 {
@@ -13,7 +14,9 @@ public class UIElement
 
     #region Drawing Properties
 
-    public Color BackgroundColour;
+    public UIColour BackgroundColour;
+    public UIColour TextColour;
+
     public bool IsVisible = true;
 
     #endregion
@@ -91,5 +94,18 @@ public class UIElement
         foreach (UIElement child in children)
             AddChild(child);
         return this;
+    }
+
+    internal virtual IEnumerable<UIVertex> GenerateVerts(DrawNode node, Vector2 invScreenSize)
+    {
+        Vector2 min = new Vector2(node.XOffset, node.YOffset) * invScreenSize;
+        Vector2 max = (new Vector2(node.XSize, node.YSize) + min) * invScreenSize;
+
+        return [
+            new UIVertex(min.X * 2 - 1, (1 - max.Y) * 2 - 1, node.ZIndex*0.0001f, this),
+            new UIVertex(min.X * 2 - 1, (1 - min.Y) * 2 - 1, node.ZIndex*0.0001f, this),
+            new UIVertex(max.X * 2 - 1, (1 - min.Y) * 2 - 1, node.ZIndex*0.0001f, this),
+            new UIVertex(max.X * 2 - 1, (1 - max.Y) * 2 - 1, node.ZIndex*0.0001f, this),
+        ];
     }
 }

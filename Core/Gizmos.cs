@@ -142,25 +142,25 @@ public static class Gizmos
 
     static readonly Vertex[] VOXEL_VERTICES =
     {
-        // X-
+        // XPos_px-
         new Vertex { Position = new Vector3(0, 0, 1) },
         new Vertex { Position = new Vector3(0, 1, 1) },
         new Vertex { Position = new Vector3(0, 1, 0) },
         new Vertex { Position = new Vector3(0, 0, 0) },
 
-        // X+
+        // XPos_px+
         new Vertex { Position = new Vector3(1, 0, 0) },
         new Vertex { Position = new Vector3(1, 1, 0) },
         new Vertex { Position = new Vector3(1, 1, 1) },
         new Vertex { Position = new Vector3(1, 0, 1) },
                                                          
-        // Y-                                            
+        // YPox_px-                                            
         new Vertex { Position = new Vector3(1, 0, 0) },
         new Vertex { Position = new Vector3(1, 0, 1) },
         new Vertex { Position = new Vector3(0, 0, 1) },
         new Vertex { Position = new Vector3(0, 0, 0) },
                                                          
-        // Y+                                            
+        // YPox_px+                                            
         new Vertex { Position = new Vector3(0, 1, 0) },
         new Vertex { Position = new Vector3(0, 1, 1) },
         new Vertex { Position = new Vector3(1, 1, 1) },

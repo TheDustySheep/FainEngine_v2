@@ -62,7 +62,7 @@ internal class FontLoader
                 UV = new Rect(beforeUVWidth, 0f, uvWidth, 1f),
             };
 
-            //Console.WriteLine($"Loaded Char: {c} UV Before: {beforeUVWidth:0.000} UV Width: {uvWidth:0.000} Aspect: {aspect:0.000}");
+            //Console.WriteLine($"Loaded Char: {c} UV Before: {beforeUVWidth:0.000} UV XSize_px: {uvWidth:0.000} Aspect: {aspect:0.000}");
         }
         return new FontType(uvLookup, texture);
     }

@@ -19,6 +19,6 @@ public struct Rect
 
     public override string ToString()
     {
-        return $"X: {X} Y: {H} W: {W} H: {H}";
+        return $"XPos_px: {X} YPox_px: {H} W: {W} H: {H}";
     }
 }

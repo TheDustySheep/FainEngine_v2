@@ -1,12 +1,17 @@
 ﻿using FainEngine_v2.Core;
 using FainEngine_v2.Rendering.Materials;
 using FainEngine_v2.Resources;
+using FainEngine_v2.UI.Elements;
+using FainEngine_v2.UI.FontRendering;
+using System.Drawing;
 using System.Numerics;
 
 namespace FainEngine_v2.UI;
 
 public class UICanvas
 {
+    Vector2 invScreenSize;
+    public FontAtlas Atlas { get; private set; }
     public UIElement Root { get; init; }
     public float Priority { get; set; }
 
@@ -21,15 +26,36 @@ public class UICanvas
     public UICanvas()
     {
         _mesh = new UIMesh();
-        _uiMaterial = new Material(ResourceLoader.LoadShader(@"Resources/UI"));
         _drawer = new UIDrawer(this);
         Root = CreateRoot();
+
+        Atlas = new FontAtlas(GameGraphics.GL, @"Resources/Fonts/lemon_milk/LEMONMILK-Regular.otf", 72);
+        _uiMaterial = new UIMaterial(ResourceLoader.LoadShader(@"Resources/UI"), Atlas.AtlasTexture);
+
+        Root.AddChild
+        (
+            new UIElement()
+            {
+                XSize = 256,
+                YSize = 256,
+                BackgroundColour = Color.Red
+            }.AddChild
+            (
+                new UIText(this, "test")
+            )
+        );
     }
 
     public void Draw()
     {
         Root.XSize = GameGraphics.Window.FramebufferSize.X;
-        Root.YSize = GameGraphics.Window.FramebufferSize.X;
+        Root.YSize = GameGraphics.Window.FramebufferSize.Y;
+
+        invScreenSize = new Vector2
+        (
+            1f / GameGraphics.Window.FramebufferSize.X,
+            1f / GameGraphics.Window.FramebufferSize.Y
+        );
 
         if (_mesh == null)
             return;
@@ -49,28 +75,31 @@ public class UICanvas
         _mesh.Apply();
 
         // Draw Mesh
+        _uiMaterial.SetUniforms();
         _uiMaterial.Use();
         _mesh.Draw();
     }
 
-    internal void DrawElement(Vector2 pos, Vector2 size, UIElement elem, int z)
+    internal void DrawElement(DrawNode node)
     {
         uint vertCount = (uint)drawVerts.Count;
-        Span<UIVertex> verts =
-        [
-            new UIVertex((pos.X         ) * 2 - 1, (1 - pos.Y - size.Y) * 2 - 1, z*0.0001f, elem.BackgroundColour),
-            new UIVertex((pos.X         ) * 2 - 1, (1 - pos.Y         ) * 2 - 1, z*0.0001f, elem.BackgroundColour),
-            new UIVertex((pos.X + size.X) * 2 - 1, (1 - pos.Y         ) * 2 - 1, z*0.0001f, elem.BackgroundColour),
-            new UIVertex((pos.X + size.X) * 2 - 1, (1 - pos.Y - size.Y) * 2 - 1, z*0.0001f, elem.BackgroundColour),
-        ];
+
+        var elem = node.Element;
+        var verts = elem.GenerateVerts(node, invScreenSize);
+
         drawVerts.AddRange(verts);
 
-        drawIndices.Add(vertCount + 0);
-        drawIndices.Add(vertCount + 1);
-        drawIndices.Add(vertCount + 2);
-        drawIndices.Add(vertCount + 2);
-        drawIndices.Add(vertCount + 3);
-        drawIndices.Add(vertCount + 0);
+        // If multiple quads returned then add them all
+        for (int i = 0; i < verts.Count() / 4; i++)
+        {
+            drawIndices.Add(vertCount + 0);
+            drawIndices.Add(vertCount + 1);
+            drawIndices.Add(vertCount + 2);
+            drawIndices.Add(vertCount + 2);
+            drawIndices.Add(vertCount + 3);
+            drawIndices.Add(vertCount + 0);
+            vertCount += 4;
+        }
     }
 
     private static UIElement CreateRoot()

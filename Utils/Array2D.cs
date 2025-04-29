@@ -38,7 +38,7 @@
             {
                 if (x < 0 || x > X_Size ||
                     y < 0 || y > Y_Size)
-                    throw new IndexOutOfRangeException($"Index out of Range X:{x}/{X_Size} Y:{y}/{Y_Size}");
+                    throw new IndexOutOfRangeException($"Index out of Range XPos_px:{x}/{X_Size} YPox_px:{y}/{Y_Size}");
 
                 return Data[x + y * X_Size];
             }
@@ -46,7 +46,7 @@
             {
                 if (x < 0 || x > X_Size ||
                     y < 0 || y > Y_Size)
-                    throw new IndexOutOfRangeException($"Index out of Range X:{x}/{X_Size} Y:{y}/{Y_Size}");
+                    throw new IndexOutOfRangeException($"Index out of Range XPos_px:{x}/{X_Size} YPox_px:{y}/{Y_Size}");
 
                 Data[x + y * X_Size] = value;
             }
@@ -58,7 +58,7 @@
             {
                 if (x > X_Size ||
                     y > Y_Size)
-                    throw new IndexOutOfRangeException($"Index out of Range X:{x}/{X_Size} Y:{y}/{Y_Size}");
+                    throw new IndexOutOfRangeException($"Index out of Range XPos_px:{x}/{X_Size} YPox_px:{y}/{Y_Size}");
 
                 return Data[x + y * X_Size];
             }
@@ -66,7 +66,7 @@
             {
                 if (x > X_Size ||
                     y > Y_Size)
-                    throw new IndexOutOfRangeException($"Index out of Range X:{x}/{X_Size} Y:{y}/{Y_Size}");
+                    throw new IndexOutOfRangeException($"Index out of Range XPos_px:{x}/{X_Size} YPox_px:{y}/{Y_Size}");
 
                 Data[x + y * X_Size] = value;
             }

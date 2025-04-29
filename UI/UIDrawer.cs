@@ -1,4 +1,5 @@
 ﻿using FainEngine_v2.Core;
+using FainEngine_v2.UI.Elements;
 using System.Numerics;
 
 namespace FainEngine_v2.UI
@@ -56,30 +57,28 @@ namespace FainEngine_v2.UI
                     break;
                 case Layout.SizeMode.Fit:
                     {
+                        float total =
+                                elem.GetPaddingStart(axis) +
+                                elem.GetPaddingEnd(axis);
+
                         if (elem.LayoutAxis == axis)
                         {
                             // Sum width
-                            float total =
-                                elem.GetPaddingStart(axis) +
-                                elem.GetPaddingEnd(axis) +
-                                elem.ChildGap * (node.Children.Length - 1);
+                            total += elem.ChildGap * (node.Children.Length - 1);
 
                             foreach (var child in node.Children)
                                 total += child.GetSize(axis);
 
-                            node.SetSize(axis, total);
                         }
                         else
                         {
-                            // Max width
-                            float total =
-                                elem.GetPaddingStart(axis) +
-                                elem.GetPaddingEnd(axis);
-
+                            // UVMax of children
                             total += node.Children.Length == 0 ? 0 : node.Children.Max(i => i.GetSize(axis));
-
-                            node.SetSize(axis, total);
                         }
+
+                        // Let it be the desired size if requested
+                        total = MathF.Max(elem.GetSize(axis), total);
+                        node.SetSize(axis, total);
                     }
                     break;
                 case Layout.SizeMode.Grow:
@@ -420,18 +419,7 @@ namespace FainEngine_v2.UI
         {
             if (node.Element.IsVisible)
             {
-                _UIManager.DrawElement(
-                    new Vector2(
-                        node.XOffset * invScreenX,
-                        node.YOffset * invScreenY
-                    ),
-                    new Vector2(
-                        node.XSize * invScreenX, 
-                        node.YSize * invScreenY
-                    ),
-                    node.Element,
-                    z
-                );
+                _UIManager.DrawElement(node);
             }
 
             foreach (var child in node.Children)
@@ -440,46 +428,49 @@ namespace FainEngine_v2.UI
             }
         }
 
-        private class DrawNode
+    }
+
+    internal class DrawNode
+    {
+        public UIElement Element { get; }
+        public DrawNode? Parent { get; }
+        public DrawNode[] Children { get; }
+
+        public DrawNode(UIElement element, DrawNode? parent = null)
         {
-            public UIElement Element { get; }
-            public DrawNode? Parent { get; }
-            public DrawNode[] Children { get; }
+            Element = element ?? throw new ArgumentNullException(nameof(element));
+            Parent = parent;
 
-            public DrawNode(UIElement element, DrawNode? parent = null)
-            {
-                Element = element ?? throw new ArgumentNullException(nameof(element));
-                Parent = parent;
-
-                // Recursively build child DrawNodes
-                Children = element.Children
-                                  .Select(child => new DrawNode(child, this))
-                                  .ToArray();
-            }
-
-            internal float GetSize(Layout.Axis axis) => axis == Layout.Axis.X ? XSize : YSize;
-            internal void SetSize(Layout.Axis axis, float size)
-            {
-                if (axis == Layout.Axis.X)
-                    XSize = size;
-                else
-                    YSize = size;
-            }
-
-            internal float GetOffset(Layout.Axis axis) => axis == Layout.Axis.X ? XOffset : YOffset;
-            internal void SetOffset(Layout.Axis axis, float offset)
-            {
-                if (axis == Layout.Axis.X)
-                    XOffset = offset;
-                else
-                    YOffset = offset;
-            }
-
-            public float XSize;
-            public float YSize;
-
-            public float XOffset;
-            public float YOffset;
+            // Recursively build child DrawNodes
+            Children = element.Children
+                                .Select(child => new DrawNode(child, this))
+                                .ToArray();
         }
+
+        internal float GetSize(Layout.Axis axis) => axis == Layout.Axis.X ? XSize : YSize;
+        internal void SetSize(Layout.Axis axis, float size)
+        {
+            if (axis == Layout.Axis.X)
+                XSize = size;
+            else
+                YSize = size;
+        }
+
+        internal float GetOffset(Layout.Axis axis) => axis == Layout.Axis.X ? XOffset : YOffset;
+        internal void SetOffset(Layout.Axis axis, float offset)
+        {
+            if (axis == Layout.Axis.X)
+                XOffset = offset;
+            else
+                YOffset = offset;
+        }
+
+        public float XSize;
+        public float YSize;
+
+        public float XOffset;
+        public float YOffset;
+
+        public int ZIndex;
     }
 }

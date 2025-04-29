@@ -91,7 +91,7 @@ public static class AABBResolver
         if (overlap.Size.X < overlap.Size.Y &&
             overlap.Size.X < overlap.Size.Z)
         {
-            // X is smallest overlap
+            // XPos_px is smallest overlap
             if (a.Center.X > overlap.Center.X)
                 return Vector3.UnitX * overlap.Size.X;
             else
@@ -101,7 +101,7 @@ public static class AABBResolver
             overlap.Size.Y < overlap.Size.X &&
             overlap.Size.Y < overlap.Size.Z)
         {
-            // Y is smallest overlap
+            // YPox_px is smallest overlap
             if (a.Center.Y > overlap.Center.Y)
                 return Vector3.UnitY * overlap.Size.Y;
             else
