@@ -8,11 +8,6 @@ namespace FainEngine_v2.UI
     {
         UICanvas _UIManager;
 
-        int screenX;
-        int screenY;
-        float invScreenX;
-        float invScreenY;
-
         public UIDrawer(UICanvas uiManager)
         {
             _UIManager = uiManager;
@@ -20,11 +15,6 @@ namespace FainEngine_v2.UI
 
         internal void Process(UIElement root)
         {
-            screenX = GameGraphics.Window.FramebufferSize.X;
-            screenY = GameGraphics.Window.FramebufferSize.Y;
-            invScreenX = 1f / screenX;
-            invScreenY = 1f / screenY;
-
             var drawRoot = new DrawNode(root);
 
             FitSize(drawRoot, Layout.Axis.X);

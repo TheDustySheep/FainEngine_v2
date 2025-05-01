@@ -1,146 +1,162 @@
-﻿using SixLabors.Fonts;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
-using SixLabors.ImageSharp.Processing;
-using SixLabors.ImageSharp.Drawing.Processing;
-using System.Text;
+﻿using System.Text;
 using FainEngine_v2.Rendering.Materials;
 using Silk.NET.OpenGL;
 using System.Numerics;
+using SixLabors.Fonts;
+using SixLabors.Fonts.Unicode;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
+using SixLabors.ImageSharp.Drawing.Processing;
 
 namespace FainEngine_v2.UI.FontRendering;
 
 public class FontAtlas
 {
-    private readonly Font font;
-    private readonly int _padding;
-    private readonly int _atlasX;
-    private readonly int _atlasY;
+    private Font _font;
+    private int _padding;
+    private int _atlasSize;
+    private float _fontSize;
 
-    private readonly Dictionary<char, GlyphData> glyphs;
-    public IReadOnlyDictionary<char, GlyphData> Glyphs => glyphs;
+    private readonly Dictionary<char, GlyphData> glyphs = new();
 
     public Texture2D AtlasTexture { get; private set; }
 
-    public FontAtlas(GL gl, string fontPath, float fontSize, int width=1024, int height=1024, int padding=1)
+    public FontAtlas(string fontPath, float fontSize, int atlasSize=1024, int padding=2)
     {
-        if (!File.Exists(fontPath))
-            throw new FileNotFoundException($"Font file not found: {fontPath}", fontPath);
-
         _padding = padding;
-        _atlasX = width;
-        _atlasY = height;
+        _atlasSize = atlasSize;
+        _fontSize = fontSize;
 
-        font = LoadFont(fontPath, fontSize);
-        glyphs = GenerateGlyphs();
-        AtlasTexture = BuildTexture(gl);
+        _font = LoadFont(fontPath);
+        AtlasTexture = LoadAtlas();
     }
 
-    private static Font LoadFont(string fontPath, float fontSize)
+    private Font LoadFont(string fontPath)
     {
         var collection = new FontCollection();
         var family = collection.Add(fontPath);
-        return family.CreateFont(fontSize);
+        return family.CreateFont(_fontSize);
     }
 
-    private Dictionary<char, GlyphData> GenerateGlyphs()
+    private Texture2D LoadAtlas()
     {
-        var glyphs = new Dictionary<char, GlyphData>();
-        foreach (char c in GetDefaultCharacters())
-        {
-            var size = TextMeasurer.MeasureAdvance(c.ToString(), new TextOptions(font));
-            glyphs.Add(
-                c,
-                new GlyphData(
-                    c,
-                    (int)Math.Ceiling(size.Width),
-                    (int)Math.Ceiling(size.Height)
-                )
-            );
-        }
+        var metrics = _font.FontMetrics;
+        float scale = _fontSize / metrics.UnitsPerEm;
 
-        int x = 0, y = 0, rowHeight = 0;
+        Texture2D tex;
 
-        foreach (var g in glyphs.Values)
+        using (var img = new Image<Rgba32>(_atlasSize, _atlasSize))
         {
-            if (x + g.XSize_px > _atlasX)
+            img.Mutate(mtx =>
             {
-                x = 0;
-                y += rowHeight + _padding;
-                rowHeight = 0;
-            }
-            if (y + g.YSize_px > _atlasY)
-                throw new InvalidOperationException("Atlas size too small for all glyphs.");
+                int xPos = 0;
+                int yPos = 0;
+                int yMax = 0;
 
-            g.XPos_px = x;
-            g.YPox_px = y;
+                foreach (var c in CharSet())
+                {
+                    if (!metrics.TryGetGlyphMetrics(new CodePoint(c), TextAttributes.None, TextDecorations.None, LayoutMode.HorizontalTopBottom, ColorFontSupport.None, out var gmList))
+                        continue;
 
-            x += g.XSize_px + _padding;
-            rowHeight = Math.Max(rowHeight, g.YSize_px);
+                    var gm = gmList[0];
+
+                    var glyph = new GlyphData
+                    {
+                        Character = c,
+                        AdvancePx = scale * new Vector2(gm.AdvanceWidth, gm.AdvanceHeight),
+                        BearingPx = scale * new Vector2(gm.LeftSideBearing, gm.BottomSideBearing),
+                        BoundsPx  = scale * new Vector2(gm.Width, gm.Height),
+                    };
+
+                    int width  = (int)MathF.Ceiling(glyph.AdvancePx.X);
+                    int height = (int)MathF.Ceiling(glyph.AdvancePx.Y);
+
+                    if (xPos + width > _atlasSize)
+                    {
+                        xPos = 0;
+                        yPos += yMax + _padding;
+                        yMax = 0;
+                    }
+
+                    if (yPos + height > _atlasSize)
+                    {
+                        // Exceeded texture atlas size
+                        break;
+                    }
+
+                    mtx.DrawText(c.ToString(), _font, Color.White, new PointF(xPos, yPos));
+
+                    glyph.UVMin = new Vector2
+                    (
+                        xPos,
+                        yPos
+                    ) / _atlasSize;
+
+                    glyph.UVMax = new Vector2
+                    (
+                        xPos + glyph.AdvancePx.X,
+                        yPos + glyph.AdvancePx.Y
+                    ) / _atlasSize;
+
+                    glyph.UVMin.Y = 1f - glyph.UVMin.Y;
+                    glyph.UVMax.Y = 1f - glyph.UVMax.Y;
+
+                    xPos += width + _padding;
+                    yMax = int.Max(yMax, height);
+
+                    glyphs[c] = glyph;
+                }
+            });
+
+            tex = new Texture2D(img);
+        }
+        return tex;
+    }
+
+    public static string CharSet()
+    {
+        char min = (char)32;
+        char max = (char)126;
+        int count = max - min + 1;
+
+        Span<char> chars = stackalloc char[count];
+
+        for (int i = 0; i < count; i++)
+        {
+            chars[i] = (char)(i + min);
         }
 
-        foreach (var g in glyphs.Values)
-        {
-            g.UVMin = new Vector2
-            (
-                (float)g.XPos_px / _atlasX,
-                1 - ((float)g.YPox_px / _atlasY)
-            );
-
-            g.UVMax = new Vector2
-            (
-                g.UVMin.X + ((float)g.XSize_px / _atlasX),
-                g.UVMin.Y - ((float)g.YSize_px / _atlasY)
-            );
-        }
-
-        return glyphs;
+        return chars.ToString();
     }
 
-    private Texture2D BuildTexture(GL gl)
+    public bool TryGetGlyph(char c, out GlyphData data)
     {
-        using var image = new Image<Rgba32>(_atlasX, _atlasY);
-        image.Mutate(ctx =>
-        {
-            foreach (var g in glyphs.Values)
-            {
-                ctx.DrawText(
-                    g.Character.ToString(),
-                    font,
-                    Color.White,
-                    new PointF(g.XPos_px, g.YPox_px));
-            }
-        });
-
-        return new Texture2D(gl, image);
+        return glyphs.TryGetValue(c, out  data);
     }
 
-    private static string GetDefaultCharacters()
+    public struct GlyphData
     {
-        var sb = new StringBuilder();
-        for (int i = 32; i < 127; i++)
-            sb.Append((char)i);
-        return sb.ToString();
-    }
+        public char Character;
+        public Vector2 BearingPx;
+        public Vector2 AdvancePx;
+        public Vector2 BoundsPx;
 
-    public class GlyphData
-    {
-        public char Character { get; }
-        internal int XPos_px { get; set; }
-        internal int YPox_px { get; set; }
-        internal int XSize_px { get; }
-        internal int YSize_px { get; }
+        public Vector2 UVMin;
+        public Vector2 UVMax;
 
-        public Vector2 Size_px => new Vector2(XSize_px, YSize_px);
-
-        public Vector2 UVMin { get; set; }
-        public Vector2 UVMax { get; set; }
-
-        public GlyphData(char character, int width, int height)
+        public override string ToString()
         {
-            Character = character;
-            XSize_px = width;
-            YSize_px = height;
+            StringBuilder sb = new();
+
+            sb.AppendLine($"Character {Character}");
+            sb.AppendLine($"Bearing   {BearingPx}");
+            sb.AppendLine($"Advance   {AdvancePx}");
+            sb.AppendLine($"Bounds    {BoundsPx}");
+            sb.AppendLine($"UV Min    {UVMin}");
+            sb.AppendLine($"UV Max    {UVMax}");
+
+            return sb.ToString();
         }
     }
 }

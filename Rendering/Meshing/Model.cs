@@ -64,7 +64,7 @@ public class Model : IDisposable
         List<uint> indices = new List<uint>();
         List<Texture> textures = new List<Texture>();
 
-        // walk through each of the mesh's vertices
+        // walk through each of the _mesh's vertices
         for (uint i = 0; i < mesh->MNumVertices; i++)
         {
             Vertex vertex = new Vertex();
@@ -82,7 +82,7 @@ public class Model : IDisposable
                 vertex.Bitangent = mesh->MBitangents[i];
 
             // texture coordinates
-            if (mesh->MTextureCoords[0] != null) // does the mesh contain texture coordinates?
+            if (mesh->MTextureCoords[0] != null) // does the _mesh contain texture coordinates?
             {
                 // a vertex can contain up to 8 different texture coordinates. We thus make the assumption that we won't 
                 // use models where a vertex can have multiple texture coordinates so we always take the first set (0).
@@ -93,7 +93,7 @@ public class Model : IDisposable
             vertices.Add(vertex);
         }
 
-        // now wak through each of the mesh's faces (a face is a mesh its triangle) and retrieve the corresponding vertex indices.
+        // now wak through each of the _mesh's faces (a face is a _mesh its triangle) and retrieve the corresponding vertex indices.
         for (uint i = 0; i < mesh->MNumFaces; i++)
         {
             Face face = mesh->MFaces[i];
@@ -128,7 +128,7 @@ public class Model : IDisposable
         if (heightMaps.Any())
             textures.AddRange(heightMaps);
 
-        // return a mesh object created from the extracted mesh data
+        // return a _mesh object created from the extracted _mesh data
         var result = new CustomVertexMesh<Vertex, uint>(_gl, vertices.ToArray(), indices.ToArray());
         return result;
     }

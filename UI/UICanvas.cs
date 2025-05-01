@@ -29,33 +29,43 @@ public class UICanvas
         _drawer = new UIDrawer(this);
         Root = CreateRoot();
 
-        Atlas = new FontAtlas(GameGraphics.GL, @"Resources/Fonts/lemon_milk/LEMONMILK-Regular.otf", 72);
+        Atlas = new FontAtlas(@"Resources/Fonts/Tinos/Tinos-Regular.ttf", 16);
         _uiMaterial = new UIMaterial(ResourceLoader.LoadShader(@"Resources/UI"), Atlas.AtlasTexture);
 
         Root.AddChild
         (
             new UIElement()
             {
-                XSize = 256,
-                YSize = 256,
-                BackgroundColour = Color.Red
+                BackgroundColour = Color.White
             }.AddChild
             (
-                new UIText(this, "test")
+                new UIText(this, "FPS: XX")
+                {
+                    XSizeMax = 300f,
+                }
             )
         );
+
+        _timer = new Timer(i =>
+        {
+            (Root.Children[0].Children[0] as UIText).Text = $"FPS: {1f / GameTime.DeltaTime:F2}";
+
+        }, null, 0, 500);
     }
+
+    Timer _timer;
 
     public void Draw()
     {
-        Root.XSize = GameGraphics.Window.FramebufferSize.X;
-        Root.YSize = GameGraphics.Window.FramebufferSize.Y;
+        
 
-        invScreenSize = new Vector2
-        (
-            1f / GameGraphics.Window.FramebufferSize.X,
-            1f / GameGraphics.Window.FramebufferSize.Y
+        Vector2 screenSize = new Vector2(
+            GameGraphics.Window.FramebufferSize.X,
+            GameGraphics.Window.FramebufferSize.Y
         );
+
+        Root.XSize = screenSize.X;
+        Root.YSize = screenSize.Y;
 
         if (_mesh == null)
             return;
@@ -69,15 +79,30 @@ public class UICanvas
         // Create Mesh
         _drawer.Process(Root);
 
-        // Update mesh
+        // Update _mesh
         _mesh.SetVertices(drawVerts.ToArray());
         _mesh.SetTriangles(drawIndices.ToArray());
         _mesh.Apply();
 
         // Draw Mesh
-        _uiMaterial.SetUniforms();
         _uiMaterial.Use();
+        _uiMaterial.SetUniforms();
+        _uiMaterial.SetViewMatrix(ViewMatrix());
+
         _mesh.Draw();
+    }
+
+    internal Matrix4x4 ViewMatrix()
+    {
+        var scale = Matrix4x4.CreateScale(
+            2f / GameGraphics.Window.FramebufferSize.X,
+            2f /-GameGraphics.Window.FramebufferSize.Y,
+            0.0001f
+        );
+        var translation = Matrix4x4.CreateTranslation(-1f, 1f, 0f);
+        
+        return scale * translation;
+        //return Matrix4x4.Identity;
     }
 
     internal void DrawElement(DrawNode node)
@@ -85,7 +110,7 @@ public class UICanvas
         uint vertCount = (uint)drawVerts.Count;
 
         var elem = node.Element;
-        var verts = elem.GenerateVerts(node, invScreenSize);
+        var verts = elem.GenerateVerts(node);
 
         drawVerts.AddRange(verts);
 

@@ -1,4 +1,5 @@
-﻿using Silk.NET.OpenGL;
+﻿using FainEngine_v2.Core;
+using Silk.NET.OpenGL;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
@@ -7,63 +8,41 @@ namespace FainEngine_v2.Rendering.Materials;
 
 public class Texture2D : Texture
 {
+    public int Width { get; private set; }
+    public int Height { get; private set; }
+
     protected override TextureTarget Target => TextureTarget.Texture2D;
 
-    public unsafe Texture2D(
-        GL gl,
+    public Texture2D(
         string path,
         WrappingModes wrapMode = WrappingModes.Clamp_To_Edge,
         FilterModes filterMode = FilterModes.Nearest,
-        MipMapModes mipMapMode = MipMapModes.None) : base(gl, wrapMode, filterMode, mipMapMode)
+        MipMapModes mipMapMode = MipMapModes.None) : base(wrapMode, filterMode, mipMapMode)
     {
         using (var img = Image.Load<Rgba32>(path))
         {
-            gl.TexImage2D(Target, 0, InternalFormat.Rgba8, (uint)img.Width, (uint)img.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, null);
-
-            img.Mutate(i => i.RotateFlip(RotateMode.Rotate180, FlipMode.Horizontal));
-
-            img.ProcessPixelRows(accessor =>
-            {
-                for (int y = 0; y < accessor.Height; y++)
-                {
-                    fixed (void* data = accessor.GetRowSpan(y))
-                    {
-                        gl.TexSubImage2D(Target, 0, 0, y, (uint)accessor.Width, 1, PixelFormat.Rgba, PixelType.UnsignedByte, data);
-                    }
-                }
-            });
+            Width = img.Width;
+            Height = img.Height;
+            Process(img);
         }
 
         SetParameters();
     }
 
-    public unsafe Texture2D(
-    GL gl,
-    Image<Rgba32> img,
-    WrappingModes wrapMode = WrappingModes.Clamp_To_Edge,
-    FilterModes filterMode = FilterModes.Nearest,
-    MipMapModes mipMapMode = MipMapModes.None) : base(gl, wrapMode, filterMode, mipMapMode)
+    public Texture2D(
+        Image<Rgba32> img,
+        WrappingModes wrapMode = WrappingModes.Clamp_To_Edge,
+        FilterModes filterMode = FilterModes.Nearest,
+        MipMapModes mipMapMode = MipMapModes.None) : base(wrapMode, filterMode, mipMapMode)
     {
-        gl.TexImage2D(Target, 0, InternalFormat.Rgba8, (uint)img.Width, (uint)img.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, null);
+        Width = img.Width;
+        Height = img.Height;
 
-        img.Mutate(i => i.RotateFlip(RotateMode.Rotate180, FlipMode.Horizontal));
-
-        img.ProcessPixelRows(accessor =>
-        {
-            for (int y = 0; y < accessor.Height; y++)
-            {
-                fixed (void* data = accessor.GetRowSpan(y))
-                {
-                    gl.TexSubImage2D(Target, 0, 0, y, (uint)accessor.Width, 1, PixelFormat.Rgba, PixelType.UnsignedByte, data);
-                }
-            }
-        });
-
+        Process(img);
         SetParameters();
     }
 
     public unsafe Texture2D(
-        GL gl,
         int width,
         int height,
         InternalFormat internalFormat = InternalFormat.Rgba8,
@@ -71,11 +50,13 @@ public class Texture2D : Texture
         PixelType pixelType = PixelType.UnsignedByte,
         WrappingModes wrapMode = WrappingModes.Clamp_To_Edge,
         FilterModes filterMode = FilterModes.Nearest,
-        MipMapModes mipMapMode = MipMapModes.None) : base(gl, wrapMode, filterMode, mipMapMode)
+        MipMapModes mipMapMode = MipMapModes.None) : base(wrapMode, filterMode, mipMapMode)
     {
-        _gl = gl;
+        Width = width;
+        Height = height;
+
         Bind();
-        gl.TexImage2D(
+        _gl.TexImage2D(
             Target,
             0,
             internalFormat,
@@ -87,6 +68,43 @@ public class Texture2D : Texture
             null);
 
         SetParameters();
+    }
+
+    private unsafe void Process(Image<Rgba32> img)
+    {
+        _gl.TexImage2D(Target, 0, InternalFormat.Rgba8, (uint)img.Width, (uint)img.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, null);
+
+        img.Mutate(i => i.RotateFlip(RotateMode.Rotate180, FlipMode.Horizontal));
+
+        img.ProcessPixelRows(accessor =>
+        {
+            for (int y = 0; y < accessor.Height; y++)
+            {
+                fixed (void* data = accessor.GetRowSpan(y))
+                {
+                    _gl.TexSubImage2D(Target, 0, 0, y, (uint)accessor.Width, 1, PixelFormat.Rgba, PixelType.UnsignedByte, data);
+                }
+            }
+        });
+    }
+
+    public unsafe void SetData(System.Drawing.Rectangle bounds, byte[] data)
+    {
+        Bind();
+        fixed (byte* ptr = data)
+        {
+            _gl.TexSubImage2D(
+                target:  TextureTarget.Texture2D,
+                level:   0,
+                xoffset: bounds.Left,
+                yoffset: bounds.Top,
+                width:   (uint)bounds.Width,
+                height:  (uint)bounds.Height,
+                format:  PixelFormat.Rgba,
+                type:    PixelType.UnsignedByte,
+                pixels:  ptr
+            );
+        }
     }
 
     public void FrameBufferTexture(FramebufferAttachment attachment)

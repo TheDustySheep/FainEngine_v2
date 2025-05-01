@@ -22,7 +22,7 @@ public static class ResourceLoader
         if (_gl is null)
             throw new Exception("OpenGL is not set");
 
-        return new Texture2D(_gl, filePath, wrapMode, filterMode, mipMapMode);
+        return new Texture2D(filePath, wrapMode, filterMode, mipMapMode);
     }
 
     public static Texture2DArray LoadTextureAtlas(
@@ -35,7 +35,7 @@ public static class ResourceLoader
         if (_gl is null)
             throw new Exception("OpenGL is not set");
 
-        return new Texture2DArray(_gl, filePath, atlasSize, wrapMode, filterMode, mipMapMode);
+        return new Texture2DArray(filePath, atlasSize, wrapMode, filterMode, mipMapMode);
     }
     public static Shader LoadShader(string folder)
     {
@@ -56,7 +56,7 @@ public static class ResourceLoader
         string vertSRC = File.ReadAllText(vertFile);
         string fragSRC = File.ReadAllText(fragFile);
 
-        return new Shader(_gl, vertSRC, fragSRC);
+        return new Shader(vertSRC, fragSRC);
     }
 
     public static Model LoadModel(string filePath)

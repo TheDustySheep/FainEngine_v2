@@ -1,3 +1,4 @@
+using FainEngine_v2.Core;
 using Silk.NET.OpenGL;
 
 namespace FainEngine_v2.Rendering.Materials;
@@ -10,8 +11,7 @@ public abstract class Texture : TextureObject, IDisposable
     public FilterModes FilterMode { get; init; } = FilterModes.Nearest;
     public MipMapModes MipMapMode { get; init; } = MipMapModes.None;
 
-
-    protected Texture(GL gl, WrappingModes wrapMode, FilterModes filterMode, MipMapModes mipMapMode) : base(gl)
+    protected Texture(WrappingModes wrapMode, FilterModes filterMode, MipMapModes mipMapMode) : base()
     {
         WrapMode = wrapMode;
         FilterMode = filterMode;

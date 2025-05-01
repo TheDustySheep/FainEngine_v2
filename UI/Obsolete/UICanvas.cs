@@ -17,11 +17,11 @@ public class UICanvas : IEntity
     public UICanvas()
     {
         //FontLoader fontLoader = new FontLoader();
-        //var font = fontLoader.LoadFont();
+        //var _font = fontLoader.LoadFont();
 
         //uiMesh = new UIMesh();
 
-        //material = new UIMaterial(ResourceLoader.LoadShader("Resources/UI"), font.Texture);
+        //material = new UIMaterial(ResourceLoader.LoadShader("Resources/UI"), _font.Texture);
 
     }
 
@@ -48,7 +48,7 @@ unsafe class SilkDevice : NuklearDeviceTex<Texture2D>
     {
         Image<Rgba32> img = new Image<Rgba32>(W, H);
 
-        return new Texture2D(GameGraphics.GL, img);
+        return new Texture2D(img);
     }
     public override void SetBuffer(NkVertex[] VertexBuffer, ushort[] IndexBuffer)
     {

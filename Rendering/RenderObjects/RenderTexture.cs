@@ -25,7 +25,6 @@ public sealed class RenderTexture : IFrameBuffer, IDisposable
         fbo = new FrameBufferObject(_gl);
 
         color_tex = new Texture2D(
-            gl,
             width,
             height,
             InternalFormat.Rgba,
@@ -35,7 +34,6 @@ public sealed class RenderTexture : IFrameBuffer, IDisposable
         color_tex.FrameBufferTexture(FramebufferAttachment.ColorAttachment0);
 
         depth_tex = new Texture2D(
-            gl,
             width,
             height,
             InternalFormat.DepthComponent,

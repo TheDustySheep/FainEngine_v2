@@ -10,12 +10,11 @@ public class Texture2DArray : Texture
     protected override TextureTarget Target => TextureTarget.Texture2DArray;
 
     public unsafe Texture2DArray(
-        GL gl,
         string path,
         uint atlasSize = 16,
         WrappingModes wrapMode = WrappingModes.Clamp_To_Edge,
         FilterModes filterMode = FilterModes.Nearest,
-        MipMapModes mipMapMode = MipMapModes.None) : base(gl, wrapMode, filterMode, mipMapMode)
+        MipMapModes mipMapMode = MipMapModes.None) : base(wrapMode, filterMode, mipMapMode)
     {
         using (var img = Image.Load<Rgba32>(path))
         {
@@ -23,7 +22,7 @@ public class Texture2DArray : Texture
             uint height = (uint)img.Height / atlasSize;
             uint depth = atlasSize * atlasSize;
 
-            gl.TexImage3D(Target, 0, InternalFormat.Rgba8, width, height, depth, 0, PixelFormat.Rgba, PixelType.UnsignedByte, null);
+            _gl.TexImage3D(Target, 0, InternalFormat.Rgba8, width, height, depth, 0, PixelFormat.Rgba, PixelType.UnsignedByte, null);
 
             img.Mutate(i => i.Rotate(RotateMode.Rotate90));
 
@@ -38,7 +37,7 @@ public class Texture2DArray : Texture
                             var slice = accessor.GetRowSpan((int)(j * height + y)).Slice((int)(i * width), (int)width);
                             fixed (void* data = slice)
                             {
-                                gl.TexSubImage3D(Target, 0, y, 0, i_depth, 1, width, 1, PixelFormat.Rgba, PixelType.UnsignedByte, data);
+                                _gl.TexSubImage3D(Target, 0, y, 0, i_depth, 1, width, 1, PixelFormat.Rgba, PixelType.UnsignedByte, data);
                             }
                         }
                     });

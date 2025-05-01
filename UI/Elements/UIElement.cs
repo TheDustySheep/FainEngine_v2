@@ -7,39 +7,42 @@ public class UIElement
 {
     #region Tree
 
-    public UIElement? Parent;
-    public List<UIElement> Children = new();
+    protected UIElement? _parent;
+    protected List<UIElement> _children = new();
+
+    public UIElement? Parent => _parent;
+    public IReadOnlyList<UIElement> Children => _children;
 
     #endregion
 
     #region Drawing Properties
 
-    public UIColour BackgroundColour;
-    public UIColour TextColour;
+    public virtual UIColour BackgroundColour { get; set; }
+    public virtual UIColour TextColour {get; set; }
 
-    public bool IsVisible = true;
+    public virtual bool IsVisible {get; set; } = true;
 
     #endregion
 
     #region Layout Data
 
     // Sizing
-    public Layout.SizeMode XSizeMode = Layout.SizeMode.Fit;
-    public float XSize;
-    public float XSizeMin = 0f;
-    public float XSizeMax = float.PositiveInfinity;
+    public virtual Layout.SizeMode XSizeMode { get; set; } = Layout.SizeMode.Fit;
+    public virtual float XSize    { get; set; }
+    public virtual float XSizeMin { get; set; } = 0f;
+    public virtual float XSizeMax { get; set; } = float.PositiveInfinity;
 
-    public Layout.SizeMode YSizeMode = Layout.SizeMode.Fit;
-    public float YSize;
-    public float YSizeMin = 0f;
-    public float YSizeMax = float.PositiveInfinity;
+    public virtual Layout.SizeMode YSizeMode { get; set; } = Layout.SizeMode.Fit;
+    public virtual float YSize    { get; set; }
+    public virtual float YSizeMin { get; set; } = 0f;
+    public virtual float YSizeMax { get; set; } = float.PositiveInfinity;
 
     // Padding
-    public float PaddingTop;
-    public float PaddingBottom;
-    public float PaddingLeft;
-    public float PaddingRight;
-    public float Padding
+    public virtual float PaddingTop    { get; set; }
+    public virtual float PaddingBottom { get; set; }
+    public virtual float PaddingLeft   { get; set; }
+    public virtual float PaddingRight  { get; set; }
+    public virtual float Padding
     {
         set
         {
@@ -51,34 +54,49 @@ public class UIElement
     }
 
     // Positioning
-    public Layout.Justify Justify;
-    public Layout.Align   Align;
+    public virtual Layout.Justify Justify { get; set; }
+    public virtual Layout.Align   Align   { get; set; }
 
-    // Children
-    public Layout.Axis LayoutAxis;
+    // _children
+    public virtual Layout.Axis LayoutAxis { get; set; }
 
-    public float ChildGap;
+    public virtual float ChildGap { get; set; }
 
     #endregion
 
 
     #region Accessors
 
-    internal Layout.SizeMode GetSizeMode(Layout.Axis axis) => axis == Layout.Axis.X ? XSizeMode : YSizeMode;
+    internal virtual Layout.SizeMode GetSizeMode(Layout.Axis axis) => axis == Layout.Axis.X ? XSizeMode : YSizeMode;
 
-    internal float GetSize   (Layout.Axis axis) => axis == Layout.Axis.X ? XSize    : YSize;
-    internal float GetSizeMin(Layout.Axis axis) => axis == Layout.Axis.X ? XSizeMin : YSizeMin;
-    internal float GetSizeMax(Layout.Axis axis) => axis == Layout.Axis.X ? XSizeMax : YSizeMax;
+    internal virtual float GetSize   (Layout.Axis axis) => axis == Layout.Axis.X ? XSize    : YSize;
+    internal virtual float GetSizeMin(Layout.Axis axis) => axis == Layout.Axis.X ? XSizeMin : YSizeMin;
+    internal virtual float GetSizeMax(Layout.Axis axis) => axis == Layout.Axis.X ? XSizeMax : YSizeMax;
 
-    internal float GetPaddingStart(Layout.Axis axis) => axis == Layout.Axis.X ? PaddingLeft  : PaddingTop;
-    internal float GetPaddingEnd  (Layout.Axis axis) => axis == Layout.Axis.X ? PaddingRight : PaddingBottom;
+    internal virtual float GetPaddingStart(Layout.Axis axis) => axis == Layout.Axis.X ? PaddingLeft  : PaddingTop;
+    internal virtual float GetPaddingEnd  (Layout.Axis axis) => axis == Layout.Axis.X ? PaddingRight : PaddingBottom;
 
     #endregion
 
+    public UIElement SetParent(UIElement parent)
+    {
+        if (_parent != null)
+            parent._children.Remove(this);
+        _parent = null;
+        return this;
+    }
+
     public UIElement AddChild(UIElement child)
     {
-        Children.Add(child);
-        child.Parent = this;
+        _children.Add(child);
+        child._parent = this;
+        return this;
+    }
+
+    public UIElement RemoveChild(UIElement child)
+    {
+        _children.Remove(child);
+        child._parent = null;
         return this;
     }
 
@@ -96,16 +114,16 @@ public class UIElement
         return this;
     }
 
-    internal virtual IEnumerable<UIVertex> GenerateVerts(DrawNode node, Vector2 invScreenSize)
+    internal virtual IEnumerable<UIVertex> GenerateVerts(DrawNode node)
     {
-        Vector2 min = new Vector2(node.XOffset, node.YOffset) * invScreenSize;
-        Vector2 max = (new Vector2(node.XSize, node.YSize) + min) * invScreenSize;
+        Vector2 min = new Vector2(node.XOffset, node.YOffset);
+        Vector2 max = new Vector2(node.XSize, node.YSize) + min;
 
         return [
-            new UIVertex(min.X * 2 - 1, (1 - max.Y) * 2 - 1, node.ZIndex*0.0001f, this),
-            new UIVertex(min.X * 2 - 1, (1 - min.Y) * 2 - 1, node.ZIndex*0.0001f, this),
-            new UIVertex(max.X * 2 - 1, (1 - min.Y) * 2 - 1, node.ZIndex*0.0001f, this),
-            new UIVertex(max.X * 2 - 1, (1 - max.Y) * 2 - 1, node.ZIndex*0.0001f, this),
+            new UIVertex(min.X, min.Y, node.ZIndex, this),
+            new UIVertex(max.X, min.Y, node.ZIndex, this),
+            new UIVertex(max.X, max.Y, node.ZIndex, this),
+            new UIVertex(min.X, max.Y, node.ZIndex, this),
         ];
     }
 }

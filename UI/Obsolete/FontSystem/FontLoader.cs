@@ -33,7 +33,7 @@ internal class FontLoader
                 .DrawText(characters, font, Rgba32.ParseHex("000000"), new PointF(0, 0))
             );
             image.Save(@"C:\Users\Sean\source\repos\FainEngine_v2\Resources\Fonts\Montserrat\out.png");
-            texture = new Texture2D(Core.GameGraphics.GL, image);
+            texture = new Texture2D(image);
         }
 
         ReadOnlySpan<char> chars = characters.AsSpan();

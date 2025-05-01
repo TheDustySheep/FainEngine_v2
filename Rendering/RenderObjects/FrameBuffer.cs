@@ -24,7 +24,6 @@ public sealed class FrameBuffer : IFrameBuffer, IDisposable
         fbo = new FrameBufferObject(_gl);
 
         color_tex = new Texture2D(
-            gl,
             width,
             height,
             InternalFormat.Rgba,

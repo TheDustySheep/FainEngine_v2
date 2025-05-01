@@ -11,7 +11,7 @@ uniform sampler2D fontAtlas;
 void main()
 {
     float textMask = texture(fontAtlas, oTextUV).r;
-
+    
     if (textMask > 0.5)
         FragColor = vec4(oTextColor.rgb, 1.0);
     else if (oColor.a > 0.5)

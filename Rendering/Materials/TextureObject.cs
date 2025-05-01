@@ -1,4 +1,5 @@
-﻿using Silk.NET.OpenGL;
+﻿using FainEngine_v2.Core;
+using Silk.NET.OpenGL;
 
 namespace FainEngine_v2.Rendering.Materials
 {
@@ -8,9 +9,9 @@ namespace FainEngine_v2.Rendering.Materials
         protected uint _handle;
         protected abstract TextureTarget Target { get; }
 
-        public TextureObject(GL gl)
+        public TextureObject()
         {
-            _gl = gl;
+            _gl = GameGraphics.GL;
             _handle = _gl.GenTexture();
         }
 
