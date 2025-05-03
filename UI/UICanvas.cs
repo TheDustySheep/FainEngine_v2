@@ -10,7 +10,6 @@ namespace FainEngine_v2.UI;
 
 public class UICanvas
 {
-    Vector2 invScreenSize;
     public FontAtlas Atlas { get; private set; }
     public UIElement Root { get; init; }
     public float Priority { get; set; }
@@ -31,29 +30,7 @@ public class UICanvas
 
         Atlas = new FontAtlas(@"Resources/Fonts/Tinos/Tinos-Regular.ttf", 16);
         _uiMaterial = new UIMaterial(ResourceLoader.LoadShader(@"Resources/UI"), Atlas.AtlasTexture);
-
-        Root.AddChild
-        (
-            new UIElement()
-            {
-                BackgroundColour = Color.White
-            }.AddChild
-            (
-                new UIText(this, "FPS: XX")
-                {
-                    XSizeMax = 300f,
-                }
-            )
-        );
-
-        _timer = new Timer(i =>
-        {
-            (Root.Children[0].Children[0] as UIText).Text = $"FPS: {1f / GameTime.DeltaTime:F2}";
-
-        }, null, 0, 500);
     }
-
-    Timer _timer;
 
     public void Draw()
     {
