@@ -193,6 +193,6 @@ public class Model : IDisposable
             mesh.Dispose();
         }
 
-        _texturesLoaded = null;
+        _texturesLoaded = null!;
     }
 }

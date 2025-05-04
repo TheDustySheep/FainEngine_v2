@@ -121,7 +121,7 @@ namespace FainEngine_v2.UI.Elements
 
             // 4) final tail‐piece
             if (lineStart < text.Length)
-                onLine(text.Slice(lineStart, text.Length - lineStart));
+                onLine.Invoke(text.Slice(lineStart, text.Length - lineStart));
         }
 
         private void RecalculateBounds()

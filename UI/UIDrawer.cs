@@ -461,6 +461,6 @@ namespace FainEngine_v2.UI
         public float XOffset;
         public float YOffset;
 
-        public int ZIndex;
+        public int ZIndex = 0;
     }
 }

@@ -1,5 +1,5 @@
 ﻿namespace FainEngine_v2.Utils;
-public class WorkerThread
+public class WorkerThread : IDisposable
 {
     readonly Thread thread;
     bool isActive = true;
@@ -19,5 +19,5 @@ public class WorkerThread
         thread.Start();
     }
 
-    public void Terminate() => isActive = false;
+    public void Dispose() => isActive = false;
 }

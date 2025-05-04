@@ -10,10 +10,7 @@ namespace FainEngine_v2.Utils.Variables
     {
         private T _value;
 
-        public ReferenceVariable()
-        {
-
-        }
+        public ReferenceVariable() { }
 
         public ReferenceVariable(T value)
         {
@@ -30,9 +27,15 @@ namespace FainEngine_v2.Utils.Variables
             }
         }
 
+        public override string? ToString()
+        {
+            return _value.ToString();
+        }
+
         private event Action<T>? _event;
 
         public void   RegisterCallback(Action<T> action) => _event += action;
+
         public void UnregisterCallback(Action<T> action) => _event -= action;
     }
 }
