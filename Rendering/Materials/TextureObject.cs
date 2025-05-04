@@ -1,5 +1,4 @@
-﻿using FainEngine_v2.Core;
-using Silk.NET.OpenGL;
+﻿using Silk.NET.OpenGL;
 
 namespace FainEngine_v2.Rendering.Materials
 {

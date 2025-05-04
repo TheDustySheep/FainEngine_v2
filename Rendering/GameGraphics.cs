@@ -9,21 +9,23 @@ using Silk.NET.OpenGL;
 using Silk.NET.Windowing;
 using System.Numerics;
 
-namespace FainEngine_v2.Core;
+namespace FainEngine_v2.Rendering;
 public static class GameGraphics
 {
+    #region Public Variables
     public static event Action<int, int>? OnResized;
     public static void OnResize(Vector2D<int> newSize) => OnResized?.Invoke(newSize.X, newSize.Y);
+
+    private static GL? _gl;
+    public static GL GL => _gl ?? throw new Exception("OpenGL Not Set");
+    #endregion
 
     static IWindow? _window;
     public static IWindow Window => _window ?? throw new Exception("Window Not Set");
 
     public static float WindowAspect => Window.FramebufferSize.X / (float)Window.FramebufferSize.Y;
 
-    private static GL? _gl;
-    public static GL GL => _gl ?? throw new Exception("OpenGL Not Set");
-
-    readonly static Dictionary<Material, List<RenderInstance>> RenderQueue = new();
+    readonly static RenderQueue renderQueue = new RenderQueue();
 
     static PostProcess? _postProcess;
 
@@ -49,10 +51,37 @@ public static class GameGraphics
         ICamera camera = ICamera.Main;
         Frustum frustum = camera.Frustum;
 
-        int totalMeshes = 0;
-        int renderedMeshes = 0;
+        DrawCallDebugData debug = new();
 
-        foreach ((var mat, var queue) in RenderQueue)
+        debug.OpaqueCalls = RenderPass(camera, frustum, renderQueue.Opaque());
+
+        GL.Enable(EnableCap.Blend);
+        GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+        debug.TransparentCalls = RenderPass(camera, frustum, renderQueue.Transparent());
+        GL.Disable(EnableCap.Blend);
+
+        renderQueue.Clear();
+
+        // TODO Render Transparent
+
+        // Draw onto the main screen
+        GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+        _postProcess?.Draw();
+
+        // Draw UI
+        foreach (var canvas in Canvases.OrderBy(i => i.Priority))
+        {
+            canvas.Draw();
+            debug.UICalls++;
+        }
+
+        RenderDebugVariables.DrawCallDebugData.Value = debug;
+    }
+
+    private static uint RenderPass(ICamera camera, Frustum frustum, Dictionary<Material, List<RenderInstance>> pass)
+    {
+        uint drawCalls = 0;
+        foreach ((var mat, var queue) in pass)
         {
             mat.Use();
             mat.SetUniforms();
@@ -66,43 +95,22 @@ public static class GameGraphics
                 BoundingBox bounds = mesh.Bounds.Transform(modelMatrix);
 
                 // Skip meshes outside camera frustum
-                totalMeshes++;
                 if (mesh.ClipBounds && !frustum.Intersects(bounds))
                     continue;
-                renderedMeshes++;
 
                 mat.SetModelMatrix(modelMatrix);
 
                 mesh.Bind();
                 mesh.Draw();
+                drawCalls++;
             }
         }
-        RenderQueue.Clear();
-
-        // TODO Render Transparent
-
-        // Draw onto the main screen
-        GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
-        _postProcess?.Draw();
-
-        // Draw UI
-        foreach (var canvas in Canvases.OrderBy(i => i.Priority))
-            canvas.Draw();
+        return drawCalls;
     }
 
     public static void DrawMesh(IMesh mesh, Material mat, Matrix4x4 model)
     {
-        if (!RenderQueue.TryGetValue(mat, out var queue))
-        {
-            queue = new List<RenderInstance>();
-            RenderQueue.Add(mat, queue);
-        }
-
-        queue.Add(new RenderInstance()
-        {
-            Mesh = mesh,
-            ModelMatrix = model,
-        });
+        renderQueue.Enqueue(mesh, mat, model);
     }
 
     public static void SetPostProcess(PostProcess postProcess)
@@ -118,11 +126,5 @@ public static class GameGraphics
     public static void UnregisterCanvas(UICanvas canvas)
     {
         Canvases.Remove(canvas);
-    }
-
-    private struct RenderInstance
-    {
-        public required IMesh Mesh;
-        public required Matrix4x4 ModelMatrix;
     }
 }

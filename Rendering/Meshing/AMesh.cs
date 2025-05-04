@@ -1,4 +1,3 @@
-using FainEngine_v2.Core;
 using FainEngine_v2.Rendering.BoundingShapes;
 using Silk.NET.OpenGL;
 using System.Numerics;

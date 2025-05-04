@@ -9,6 +9,8 @@ public class Material
 
     protected readonly TextureSlot?[] Textures = new TextureSlot?[Texture.MAX_TEXTURE_COUNT];
 
+    public RenderPass RenderPass = RenderPass.Opaque;
+
     public Material(Shader shader)
     {
         this.shader = shader;
