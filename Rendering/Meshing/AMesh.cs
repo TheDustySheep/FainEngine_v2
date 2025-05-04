@@ -1,6 +1,8 @@
 using FainEngine_v2.Core;
 using FainEngine_v2.Rendering.BoundingShapes;
 using Silk.NET.OpenGL;
+using System.Numerics;
+using System.Runtime.InteropServices;
 
 namespace FainEngine_v2.Rendering.Meshing;
 
@@ -12,7 +14,7 @@ public abstract class AMesh<TVertexType, TIndexType> : IMesh
 
     protected abstract uint VertexCount { get; }
 
-    protected GL _gl { get; }
+    protected GL _gl { get; set; }
     protected VertexArrayObject<TVertexType, TIndexType> VAO { get; set; }
     protected BufferObject<TVertexType> VBO { get; set; }
     protected BufferObject<TIndexType> EBO { get; set; }
@@ -46,11 +48,10 @@ public abstract class AMesh<TVertexType, TIndexType> : IMesh
         Bind();
         ApplyVertices();
         ApplyTriangles();
-        SetVertexAttributes();
+        VertexAttributes.SetVertexAttributes(_gl, VAO);
     }
 
     public abstract void Clear();
-    protected abstract void SetVertexAttributes();
     protected abstract void ApplyVertices();
     protected void ApplyTriangles()
     {

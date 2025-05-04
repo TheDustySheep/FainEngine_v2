@@ -9,7 +9,7 @@ public class BufferObject<TDataType> : IDisposable
     private readonly BufferTargetARB _bufferType;
     private readonly GL _gl;
 
-    public unsafe BufferObject(GL gl, BufferTargetARB bufferType)
+    public BufferObject(GL gl, BufferTargetARB bufferType)
     {
         _gl = gl;
         _bufferType = bufferType;
@@ -17,13 +17,10 @@ public class BufferObject<TDataType> : IDisposable
         _handle = _gl.GenBuffer();
     }
 
-    public unsafe void SetData(Span<TDataType> data)
+    public void SetData(ReadOnlySpan<TDataType> data)
     {
         Bind();
-        fixed (void* d = data)
-        {
-            _gl.BufferData(_bufferType, (nuint)(data.Length * sizeof(TDataType)), d, BufferUsageARB.StaticDraw);
-        }
+        _gl.BufferData(_bufferType, data, BufferUsageARB.StaticDraw);
     }
 
     public void Bind()
@@ -33,6 +30,7 @@ public class BufferObject<TDataType> : IDisposable
 
     public void Dispose()
     {
+        GC.SuppressFinalize(this);
         _gl.DeleteBuffer(_handle);
     }
 }
