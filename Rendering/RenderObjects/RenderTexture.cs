@@ -9,8 +9,8 @@ public sealed class RenderTexture : IFrameBuffer, IDisposable
     public Texture2D ColorTexture => color_tex;
     public Texture2D DepthTexture => depth_tex;
 
-    readonly Texture2D color_tex;
-    readonly Texture2D depth_tex;
+    public readonly Texture2D color_tex;
+    public readonly Texture2D depth_tex;
     readonly FrameBufferObject fbo;
 
     public readonly int Height;
@@ -36,9 +36,9 @@ public sealed class RenderTexture : IFrameBuffer, IDisposable
         depth_tex = new Texture2D(
             width,
             height,
-            InternalFormat.DepthComponent,
+            InternalFormat.DepthComponent32f,
             PixelFormat.DepthComponent,
-            PixelType.UnsignedByte);
+            PixelType.Float);
 
         depth_tex.FrameBufferTexture(FramebufferAttachment.DepthAttachment);
 

@@ -9,6 +9,8 @@ public interface ICamera
 
     public static ICamera Main { get; private set; } = new NullCamera();
     Frustum Frustum { get; }
+    float Z_Near { get; }
+    float Z_Far { get; }
 
     public static void SetMainCamera(ICamera? camera)
     {

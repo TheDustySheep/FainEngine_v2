@@ -1,5 +1,7 @@
 ﻿using FainEngine_v2.Rendering;
 using FainEngine_v2.Rendering.Materials;
+using System.Text;
+using System.Text.RegularExpressions;
 using static FainEngine_v2.Rendering.Materials.Texture;
 using GL = Silk.NET.OpenGL.GL;
 
@@ -53,11 +55,76 @@ public static class ResourceLoader
         if (fragFile is null)
             throw new FileNotFoundException($"Fragment shader not found in folder: {folder}");
 
-        string vertSRC = File.ReadAllText(vertFile);
-        string fragSRC = File.ReadAllText(fragFile);
+        string vertSRC = LoadShaderWithIncludes(vertFile);
+        string fragSRC = LoadShaderWithIncludes(fragFile);
 
         return new Shader(vertSRC, fragSRC);
     }
+
+    private static readonly Regex includeRegex = new Regex(@"^\s*#include\s+""(.+)""", RegexOptions.Compiled);
+
+    public static string LoadShaderWithIncludes(string shaderPath)
+    {
+        var loadedFiles = new HashSet<string>();
+        return LoadShaderRecursive(shaderPath, loadedFiles);
+    }
+
+    private static string LoadShaderRecursive(string shaderPath, HashSet<string> loadedFiles)
+    {
+        // Normalize path and prevent double-includes
+        shaderPath = Path.GetFullPath(shaderPath);
+        if (loadedFiles.Contains(shaderPath))
+            return "";  // skip already included files
+
+        loadedFiles.Add(shaderPath);
+
+        if (!File.Exists(shaderPath))
+            throw new FileNotFoundException($"Shader file not found: {shaderPath}");
+
+        var shaderDir = Path.GetDirectoryName(shaderPath);
+        var exeRoot = AppContext.BaseDirectory;
+        var sb = new StringBuilder();
+
+        foreach (var line in File.ReadLines(shaderPath))
+        {
+            // Skip comments
+            if (line.StartsWith("//"))
+                continue;
+
+            var match = includeRegex.Match(line);
+            if (match.Success)
+            {
+                var includePath = match.Groups[1].Value;
+
+                string fullIncludePath;
+                if (Path.IsPathRooted(includePath) ||
+                    (!includePath.StartsWith("./") && !includePath.StartsWith("../") && !includePath.StartsWith(".\\")))
+                {
+                    // Treat as relative to exe root
+                    fullIncludePath = Path.Combine(exeRoot, includePath.TrimStart('/', '\\'));
+                }
+                else
+                {
+                    // Treat as relative to current shader directory
+                    fullIncludePath = Path.Combine(shaderDir, includePath);
+                }
+
+                // Recursively load included file
+                var includedCode = LoadShaderRecursive(fullIncludePath, loadedFiles);
+                sb.AppendLine($"// Begin include: {includePath}");
+                sb.AppendLine(includedCode);
+                sb.AppendLine($"// End include: {includePath}");
+            }
+            else
+            {
+                sb.AppendLine(line);
+            }
+        }
+
+        return sb.ToString();
+    }
+
+
 
     public static Model LoadModel(string filePath)
     {

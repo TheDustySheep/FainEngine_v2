@@ -11,7 +11,7 @@ namespace FainEngine_v2.Rendering.PostProcessing
 {
     public class PostProcess : IEntity
     {
-        RenderTexture rt;
+        public RenderTexture rt;
         CustomVertexMesh<Vertex, int> mesh;
         Material mat;
 

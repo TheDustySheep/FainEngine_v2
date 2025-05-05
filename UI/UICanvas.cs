@@ -1,9 +1,9 @@
 ﻿using FainEngine_v2.Rendering;
+using FainEngine_v2.Rendering.Cameras;
 using FainEngine_v2.Rendering.Materials;
 using FainEngine_v2.Resources;
 using FainEngine_v2.UI.Elements;
 using FainEngine_v2.UI.FontRendering;
-using System.Drawing;
 using System.Numerics;
 
 namespace FainEngine_v2.UI;
@@ -32,10 +32,8 @@ public class UICanvas
         _uiMaterial = new UIMaterial(ResourceLoader.LoadShader(@"Resources/UI"), Atlas.AtlasTexture);
     }
 
-    public void Draw()
+    public void Draw(ICamera cam)
     {
-        
-
         Vector2 screenSize = new Vector2(
             GameGraphics.Window.FramebufferSize.X,
             GameGraphics.Window.FramebufferSize.Y
@@ -64,7 +62,7 @@ public class UICanvas
         // Draw Mesh
         _uiMaterial.Use();
         _uiMaterial.SetUniforms();
-        _uiMaterial.SetViewMatrix(ViewMatrix());
+        _uiMaterial.SetViewMatrix(ViewMatrix(), cam);
 
         _mesh.Draw();
     }

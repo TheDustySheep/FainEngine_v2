@@ -21,7 +21,7 @@ public class Camera3D : ICamera
 
     public float FOV { get; set; } = 80f;
     public float Z_Near { get; set; } = 0.1f;
-    public float Z_Far { get; set; } = 10_000f;
+    public float Z_Far { get; set; } = 1_024f;
 
     public Frustum Frustum
     {

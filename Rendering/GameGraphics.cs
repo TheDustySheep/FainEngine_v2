@@ -1,5 +1,6 @@
 ﻿using FainEngine_v2.Rendering.BoundingShapes;
 using FainEngine_v2.Rendering.Cameras;
+using FainEngine_v2.Rendering.Lighting;
 using FainEngine_v2.Rendering.Materials;
 using FainEngine_v2.Rendering.Meshing;
 using FainEngine_v2.Rendering.PostProcessing;
@@ -18,18 +19,18 @@ public static class GameGraphics
 
     private static GL? _gl;
     public static GL GL => _gl ?? throw new Exception("OpenGL Not Set");
+
+    private static IWindow? _window;
+    public static IWindow Window => _window ?? throw new Exception("Window Not Set");
+    
+    public static float WindowAspect => Window.FramebufferSize.X / (float)Window.FramebufferSize.Y;
     #endregion
 
-    static IWindow? _window;
-    public static IWindow Window => _window ?? throw new Exception("Window Not Set");
+    private readonly static RenderQueue renderQueue = new RenderQueue();
+    private static PostProcess? _postProcess;
+    private static HashSet<UICanvas> Canvases = new();
 
-    public static float WindowAspect => Window.FramebufferSize.X / (float)Window.FramebufferSize.Y;
-
-    readonly static RenderQueue renderQueue = new RenderQueue();
-
-    static PostProcess? _postProcess;
-
-    static HashSet<UICanvas> Canvases = new();
+    private static ILightingController lightingController = new LightingController();
 
     internal static void SetGL(GL gl, IWindow window)
     {
@@ -47,22 +48,26 @@ public static class GameGraphics
         GL.ClearColor(52.9f / 100f, 80.8f / 100f, 92.2f / 100f, 0);
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         GL.DepthFunc(DepthFunction.Less);
+        GL.DepthMask(true);
 
         ICamera camera = ICamera.Main;
         Frustum frustum = camera.Frustum;
 
         DrawCallDebugData debug = new();
 
+        // Render Opaque
         debug.OpaqueCalls = RenderPass(camera, frustum, renderQueue.Opaque());
 
+        // Render Transparent
+        GL.DepthMask(false);
         GL.Enable(EnableCap.Blend);
         GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
         debug.TransparentCalls = RenderPass(camera, frustum, renderQueue.Transparent());
         GL.Disable(EnableCap.Blend);
+        GL.DepthMask(true);
 
+        // Clear the render Queue
         renderQueue.Clear();
-
-        // TODO Render Transparent
 
         // Draw onto the main screen
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
@@ -71,7 +76,7 @@ public static class GameGraphics
         // Draw UI
         foreach (var canvas in Canvases.OrderBy(i => i.Priority))
         {
-            canvas.Draw();
+            canvas.Draw(camera);
             debug.UICalls++;
         }
 
@@ -84,9 +89,14 @@ public static class GameGraphics
         foreach ((var mat, var queue) in pass)
         {
             mat.Use();
+
+            if (_postProcess != null)
+                mat.SetRenderTexture(_postProcess.rt);
+
             mat.SetUniforms();
             mat.SetProjectionMatrix(camera.ProjectionMatrix);
-            mat.SetViewMatrix(camera.ViewMatrix);
+            mat.SetLighting(lightingController);
+            mat.SetViewMatrix(camera.ViewMatrix, camera);
 
             foreach (var render in queue)
             {

@@ -1,4 +1,8 @@
 ﻿using FainEngine_v2.Core;
+using FainEngine_v2.Extensions;
+using FainEngine_v2.Rendering.Cameras;
+using FainEngine_v2.Rendering.Lighting;
+using FainEngine_v2.Rendering.RenderObjects;
 using System.Numerics;
 
 namespace FainEngine_v2.Rendering.Materials;
@@ -21,9 +25,13 @@ public class Material
         shader.Use();
     }
 
-    public void SetViewMatrix(Matrix4x4 mat)
+    public void SetViewMatrix(Matrix4x4 mat, ICamera cam)
     {
         shader.SetUniform("uView", mat);
+        shader.SetUniform("viewPos", mat.Inverse().Translation);
+        shader.SetUniform("screenSize", (Vector2)GameGraphics.Window.Size);
+        shader.SetUniform("cam_near", cam.Z_Near);
+        shader.SetUniform("cam_far" , cam.Z_Far);        
     }
 
     public void SetProjectionMatrix(Matrix4x4 mat)
@@ -36,10 +44,7 @@ public class Material
         shader.SetUniform("uModel", mat);
     }
 
-    public void UpdateAdditionalUniforms()
-    {
-        shader.SetUniform("time", GameTime.TotalTime);
-    }
+    public virtual void SetRenderTexture(RenderTexture texture) { }
 
     public void SetUniforms()
     {
@@ -55,7 +60,13 @@ public class Material
             texSlot.Texture.Use(i);
         }
 
+        shader.SetUniform("time", GameTime.TotalTime);
         SetAdditionalUniforms();
+    }
+
+    internal void SetLighting(ILightingController lightingController)
+    {
+        lightingController.SetLights(shader);
     }
 
     protected virtual void SetAdditionalUniforms() { }
