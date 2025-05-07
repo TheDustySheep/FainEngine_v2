@@ -129,7 +129,7 @@ public class Model : IDisposable
             textures.AddRange(heightMaps);
 
         // return a _mesh object created from the extracted _mesh data
-        var result = new CustomVertexMesh<Vertex, uint>(_gl, vertices.ToArray(), indices.ToArray());
+        var result = new CustomVertexMesh<Vertex, uint>(vertices.ToArray(), indices.ToArray());
         return result;
     }
 

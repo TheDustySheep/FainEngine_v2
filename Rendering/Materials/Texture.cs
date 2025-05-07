@@ -17,35 +17,29 @@ public abstract class Texture : TextureObject, IDisposable
         FilterMode = filterMode;
         MipMapMode = mipMapMode;
 
-        Use();
-    }
-
-    public void Use(TextureUnit textureSlot = TextureUnit.Texture0)
-    {
-        _gl.ActiveTexture(textureSlot);
-        _gl.BindTexture(Target, _handle);
+        Use(0);
     }
 
     public void Use(uint textureIndex)
     {
         if (textureIndex >= MAX_TEXTURE_COUNT)
             throw new Exception($"Texture out of range {textureIndex}/{MAX_TEXTURE_COUNT}");
-
+    
         var textureSlot = TextureUnit.Texture0 + (int)textureIndex;
-
+    
         _gl.ActiveTexture(textureSlot);
         _gl.BindTexture(Target, _handle);
     }
 
     protected void SetParameters()
     {
-        _gl.TexParameter(Target, TextureParameterName.TextureWrapS, (int)WrapMode); // XPos_px
-        _gl.TexParameter(Target, TextureParameterName.TextureWrapT, (int)WrapMode); // YPox_px
-        _gl.TexParameter(Target, TextureParameterName.TextureMinFilter, (int)FilterMode);
-        _gl.TexParameter(Target, TextureParameterName.TextureMagFilter, (int)FilterMode);
-        _gl.TexParameter(Target, TextureParameterName.TextureBaseLevel, 0);
-        _gl.TexParameter(Target, TextureParameterName.TextureMaxLevel, 8);
-        _gl.GenerateMipmap(Target);
+        _gl.TextureParameter(_handle, TextureParameterName.TextureWrapS, (int)WrapMode);
+        _gl.TextureParameter(_handle, TextureParameterName.TextureWrapT, (int)WrapMode);
+        _gl.TextureParameter(_handle, TextureParameterName.TextureMinFilter, (int)FilterMode);
+        _gl.TextureParameter(_handle, TextureParameterName.TextureMagFilter, (int)FilterMode);
+        _gl.TextureParameter(_handle, TextureParameterName.TextureBaseLevel, 0);
+        _gl.TextureParameter(_handle, TextureParameterName.TextureMaxLevel, 8);
+        _gl.GenerateTextureMipmap(_handle);
     }
 
     protected GLEnum GetFilterMode()

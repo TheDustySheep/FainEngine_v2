@@ -18,7 +18,7 @@ public static class Gizmos
 
     class GizmoMesh : CustomVertexMesh<Vertex, uint>
     {
-        public GizmoMesh(GL gl) : base(gl)
+        public GizmoMesh() : base()
         {
             Bounds = new Rendering.BoundingShapes.BoundingBox()
             {
@@ -50,9 +50,9 @@ public static class Gizmos
 
     static Material? material;
 
-    internal static void Init(GL gl)
+    internal static void Init()
     {
-        Mesh = new GizmoMesh(gl);
+        Mesh = new GizmoMesh();
         material = new Material(ResourceLoader.LoadShader("Resources/GizmoShader"));
     }
 

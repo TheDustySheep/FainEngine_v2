@@ -22,7 +22,7 @@ public class Texture2DArray : Texture
             uint height = (uint)img.Height / atlasSize;
             uint depth = atlasSize * atlasSize;
 
-            _gl.TexImage3D(Target, 0, InternalFormat.Rgba8, width, height, depth, 0, PixelFormat.Rgba, PixelType.UnsignedByte, null);
+            _gl.TextureStorage3D(_handle, 1, SizedInternalFormat.Rgba8, width, height, depth);
 
             img.Mutate(i => i.Rotate(RotateMode.Rotate90));
 
@@ -37,7 +37,18 @@ public class Texture2DArray : Texture
                             var slice = accessor.GetRowSpan((int)(j * height + y)).Slice((int)(i * width), (int)width);
                             fixed (void* data = slice)
                             {
-                                _gl.TexSubImage3D(Target, 0, y, 0, i_depth, 1, width, 1, PixelFormat.Rgba, PixelType.UnsignedByte, data);
+                                _gl.TextureSubImage3D(
+                                    _handle,
+                                    0,
+                                    y, 
+                                    0, 
+                                    i_depth,
+                                    1, 
+                                    width, 
+                                    1,
+                                    PixelFormat.Rgba,
+                                    PixelType.UnsignedByte,
+                                    data);
                             }
                         }
                     });

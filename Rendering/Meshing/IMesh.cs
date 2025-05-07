@@ -10,6 +10,5 @@ public interface IMesh : IDisposable
 {
     public bool ClipBounds { get; set; }
     public BoundingBox Bounds { get; }
-    public void Bind();
     public void Draw();
 }

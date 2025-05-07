@@ -6,11 +6,11 @@ public class FrameBufferObject : IDisposable
     protected uint _handle;
     protected GL _gl;
 
-    public unsafe FrameBufferObject(GL gl)
+    public unsafe FrameBufferObject()
     {
-        _gl = gl;
-        _handle = _gl.GenFramebuffer();
-        Bind();
+        _gl = GameGraphics.GL;
+
+        _gl.CreateFramebuffers(1, out _handle);
     }
 
     public void Bind()

@@ -4,49 +4,42 @@ using Silk.NET.OpenGL;
 namespace FainEngine_v2.Rendering.RenderObjects;
 public sealed class FrameBuffer : IFrameBuffer, IDisposable
 {
-    readonly GL _gl;
+    private readonly GL _gl;
+    private readonly uint _fbo;
+    private readonly uint _rbo;
+    public Texture2D ColorTexture { get; }
 
-    public Texture2D ColorTexture => color_tex;
+    public readonly uint Height;
+    public readonly uint Width;
 
-    readonly Texture2D color_tex;
-    readonly FrameBufferObject fbo;
-    readonly RenderBufferObject rbo;
-
-    public readonly int Height;
-    public readonly int Width;
-
-    public FrameBuffer(GL gl, int width, int height)
+    public FrameBuffer(int width, int height)
     {
-        _gl = gl;
-        Width = width;
-        Height = height;
+        _gl = GameGraphics.GL;
+        Width  = (uint)width;
+        Height = (uint)height;
 
-        fbo = new FrameBufferObject(_gl);
+        _gl.CreateFramebuffers(1, out _fbo);
+        _gl.CreateRenderbuffers(1, out _rbo);
 
-        color_tex = new Texture2D(
-            width,
-            height,
-            InternalFormat.Rgba,
-            PixelFormat.Rgba,
-            PixelType.UnsignedByte);
+        _gl.NamedRenderbufferStorage(_rbo, InternalFormat.Depth24Stencil8, Width, Height);
 
-        color_tex.FrameBufferTexture(FramebufferAttachment.ColorAttachment0);
+        ColorTexture = new Texture2D(width, height, SizedInternalFormat.Rgba8, PixelFormat.Rgba, PixelType.UnsignedByte);
 
-        rbo = new RenderBufferObject(_gl, width, height, InternalFormat.Depth24Stencil8);
-        rbo.FrameBufferRenderBuffer(FramebufferAttachment.DepthStencilAttachment);
+        _gl.NamedFramebufferTexture(_fbo, FramebufferAttachment.ColorAttachment0, ColorTexture.Handle, 0);
+        _gl.NamedFramebufferRenderbuffer(_fbo, FramebufferAttachment.DepthStencilAttachment, RenderbufferTarget.Renderbuffer, _rbo);
 
-        fbo.CheckStatus();
+        var status = _gl.CheckNamedFramebufferStatus(_fbo, FramebufferTarget.Framebuffer);
+        if (status != GLEnum.FramebufferComplete)
+            throw new Exception($"Incomplete FBO: {status}");
     }
 
-    public void Bind()
-    {
-        fbo.Bind();
-    }
+
+    public void Bind() => _gl.BindFramebuffer(FramebufferTarget.Framebuffer, _fbo);
 
     public void Dispose()
     {
-        fbo.Dispose();
-        color_tex.Dispose();
-        rbo.Dispose();
+        _gl.DeleteFramebuffer(_fbo);
+        _gl.DeleteRenderbuffer(_rbo);
+        ColorTexture.Dispose();
     }
 }

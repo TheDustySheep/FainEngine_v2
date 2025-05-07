@@ -110,7 +110,6 @@ public static class GameGraphics
 
                 mat.SetModelMatrix(modelMatrix);
 
-                mesh.Bind();
                 mesh.Draw();
                 drawCalls++;
             }

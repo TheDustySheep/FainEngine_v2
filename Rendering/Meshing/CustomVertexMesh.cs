@@ -20,26 +20,7 @@ public class CustomVertexMesh<TVertexType, TIndexType> : AMesh<TVertexType, TInd
         VertexAttributes.SetVertexAttributes(_gl, VAO);
     }
 
-    public CustomVertexMesh(GL gl) : base(gl)
-    {
-        Bind();
-        ApplyVertices();
-        ApplyTriangles();
-        VertexAttributes.SetVertexAttributes(_gl, VAO);
-    }
-
     public CustomVertexMesh(TVertexType[] vertices, TIndexType[] trianges) : base()
-    {
-        Vertices = vertices;
-        Triangles = trianges;
-
-        Bind();
-        ApplyVertices();
-        ApplyTriangles();
-        VertexAttributes.SetVertexAttributes(_gl, VAO);
-    }
-
-    public CustomVertexMesh(GL gl, TVertexType[] vertices, TIndexType[] trianges) : base(gl)
     {
         Vertices = vertices;
         Triangles = trianges;

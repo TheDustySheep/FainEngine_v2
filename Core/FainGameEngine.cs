@@ -20,7 +20,14 @@ public class FainGameEngine
         options.Title = windowTitle;
         options.Samples = 4;
         options.PreferredDepthBufferBits = 24;
+        options.VSync = false;
 
+        options.API = new GraphicsAPI(
+            ContextAPI.OpenGL,
+            ContextProfile.Core,
+            ContextFlags.ForwardCompatible,
+            new APIVersion(4, 6));
+        
         window = Window.Create(options);
 
         window.Load += OnLoad;
@@ -55,11 +62,12 @@ public class FainGameEngine
         _gl.Enable(EnableCap.CullFace);
         _gl.FrontFace(FrontFaceDirection.CW);
         _gl.CullFace(TriangleFace.Back);
+
         _gl.Enable(EnableCap.Multisample);
 
         GameGraphics.SetGL(_gl, window);
         ResourceLoader.SetGL(_gl);
-        Gizmos.Init(_gl);
+        Gizmos.Init();
         GameInputs.SetWindow(window);
         Load();
     }

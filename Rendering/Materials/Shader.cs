@@ -29,67 +29,61 @@ public class Shader : IDisposable
         _gl.DeleteShader(fragment);
     }
 
+    ~Shader()
+    {
+        Dispose(); 
+    }
+
     public void Use()
     {
         _gl.UseProgram(_handle);
     }
 
-    private int GetUniformLocation(string name)
-    {
-        int location = _gl.GetUniformLocation(_handle, name);
-        //if (location == -1)
-        //{
-        //    throw new Exception($"{name} uniform not found on shader.");
-        //}
-        return location;
-    }
+    private int GetUniformLocation(string name) => _gl.GetUniformLocation(_handle, name);
 
     public void SetUniform(string name, int value)
     {
         int location = GetUniformLocation(name);
-        _gl.Uniform1(location, value);
+        _gl.ProgramUniform1(_handle, location, value);
     }
 
     public void SetUniform(string name, uint value)
     {
         int location = GetUniformLocation(name);
-        _gl.Uniform1(location, value);
+        _gl.ProgramUniform1(_handle, location, value);
     }
 
     public void SetUniform(string name, float value)
     {
         int location = GetUniformLocation(name);
-        _gl.Uniform1(location, value);
+        _gl.ProgramUniform1(_handle, location, value);
     }
 
     public void SetUniform(string name, Vector2 value)
     {
         int location = GetUniformLocation(name);
-        _gl.Uniform2(location, value);
+        _gl.ProgramUniform2(_handle, location, value);
     }
 
     public void SetUniform(string name, Vector3 value)
     {
         int location = GetUniformLocation(name);
-        _gl.Uniform3(location, value);
+        _gl.ProgramUniform3(_handle, location, value);
     }
 
     public void SetUniform(string name, Vector4 value)
     {
         int location = GetUniformLocation(name);
-        _gl.Uniform4(location, value);
+        _gl.ProgramUniform4(_handle, location, value);
     }
 
     public unsafe void SetUniform(string name, Matrix4x4 value)
     {
         int location = GetUniformLocation(name);
-        _gl.UniformMatrix4(location, 1, false, (float*)&value);
+        _gl.ProgramUniformMatrix4(_handle, location, 1, false, (float*)&value);
     }
 
-    public void Dispose()
-    {
-        _gl.DeleteProgram(_handle);
-    }
+    public void Dispose() => _gl.DeleteProgram(_handle);
 
     private uint LoadShader(ShaderType type, string src)
     {

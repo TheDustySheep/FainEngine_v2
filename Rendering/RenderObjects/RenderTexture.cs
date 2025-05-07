@@ -6,54 +6,40 @@ public sealed class RenderTexture : IFrameBuffer, IDisposable
 {
     readonly GL _gl;
 
-    public Texture2D ColorTexture => color_tex;
-    public Texture2D DepthTexture => depth_tex;
+    public Texture2D ColorTexture { get; private set; }
+    public Texture2D DepthTexture { get; private set; }
 
-    public readonly Texture2D color_tex;
-    public readonly Texture2D depth_tex;
-    readonly FrameBufferObject fbo;
+    readonly uint _fbo;
 
     public readonly int Height;
     public readonly int Width;
 
     public unsafe RenderTexture(GL gl, int width, int height)
     {
-        _gl = gl;
         Width = width;
         Height = height;
 
-        fbo = new FrameBufferObject(_gl);
+        _gl = gl;
+        _gl.CreateFramebuffers(1, out _fbo);
 
-        color_tex = new Texture2D(
-            width,
-            height,
-            InternalFormat.Rgba,
-            PixelFormat.Rgba,
-            PixelType.UnsignedByte);
 
-        color_tex.FrameBufferTexture(FramebufferAttachment.ColorAttachment0);
+        ColorTexture = new Texture2D(width, height, SizedInternalFormat.Rgba8, PixelFormat.Rgba, PixelType.UnsignedByte);
+        DepthTexture = new Texture2D(width, height, SizedInternalFormat.DepthComponent32f, PixelFormat.DepthComponent, PixelType.Float);
 
-        depth_tex = new Texture2D(
-            width,
-            height,
-            InternalFormat.DepthComponent32f,
-            PixelFormat.DepthComponent,
-            PixelType.Float);
+        _gl.NamedFramebufferTexture(_fbo, FramebufferAttachment.ColorAttachment0, ColorTexture.Handle, 0);
+        _gl.NamedFramebufferTexture(_fbo, FramebufferAttachment.DepthAttachment, DepthTexture.Handle, 0);
 
-        depth_tex.FrameBufferTexture(FramebufferAttachment.DepthAttachment);
-
-        fbo.CheckStatus();
+        var status = _gl.CheckNamedFramebufferStatus(_fbo, FramebufferTarget.Framebuffer);
+        if (status != GLEnum.FramebufferComplete)
+            throw new Exception($"Incomplete FBO: {status}");
     }
 
-    public void Bind()
-    {
-        fbo.Bind();
-    }
+    public void Bind() => _gl.BindFramebuffer(FramebufferTarget.Framebuffer, _fbo);
 
     public void Dispose()
     {
-        fbo.Dispose();
-        color_tex.Dispose();
-        depth_tex.Dispose();
+        _gl.DeleteFramebuffer(_fbo);
+        ColorTexture.Dispose();
+        DepthTexture.Dispose();
     }
 }

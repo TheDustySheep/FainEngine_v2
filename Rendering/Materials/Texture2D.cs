@@ -45,7 +45,7 @@ public class Texture2D : Texture
     public unsafe Texture2D(
         int width,
         int height,
-        InternalFormat internalFormat = InternalFormat.Rgba8,
+        SizedInternalFormat internalFormat = SizedInternalFormat.Rgba8,
         PixelFormat pixelFormat = PixelFormat.Rgba,
         PixelType pixelType = PixelType.UnsignedByte,
         WrappingModes wrapMode = WrappingModes.Clamp_To_Edge,
@@ -55,24 +55,31 @@ public class Texture2D : Texture
         Width = width;
         Height = height;
 
-        Bind();
-        _gl.TexImage2D(
-            Target,
-            0,
-            internalFormat,
-            (uint)width,
-            (uint)height,
-            0,
-            pixelFormat,
-            pixelType,
-            null);
+        _gl.TextureStorage2D(
+            _handle, 
+            1,
+            internalFormat, 
+            (uint)width, 
+            (uint)height);
+
+        //_gl.TexImage2D(
+        //    Target,
+        //    0,
+        //    internalFormat,
+        //    (uint)width,
+        //    (uint)height,
+        //    0,
+        //    pixelFormat,
+        //    pixelType,
+        //    null);
 
         SetParameters();
     }
 
     private unsafe void Process(Image<Rgba32> img)
     {
-        _gl.TexImage2D(Target, 0, InternalFormat.Rgba8, (uint)img.Width, (uint)img.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, null);
+        //_gl.TexImage2D(Target, 0, InternalFormat.Rgba8, (uint)img.Width, (uint)img.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, null);
+        _gl.TextureStorage2D(_handle, 1, SizedInternalFormat.Rgb8, (uint)img.Width, (uint)img.Height);
 
         img.Mutate(i => i.RotateFlip(RotateMode.Rotate180, FlipMode.Horizontal));
 
@@ -82,7 +89,16 @@ public class Texture2D : Texture
             {
                 fixed (void* data = accessor.GetRowSpan(y))
                 {
-                    _gl.TexSubImage2D(Target, 0, 0, y, (uint)accessor.Width, 1, PixelFormat.Rgba, PixelType.UnsignedByte, data);
+                    _gl.TextureSubImage2D(
+                        _handle,
+                        0,
+                        0, y,
+                        (uint)accessor.Width, 1,
+                        PixelFormat.Rgba,
+                        PixelType.UnsignedByte,
+                        data);
+
+                    //_gl.TexSubImage2D(Target, 0, 0, y, (uint)accessor.Width, 1, PixelFormat.Rgba, PixelType.UnsignedByte, data);
                 }
             }
         });
@@ -90,11 +106,10 @@ public class Texture2D : Texture
 
     public unsafe void SetData(System.Drawing.Rectangle bounds, byte[] data)
     {
-        Bind();
         fixed (byte* ptr = data)
         {
-            _gl.TexSubImage2D(
-                target:  TextureTarget.Texture2D,
+            _gl.TextureSubImage2D(
+                _handle,
                 level:   0,
                 xoffset: bounds.Left,
                 yoffset: bounds.Top,

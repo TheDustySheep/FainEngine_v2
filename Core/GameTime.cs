@@ -5,17 +5,30 @@ public static class GameTime
     public static float DeltaTime { get; private set; } = 0f;
     public static long TotalTicks { get; private set; }
 
-    private static float FixedUpdateTotalTime = 0f;
-    public const float FixedDeltaTime = 1f / 20f;
+    public static  float FixedDeltaTimeActual { get; private set; } = FixedDeltaTime;
+    public const   float FixedDeltaTime = 1f / 20f;
+
+    private static float _lastFixedUpdate = 0f;
+    private static float _fixedUpdateTotalTime = 0f;
 
     internal static bool TickFixedUpdate()
     {
-        if (FixedUpdateTotalTime < TotalTime)
+        if (_fixedUpdateTotalTime < TotalTime)
         {
-            FixedUpdateTotalTime += FixedDeltaTime;
+            if (TotalTime != _lastFixedUpdate)
+            {
+                FixedDeltaTimeActual = TotalTime - _lastFixedUpdate;
+                _lastFixedUpdate = TotalTime;
+            }
+
+            _fixedUpdateTotalTime += FixedDeltaTime;
             return true;
         }
-        return false;
+        else
+        {
+
+            return false;
+        }
     }
 
     internal static void Tick(float deltaTime)
