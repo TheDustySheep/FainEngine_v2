@@ -63,6 +63,6 @@ public class VertexArrayObject<TVertexType, TIndexType> : IDisposable
 
     public void Dispose()
     {
-        _gl.DeleteVertexArray(_handle);
+        _gl.DeleteBuffer(_handle);
     }
 }
