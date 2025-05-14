@@ -15,6 +15,7 @@ public static class ResourceLoader
         _gl = gl;
     }
 
+    #region Textures
     public static Texture2D LoadTexture2D(
         string filePath,
         WrappingModes wrapMode = WrappingModes.Clamp_To_Edge,
@@ -39,6 +40,9 @@ public static class ResourceLoader
 
         return new Texture2DArray(filePath, atlasSize, wrapMode, filterMode, mipMapMode);
     }
+    #endregion
+
+    #region Shaders
     public static Shader LoadShader(string folder)
     {
         if (_gl is null)
@@ -124,7 +128,7 @@ public static class ResourceLoader
         return sb.ToString();
     }
 
-
+    #endregion
 
     public static Model LoadModel(string filePath)
     {
