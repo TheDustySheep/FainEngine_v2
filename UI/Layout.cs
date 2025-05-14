@@ -38,5 +38,12 @@ namespace FainEngine_v2.UI
             Center,
             End,
         }
+
+        public enum OverflowMode
+        {
+            Wrap,
+            Clip,
+            Ellipsis
+        }
     }
 }

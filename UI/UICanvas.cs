@@ -10,8 +10,8 @@ namespace FainEngine_v2.UI;
 
 public class UICanvas
 {
-    public FontAtlas Atlas { get; private set; }
-    public UIElement Root { get; init; }
+    public readonly FontAtlas Atlas;
+    public readonly UIElement Root;
     public float Priority { get; set; }
 
     private UIDrawer  _drawer;

@@ -13,6 +13,7 @@ namespace FainEngine_v2.UI.FontRendering;
 
 public class FontAtlas
 {
+    public float LineHeight => _fontSize;
     private Font _font;
     private int _padding;
     private int _atlasSize;

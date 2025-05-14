@@ -7,8 +7,8 @@ public class UIElement
 {
     #region Tree
 
-    protected UIElement? _parent;
-    protected List<UIElement> _children = new();
+    private UIElement? _parent;
+    private List<UIElement> _children = new();
 
     public UIElement? Parent => _parent;
     public IReadOnlyList<UIElement> Children => _children;
