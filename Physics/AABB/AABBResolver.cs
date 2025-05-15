@@ -35,7 +35,7 @@ public static class AABBResolver
         return player;
     }
 
-    public static bool IsOverlapping(StaticAABB a, StaticAABB b)
+    public static bool IsOverlapping(IAABB a, IAABB b)
     {
         return
         !(
@@ -92,7 +92,7 @@ public static class AABBResolver
             overlap.Size.X < overlap.Size.Z)
         {
             // XPos_px is smallest overlap
-            if (a.Center.X > overlap.Center.X)
+            if (a.Center.X > overlap.Position.X)
                 return Vector3.UnitX * overlap.Size.X;
             else
                 return Vector3.UnitX * -overlap.Size.X;
@@ -102,7 +102,7 @@ public static class AABBResolver
             overlap.Size.Y < overlap.Size.Z)
         {
             // YPox_px is smallest overlap
-            if (a.Center.Y > overlap.Center.Y)
+            if (a.Center.Y > overlap.Position.Y)
                 return Vector3.UnitY * overlap.Size.Y;
             else
                 return Vector3.UnitY * -overlap.Size.Y;
@@ -111,7 +111,7 @@ public static class AABBResolver
             overlap.Size.Z < overlap.Size.X &&
             overlap.Size.Z < overlap.Size.Y)
         {
-            if (a.Center.Z > overlap.Center.Z)
+            if (a.Center.Z > overlap.Position.Z)
                 return Vector3.UnitZ * overlap.Size.Z;
             else
                 return Vector3.UnitZ * -overlap.Size.Z;
@@ -160,6 +160,7 @@ public static class AABBResolver
         return entity;
     }
 
+    const float INF = 1e20f;
     public static float SweptCollision(DynamicAABB b1, StaticAABB b2, out Vector3 normal)
     {
         // find the distance between the objects on the near and far sides for both x and y 
@@ -205,8 +206,8 @@ public static class AABBResolver
 
         if (b1.Delta.X == 0.0f)
         {
-            Entry.X = float.NegativeInfinity;
-            Exit.X = float.PositiveInfinity;
+            Entry.X = -INF;
+            Exit.X  =  INF;
         }
         else
         {
@@ -216,8 +217,8 @@ public static class AABBResolver
 
         if (b1.Delta.Y == 0.0f)
         {
-            Entry.Y = float.NegativeInfinity;
-            Exit.Y = float.PositiveInfinity;
+            Entry.Y = -INF;
+            Exit.Y  =  INF;
         }
         else
         {
@@ -227,8 +228,8 @@ public static class AABBResolver
 
         if (b1.Delta.Z == 0.0f)
         {
-            Entry.Z = float.NegativeInfinity;
-            Exit.Z = float.PositiveInfinity;
+            Entry.Z = -INF;
+            Exit.Z  =  INF;
         }
         else
         {

@@ -5,4 +5,5 @@ public enum CollisionMode
     NoCollisions,
     Stop,
     Slide,
+    Bounce,
 }
