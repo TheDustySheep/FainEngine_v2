@@ -40,6 +40,17 @@ namespace FainEngine_v2.Rendering.Meshing
             _gl.NamedBufferSubData(_handle, 0, data);
         }
 
+        public void FillByte(byte value)
+        {
+            _gl.ClearNamedBufferData(
+                _handle,
+                SizedInternalFormat.R8,
+                PixelFormat.Red,
+                PixelType.UnsignedByte,
+                ref value
+            );
+        }
+
         public void Bind(uint bindingPoint)
         {
             _gl.BindBufferBase(BufferTargetARB.ShaderStorageBuffer, bindingPoint, _handle);
