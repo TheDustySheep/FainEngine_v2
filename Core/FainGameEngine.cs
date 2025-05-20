@@ -1,5 +1,6 @@
 ﻿using FainEngine_v2.Rendering;
 using FainEngine_v2.Resources;
+using FainEngine_v2.Utils;
 using Silk.NET.Maths;
 using Silk.NET.OpenGL;
 using Silk.NET.Windowing;
@@ -86,6 +87,8 @@ public class FainGameEngine
         // Update loop
         EntityManager.Update();
         Update();
+
+        MainThreadDispatcher.ExecutePending();
 
         Gizmos.Tick();
 
