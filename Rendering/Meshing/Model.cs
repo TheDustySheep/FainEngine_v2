@@ -104,7 +104,7 @@ public class Model : IDisposable
 
         // process materials
         Material* material = scene->MMaterials[mesh->MMaterialIndex];
-        // we assume a convention for sampler names in the shaders. Each diffuse texture should be named
+        // we assume a convention for sampler _filePaths in the shaders. Each diffuse texture should be named
         // as 'texture_diffuseN' where N is a sequential number ranging from 1 to MAX_SAMPLER_NUMBER. 
         // Same applies to other texture as the following list summarizes:
         // diffuse: texture_diffuseN

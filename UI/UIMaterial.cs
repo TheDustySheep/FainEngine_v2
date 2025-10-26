@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FainEngine_v2.UI
 {
-    class UIMaterial : Material
+    public class UIMaterial : Material
     {
         public UIMaterial(Shader shader, Texture2D atlas) : base(shader)
         {

@@ -1,465 +1,105 @@
-﻿using FainEngine_v2.Core;
-using FainEngine_v2.UI.Elements;
+﻿using FainEngine_v2.Rendering.Cameras;
+using FainEngine_v2.Rendering;
+using FainEngine_v2.UI.Core;
+using FainEngine_v2.UI.UIElements;
 using System.Numerics;
+using FainEngine_v2.Rendering.Materials;
 
 namespace FainEngine_v2.UI;
 
-internal class UIDrawer
+public class UIDrawer : ALayoutDrawer
 {
-    UICanvas _UIManager;
+    public UIElement Root;
 
-    public UIDrawer(UICanvas uiManager)
+    readonly List<UIVertex> drawVerts = new();
+    readonly List<uint> drawIndices = new();
+
+    readonly UIMesh _mesh;
+    readonly Material _uiMaterial;
+
+    public UIDrawer(UIElement root, Material material)
     {
-        _UIManager = uiManager;
+        Root = root;
+        _uiMaterial = material;
+        _mesh = new UIMesh();
     }
 
-    internal void Process(UIElement root)
+    public void Draw(ICamera cam)
     {
-        var drawRoot = new DrawNode(root);
+        Vector2 screenSize = new Vector2(
+            GameGraphics.Window.FramebufferSize.X,
+            GameGraphics.Window.FramebufferSize.Y
+        );
 
-        Measure(drawRoot, Layout.Axis.X);
-        Allocate(drawRoot, Layout.Axis.X);
+        Root.Styles.XSize = screenSize.X;
+        Root.Styles.YSize = screenSize.Y;
 
-        Measure(drawRoot, Layout.Axis.Y);
-        Allocate(drawRoot, Layout.Axis.Y);
+        if (_mesh == null)
+            return;
 
-        Position(drawRoot, Layout.Axis.X);
-        Position(drawRoot, Layout.Axis.Y);
+        // Clear Data
+        drawVerts.Clear();
+        drawIndices.Clear();
 
-        Draw(drawRoot);
+        _mesh.Clear();
+
+        // Create Mesh
+        LayoutSolver.UpdateLayout(Root);
+        GenerateVertices(Root);
+
+        //Console.WriteLine("============================================");
+
+        Root.PrintTreeStylesAndLayout();
+
+        //foreach (var vert in drawVerts)
+        //{
+        //    Console.WriteLine($"Vert: {vert.Position}");
+        //}
+
+        // Update _mesh
+        _mesh.SetVertices(drawVerts.ToArray());
+        _mesh.SetTriangles(drawIndices.ToArray());
+        _mesh.Apply();
+
+        // GenerateVertices Mesh
+        _uiMaterial.Use();
+        _uiMaterial.SetUniforms();
+        _uiMaterial.SetViewMatrix(ViewMatrix(), cam);
+
+        _mesh.Draw();
     }
 
-    private static void Measure(DrawNode node, Layout.Axis axis)
+    public override void AddElementToMesh(UIElement elem)
     {
-        foreach (var child in node.Children)
+        uint vertCount = (uint)drawVerts.Count;
+
+        var verts = elem.GenerateVerts();
+
+        drawVerts.AddRange(verts);
+
+        // If multiple quads returned then add them all
+        for (int i = 0; i < verts.Count() / 4; i++)
         {
-            Measure(child, axis);
-        }
-
-        var elem = node.Element;
-
-        switch (elem.GetSizeMode(axis))
-        {
-            case Layout.SizeMode.Fixed:
-                {
-                    node.SetSize(axis, elem.GetSize(axis));
-                }
-                break;
-            case Layout.SizeMode.Fit:
-                {
-                    float total =
-                            elem.GetPaddingStart(axis) +
-                            elem.GetPaddingEnd(axis);
-
-                    if (elem.LayoutAxis == axis)
-                    {
-                        // Sum width
-                        total += elem.ChildGap * (node.Children.Length - 1);
-
-                        foreach (var child in node.Children)
-                            total += child.GetSize(axis);
-
-                    }
-                    else
-                    {
-                        // UVMax of children
-                        total += node.Children.Length == 0 ? 0 : node.Children.Max(i => i.GetSize(axis));
-                    }
-
-                    // Let it be the desired size if requested
-                    total = MathF.Max(elem.GetSize(axis), total);
-                    node.SetSize(axis, total);
-                }
-                break;
-            case Layout.SizeMode.Grow:
-                {
-                    node.SetSize(axis, elem.GetSizeMin(axis));
-                }
-                break;
-            case Layout.SizeMode.Shrink:
-                {
-                    node.SetSize(axis, elem.GetSizeMax(axis));
-                }
-                break;
-            case Layout.SizeMode.Flexible:
-                {
-                    node.SetSize(axis, elem.GetSize(axis));
-                }
-                break;
-            default:
-                throw new NotImplementedException();
-
+            drawIndices.Add(vertCount + 0);
+            drawIndices.Add(vertCount + 1);
+            drawIndices.Add(vertCount + 2);
+            drawIndices.Add(vertCount + 2);
+            drawIndices.Add(vertCount + 3);
+            drawIndices.Add(vertCount + 0);
+            vertCount += 4;
         }
     }
 
-    private static void Allocate(DrawNode node, Layout.Axis axis)
+    internal Matrix4x4 ViewMatrix()
     {
-        var elem = node.Element;
+        var scale = Matrix4x4.CreateScale(
+            2f / GameGraphics.Window.FramebufferSize.X,
+            2f / -GameGraphics.Window.FramebufferSize.Y,
+            -0.0001f
+        );
+        var translation = Matrix4x4.CreateTranslation(-1f, 1f, 0f);
 
-        if (axis == elem.LayoutAxis)
-        {
-            float remainingSize =
-                node.GetSize(axis) -
-                elem.GetPaddingStart(axis) -
-                elem.GetPaddingEnd(axis);
-
-            foreach (var child in node.Children)
-            {
-                remainingSize -= child.GetSize(axis);
-            }
-
-            remainingSize -= (node.Children.Length - 1) * elem.ChildGap;
-
-            GrowChildren(node, axis, ref remainingSize);
-            ShrinkChildren(node, axis, ref remainingSize);
-        }
-        else
-        {
-            float remainingSize =
-                node.GetSize(axis) -
-                elem.GetPaddingStart(axis) -
-                elem.GetPaddingEnd(axis);
-
-            foreach (var child in node.Children)
-            {
-                var childSizeMode = child.Element.GetSizeMode(axis);
-                if (childSizeMode == Layout.SizeMode.Grow)
-                {
-                    child.SetSize(axis,
-                        MathF.Max
-                        (
-                            child.GetSize(axis),
-                            remainingSize
-                        )
-                    );
-                }
-                else if (childSizeMode == Layout.SizeMode.Shrink)
-                {
-                    child.SetSize(axis,
-                        MathF.Min
-                        (
-                            child.GetSize(axis),
-                            remainingSize
-                        )
-                    );
-                }
-            }
-        }
+        return scale * translation;
+        //return Matrix4x4.Identity;
     }
-
-    private static void GrowChildren(DrawNode node, Layout.Axis axis, ref float remainingSize)
-    {
-        // Growable children
-        List<DrawNode> growable = node
-            .Children
-            .Where(i =>
-                i.Element.GetSizeMode(axis) == Layout.SizeMode.Grow ||
-                i.Element.GetSizeMode(axis) == Layout.SizeMode.Flexible
-            )
-            .ToList();
-
-        while (remainingSize > 0 && growable.Count > 0)
-        {
-            float beginSize = remainingSize;
-
-            // Calculate child sizes
-            float smallest = growable[0].GetSize(axis);
-            float secondSmallest = float.PositiveInfinity;
-            float addSize = remainingSize;
-
-            foreach (var child in growable)
-            {
-                float childSize = child.GetSize(axis);
-
-                if (childSize < smallest)
-                {
-                    secondSmallest = smallest;
-                    smallest = childSize;
-                }
-                else if (childSize > smallest)
-                {
-                    secondSmallest = MathF.Min(secondSmallest, childSize);
-                    addSize = secondSmallest - smallest;
-                }
-            }
-
-            addSize = MathF.Min(addSize, remainingSize / growable.Count);
-
-            for (int i = 0; i < growable.Count; i++)
-            {
-                var child = growable[i];
-
-                float prevWidth = child.GetSize(axis);
-                if (prevWidth == smallest)
-                {
-                    child.SetSize(axis, prevWidth + addSize);
-
-                    float maxSize = child.Element.GetSizeMax(axis);
-                    if (child.GetSize(axis) >= maxSize)
-                    {
-                        child.SetSize(axis, maxSize);
-                        growable.RemoveAt(i);
-                        i--;
-                    }
-
-                    remainingSize -= (child.GetSize(axis) - prevWidth);
-                }
-            }
-
-            // No more expansion can happen
-            if (remainingSize == beginSize)
-                break;
-        }
-    }
-
-    private static void ShrinkChildren(DrawNode node, Layout.Axis axis, ref float remainingSize)
-    {
-        List<DrawNode> shrinkable = node
-            .Children
-            .Where(i => 
-                i.Element.GetSizeMode(axis) == Layout.SizeMode.Shrink ||
-                i.Element.GetSizeMode(axis) == Layout.SizeMode.Flexible
-            )
-            .ToList();
-
-        while (remainingSize < 0 && shrinkable.Count > 0)
-        {
-            float beginSize = remainingSize;
-
-            float largest = shrinkable[0].GetSize(axis);
-            float secondLargest = 0f;
-            float addSize = remainingSize;
-
-            foreach (var child in shrinkable)
-            {
-                float childSize = child.GetSize(axis);
-
-                if (childSize > largest)
-                {
-                    secondLargest = largest;
-                    largest = childSize;
-                }
-                else if (childSize < largest)
-                {
-                    secondLargest = MathF.Max(secondLargest, childSize);
-                    addSize = secondLargest - largest;
-                }
-            }
-
-            addSize = MathF.Max(addSize, remainingSize / shrinkable.Count);
-
-            for (int i = 0; i < shrinkable.Count; i++)
-            {
-                var child = shrinkable[i];
-                float prevSize = child.GetSize(axis);
-
-                if (prevSize == largest)
-                {
-                    float minSize = child.Element.GetSizeMin(axis);
-
-                    child.SetSize(axis, prevSize + addSize);
-
-                    if (child.GetSize(axis) <= minSize)
-                    {
-                        child.SetSize(axis, minSize);
-                        shrinkable.RemoveAt(i);
-                        i--;
-                    }
-
-                    // Account for what we actually removed
-                    remainingSize += (prevSize - child.GetSize(axis));
-                }
-            }
-
-            // If nothing changed this pass, bail out to avoid an infinite loop
-            if (remainingSize == beginSize)
-                break;
-        }
-    }
-
-    private static void Position(DrawNode node, Layout.Axis axis)
-    {
-        var elem = node.Element;
-
-        float offset = 
-            node.GetOffset(axis) +
-            elem.GetPaddingStart(axis);
-
-        if (elem.LayoutAxis == axis)
-        {
-            float remainingSize =
-                node.GetSize        (axis) -
-                elem.GetPaddingStart(axis) -
-                elem.GetPaddingEnd  (axis) -
-                (elem.ChildGap * (node.Children.Length - 1));
-
-            foreach (var child in node.Children)
-                remainingSize -= child.GetSize(axis);
-
-            switch (elem.Justify)
-            {
-                case Layout.Justify.Start:
-                    {
-                        foreach (var child in node.Children)
-                        {
-                            child.SetOffset(axis, offset);
-                            offset += child.GetSize(axis) + elem.ChildGap;
-
-                            Position(child, axis);
-                        }
-                    }
-                    break;
-                case Layout.Justify.Center:
-                    {
-                        offset += remainingSize / 2f;
-                        foreach (var child in node.Children)
-                        {
-                            child.SetOffset(axis, offset);
-                            offset += child.GetSize(axis) + elem.ChildGap;
-
-                            Position(child, axis);
-                        }
-                    }
-                    break;
-                case Layout.Justify.End:
-                    {
-                        offset += remainingSize;
-                        foreach (var child in node.Children)
-                        {
-                            child.SetOffset(axis, offset);
-                            offset += child.GetSize(axis) + elem.ChildGap;
-
-                            Position(child, axis);
-                        }
-                    }
-                    break;
-                case Layout.Justify.SpaceBetween:
-                    {
-                        float gap = 0f;
-                        if (node.Children.Length > 1)
-                            gap = remainingSize / (node.Children.Length - 1);
-
-                        foreach (var child in node.Children)
-                        {
-                            child.SetOffset(axis, offset);
-                            offset += child.GetSize(axis) + gap;
-
-                            Position(child, axis);
-                        }
-                    }
-                    break;
-                case Layout.Justify.SpaceEvenly:
-                    {
-                        float gap = remainingSize / (node.Children.Length + 1);
-
-                        foreach (var child in node.Children)
-                        {
-                            offset += gap;
-                            child.SetOffset(axis, offset);
-                            offset += child.GetSize(axis) + elem.ChildGap;
-
-                            Position(child, axis);
-                        }
-                    }
-                    break;
-                default:
-                    throw new NotImplementedException();
-            }
-
-
-        }
-        else
-        {
-            float parentSpace =
-                node.GetSize        (axis) -
-                elem.GetPaddingStart(axis) -
-                elem.GetPaddingEnd  (axis);
-
-            foreach (var child in node.Children)
-            {
-                float remainingSize = parentSpace - child.GetSize(axis);
-
-                switch (elem.Align)
-                {
-                    case Layout.Align.Start:
-                        {
-                            child.SetOffset(axis, offset);
-                        }
-                        break;
-                    case Layout.Align.Center:
-                        {
-                            child.SetOffset(axis, offset + remainingSize / 2f);
-                        }
-                        break;
-                    case Layout.Align.End:
-                        {
-                            child.SetOffset(axis, offset + remainingSize);
-                        }
-                        break;
-                    default:
-                        throw new NotImplementedException();
-                }
-
-                Position(child, axis);
-            }
-        }
-    }
-
-    private void Draw(DrawNode node, int z=0)
-    {
-        if (node.Element.IsVisible)
-        {
-            _UIManager.DrawElement(node);
-        }
-
-        foreach (var child in node.Children)
-        {
-            Draw(child, z+1);
-        }
-    }
-
-}
-
-internal class DrawNode
-{
-    public UIElement Element { get; }
-    public DrawNode? Parent { get; }
-    public DrawNode[] Children { get; }
-
-    public DrawNode(UIElement element, DrawNode? parent = null)
-    {
-        Element = element ?? throw new ArgumentNullException(nameof(element));
-        Parent = parent;
-
-        // Recursively build child DrawNodes
-        Children = element.Children
-                            .Select(child => new DrawNode(child, this))
-                            .ToArray();
-    }
-
-    internal float GetSize(Layout.Axis axis) => axis == Layout.Axis.X ? XSize : YSize;
-    internal void SetSize(Layout.Axis axis, float size)
-    {
-        if (axis == Layout.Axis.X)
-            XSize = size;
-        else
-            YSize = size;
-    }
-
-    internal float GetOffset(Layout.Axis axis) => axis == Layout.Axis.X ? XOffset : YOffset;
-    internal void SetOffset(Layout.Axis axis, float offset)
-    {
-        if (axis == Layout.Axis.X)
-            XOffset = offset;
-        else
-            YOffset = offset;
-    }
-
-    public float XSize;
-    public float YSize;
-
-    public float XOffset;
-    public float YOffset;
-
-    public int ZIndex = 0;
 }

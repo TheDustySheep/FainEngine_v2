@@ -1,10 +1,10 @@
-﻿using FainEngine_v2.UI.FontRendering;
+﻿using FainEngine_v2.UI.Fonts;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Numerics;
 
-namespace FainEngine_v2.UI.Elements;
-
+namespace FainEngine_v2.UI.Obsolete.Elements;
+/*
 public class UIText : UIElement
 {
     public string Text
@@ -205,3 +205,4 @@ public class UIText : UIElement
         return verts;
     }
 }
+*/

@@ -4,11 +4,11 @@ using FainEngine_v2.Rendering.Lighting;
 using FainEngine_v2.Rendering.Materials;
 using FainEngine_v2.Rendering.Meshing;
 using FainEngine_v2.Rendering.PostProcessing;
-using FainEngine_v2.UI;
 using Silk.NET.Maths;
 using Silk.NET.OpenGL;
 using Silk.NET.Windowing;
 using System.Numerics;
+using FainEngine_v2.UI;
 
 namespace FainEngine_v2.Rendering;
 public static class GameGraphics
@@ -69,11 +69,11 @@ public static class GameGraphics
         // Clear the render Queue
         renderQueue.Clear();
 
-        // Draw onto the main screen
+        // GenerateVertices onto the main screen
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
         _postProcess?.Draw();
 
-        // Draw UI
+        // GenerateVertices OldUI
         foreach (var canvas in Canvases.OrderBy(i => i.Priority))
         {
             canvas.Draw(camera);

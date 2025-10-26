@@ -45,7 +45,7 @@ public static class AABBResolver2
         return player;
     }
 
-    /// <summary>Axis-aligned overlap check using Min/Max points.</summary>
+    /// <summary>LayoutAxis-aligned overlap check using Min/Max points.</summary>
     public static bool IsOverlapping(StaticAABB a, StaticAABB b)
     {
         return !(a.Max.X < b.Min.X || a.Min.X > b.Max.X ||

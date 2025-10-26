@@ -67,4 +67,8 @@
     <Folder Include="Resources\Fonts\Montserrat\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\FainEngine_v2.UI\FainEngine_v2.UI.csproj" />
+  </ItemGroup>
+
 </Project>

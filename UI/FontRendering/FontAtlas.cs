@@ -1,6 +1,4 @@
-﻿using System.Text;
-using FainEngine_v2.Rendering.Materials;
-using Silk.NET.OpenGL;
+﻿using FainEngine_v2.Rendering.Materials;
 using System.Numerics;
 using SixLabors.Fonts;
 using SixLabors.Fonts.Unicode;
@@ -9,9 +7,9 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Drawing.Processing;
 
-namespace FainEngine_v2.UI.FontRendering;
+namespace FainEngine_v2.UI.Fonts;
 
-public class FontAtlas
+public class FontAtlas : IFontAtlas
 {
     public float LineHeight => _fontSize;
     private Font _font;
@@ -19,11 +17,10 @@ public class FontAtlas
     private int _atlasSize;
     private float _fontSize;
 
-    private readonly Dictionary<char, GlyphData> glyphs = new();
-
+    public FontMapping Glyphs { get; private set; } = new FontMapping();
     public Texture2D AtlasTexture { get; private set; }
 
-    public FontAtlas(string fontPath, float fontSize, int atlasSize=1024, int padding=2)
+    public FontAtlas(string fontPath, float fontSize, int atlasSize = 1024, int padding = 2)
     {
         _padding = padding;
         _atlasSize = atlasSize;
@@ -67,10 +64,10 @@ public class FontAtlas
                         Character = c,
                         AdvancePx = scale * new Vector2(gm.AdvanceWidth, gm.AdvanceHeight),
                         BearingPx = scale * new Vector2(gm.LeftSideBearing, gm.BottomSideBearing),
-                        BoundsPx  = scale * new Vector2(gm.Width, gm.Height),
+                        BoundsPx = scale * new Vector2(gm.Width, gm.Height),
                     };
 
-                    int width  = (int)MathF.Ceiling(glyph.AdvancePx.X);
+                    int width = (int)MathF.Ceiling(glyph.AdvancePx.X);
                     int height = (int)MathF.Ceiling(glyph.AdvancePx.Y);
 
                     if (xPos + width > _atlasSize)
@@ -106,7 +103,7 @@ public class FontAtlas
                     xPos += width + _padding;
                     yMax = int.Max(yMax, height);
 
-                    glyphs[c] = glyph;
+                    Glyphs[c] = glyph;
                 }
             });
 
@@ -129,35 +126,5 @@ public class FontAtlas
         }
 
         return chars.ToString();
-    }
-
-    public bool TryGetGlyph(char c, out GlyphData data)
-    {
-        return glyphs.TryGetValue(c, out  data);
-    }
-
-    public struct GlyphData
-    {
-        public char Character;
-        public Vector2 BearingPx;
-        public Vector2 AdvancePx;
-        public Vector2 BoundsPx;
-
-        public Vector2 UVMin;
-        public Vector2 UVMax;
-
-        public override string ToString()
-        {
-            StringBuilder sb = new();
-
-            sb.AppendLine($"Character {Character}");
-            sb.AppendLine($"Bearing   {BearingPx}");
-            sb.AppendLine($"Advance   {AdvancePx}");
-            sb.AppendLine($"Bounds    {BoundsPx}");
-            sb.AppendLine($"UV Min    {UVMin}");
-            sb.AppendLine($"UV Max    {UVMax}");
-
-            return sb.ToString();
-        }
     }
 }
