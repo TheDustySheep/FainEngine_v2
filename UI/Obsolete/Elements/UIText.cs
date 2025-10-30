@@ -190,10 +190,10 @@ public class UIText : UIElement
                 Vector2 uvMin = g.UVMin;
                 Vector2 uvMax = g.UVMax;
 
-                verts.Add(new UIVertex(gMin.X, gMin.Y, node.ZIndex, this, new Vector2(uvMin.X, uvMin.Y)));
-                verts.Add(new UIVertex(gMax.X, gMin.Y, node.ZIndex, this, new Vector2(uvMax.X, uvMin.Y)));
-                verts.Add(new UIVertex(gMax.X, gMax.Y, node.ZIndex, this, new Vector2(uvMax.X, uvMax.Y)));
-                verts.Add(new UIVertex(gMin.X, gMax.Y, node.ZIndex, this, new Vector2(uvMin.X, uvMax.Y)));
+                verts.AddClass(new UIVertex(gMin.X, gMin.Y, node.ZIndex, this, new Vector2(uvMin.X, uvMin.Y)));
+                verts.AddClass(new UIVertex(gMax.X, gMin.Y, node.ZIndex, this, new Vector2(uvMax.X, uvMin.Y)));
+                verts.AddClass(new UIVertex(gMax.X, gMax.Y, node.ZIndex, this, new Vector2(uvMax.X, uvMax.Y)));
+                verts.AddClass(new UIVertex(gMin.X, gMax.Y, node.ZIndex, this, new Vector2(uvMin.X, uvMax.Y)));
 
                 xPos += g.AdvancePx.X;
                 yHeight = MathF.Max(yHeight, g.AdvancePx.Y);

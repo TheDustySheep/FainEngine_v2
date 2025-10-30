@@ -23,8 +23,8 @@ namespace FainEngine_v2.Extensions
         public static void SortByDescending<T, TKey>(this List<T> list, Func<T, TKey> keySelector)
             where TKey : IComparable<TKey>
         {
-            if (list == null) throw new ArgumentNullException(nameof(list));
-            if (keySelector == null) throw new ArgumentNullException(nameof(keySelector));
+            ArgumentNullException.ThrowIfNull(list);
+            ArgumentNullException.ThrowIfNull(keySelector);
 
             list.Sort((a, b) => keySelector(b).CompareTo(keySelector(a)));
         }

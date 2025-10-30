@@ -148,7 +148,7 @@ public class Model : IDisposable
             {
                 if (_texturesLoaded[j].Path == path)
                 {
-                    textures.Add(_texturesLoaded[j]);
+                    textures.AddClass(_texturesLoaded[j]);
                     skip = true;
                     break;
                 }
@@ -157,8 +157,8 @@ public class Model : IDisposable
             {
                 var texture = new Texture2D(_gl, Directory, type);
                 texture.Path = path;
-                textures.Add(texture);
-                _texturesLoaded.Add(texture);
+                textures.AddClass(texture);
+                _texturesLoaded.AddClass(texture);
             }
         }
         return textures;

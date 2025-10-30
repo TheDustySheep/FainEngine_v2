@@ -1,10 +1,8 @@
 ﻿using FainEngine_v2.Rendering.Cameras;
-using FainEngine_v2.Resources;
 using FainEngine_v2.UI.FontRendering;
-using FainEngine_v2.UI.Fonts;
-using FainEngine_v2.UI.Stylesheets;
+using FainEngine_v2.UI.Fss.Evaluators;
 using FainEngine_v2.UI.UIElements;
-using System.Drawing;
+using static FainEngine_v2.UI.Fss.Styling.Styles;
 
 namespace FainEngine_v2.UI;
 
@@ -36,8 +34,8 @@ public class UICanvas
     private static UIElement CreateRoot()
     {
         var elem = new UIElement();
-        elem.Styles.XSizeMode = IStyles.SizeMode.Fixed;
-        elem.Styles.YSizeMode = IStyles.SizeMode.Fixed;
+        elem.Styles.Stylesheet.XSizeMode = new ValueStyle<SizeMode>(SizeMode.Fixed);
+        elem.Styles.Stylesheet.YSizeMode = new ValueStyle<SizeMode>(SizeMode.Fixed);
         return elem;
     }
 }

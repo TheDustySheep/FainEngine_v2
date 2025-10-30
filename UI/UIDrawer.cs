@@ -9,7 +9,7 @@ namespace FainEngine_v2.UI;
 
 public class UIDrawer : ALayoutDrawer
 {
-    public UIElement Root;
+    public IRenderElement Root;
 
     readonly List<UIVertex> drawVerts = new();
     readonly List<uint> drawIndices = new();
@@ -17,7 +17,7 @@ public class UIDrawer : ALayoutDrawer
     readonly UIMesh _mesh;
     readonly Material _uiMaterial;
 
-    public UIDrawer(UIElement root, Material material)
+    public UIDrawer(IRenderElement root, Material material)
     {
         Root = root;
         _uiMaterial = material;
@@ -31,8 +31,8 @@ public class UIDrawer : ALayoutDrawer
             GameGraphics.Window.FramebufferSize.Y
         );
 
-        Root.Styles.XSize = screenSize.X;
-        Root.Styles.YSize = screenSize.Y;
+        Root.Layout.Styles.XSize = screenSize.X;
+        Root.Layout.Styles.YSize = screenSize.Y;
 
         if (_mesh == null)
             return;
@@ -49,7 +49,7 @@ public class UIDrawer : ALayoutDrawer
 
         //Console.WriteLine("============================================");
 
-        Root.PrintTreeStylesAndLayout();
+        ((UIElement)Root).PrintTreeStylesAndLayout();
 
         //foreach (var vert in drawVerts)
         //{
@@ -69,7 +69,7 @@ public class UIDrawer : ALayoutDrawer
         _mesh.Draw();
     }
 
-    public override void AddElementToMesh(UIElement elem)
+    public override void AddElementToMesh(IRenderElement elem)
     {
         uint vertCount = (uint)drawVerts.Count;
 
