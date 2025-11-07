@@ -4,12 +4,17 @@ using FainEngine_v2.UI.Core;
 using FainEngine_v2.UI.UIElements;
 using System.Numerics;
 using FainEngine_v2.Rendering.Materials;
+using FainEngine_v2.UI.UIElements.Types;
+using FainEngine_v2.UI.Fss.StyleClasses;
 
 namespace FainEngine_v2.UI;
 
 public class UIDrawer : ALayoutDrawer
 {
-    public IRenderElement Root;
+    private UIPipeline uiPipeline = new UIPipeline();
+
+    private IRenderElement _root;
+    public IClassList? ClassList;
 
     readonly List<UIVertex> drawVerts = new();
     readonly List<uint> drawIndices = new();
@@ -17,9 +22,10 @@ public class UIDrawer : ALayoutDrawer
     readonly UIMesh _mesh;
     readonly Material _uiMaterial;
 
-    public UIDrawer(IRenderElement root, Material material)
+    public UIDrawer(IRenderElement root, IClassList? classList, Material material)
     {
-        Root = root;
+        _root = root;
+        ClassList = classList;
         _uiMaterial = material;
         _mesh = new UIMesh();
     }
@@ -31,8 +37,8 @@ public class UIDrawer : ALayoutDrawer
             GameGraphics.Window.FramebufferSize.Y
         );
 
-        Root.Layout.Styles.XSize = screenSize.X;
-        Root.Layout.Styles.YSize = screenSize.Y;
+        _root.Styles.XSize = screenSize.X;
+        _root.Styles.YSize = screenSize.Y;
 
         if (_mesh == null)
             return;
@@ -43,13 +49,15 @@ public class UIDrawer : ALayoutDrawer
 
         _mesh.Clear();
 
-        // Create Mesh
-        LayoutSolver.UpdateLayout(Root);
-        GenerateVertices(Root);
+        // Solve Layout
+        uiPipeline.Render(_root, ClassList);
+
+        // Generate Mesh
+        GenerateVertices(_root);
 
         //Console.WriteLine("============================================");
 
-        ((UIElement)Root).PrintTreeStylesAndLayout();
+        ((UIElement)_root).PrintTreeStylesAndLayout();
 
         //foreach (var vert in drawVerts)
         //{

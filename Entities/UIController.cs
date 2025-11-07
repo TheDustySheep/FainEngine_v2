@@ -1,6 +1,6 @@
 ﻿using FainEngine_v2.Rendering;
 using FainEngine_v2.UI;
-using FainEngine_v2.UI.UIElements;
+using FainEngine_v2.UI.UIElements.Types;
 
 namespace FainEngine_v2.Entities;
 
