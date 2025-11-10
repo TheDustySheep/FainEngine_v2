@@ -1,5 +1,4 @@
 using Silk.NET.OpenGL;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace FainEngine_v2.Rendering.Meshing;
 
@@ -13,7 +12,7 @@ public class BufferObject<TDataType> : IDisposable
     private readonly GL _gl;
     private bool _disposed;
 
-    public BufferObject( 
+    public BufferObject(
         BufferTargetARB bufferType,
         VertexBufferObjectUsage bufferUsage = VertexBufferObjectUsage.StaticDraw
     )

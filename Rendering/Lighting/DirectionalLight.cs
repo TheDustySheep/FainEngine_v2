@@ -16,18 +16,18 @@ namespace FainEngine_v2.Rendering.Lighting
         public void ApplyToShader(Shader shader)
         {
             shader.SetUniform($"light.direction", Direction);
-            shader.SetUniform($"light.ambient",   Ambient);
-            shader.SetUniform($"light.diffuse",   Diffuse);
-            shader.SetUniform($"light.specular",  Specular);
+            shader.SetUniform($"light.ambient", Ambient);
+            shader.SetUniform($"light.diffuse", Diffuse);
+            shader.SetUniform($"light.specular", Specular);
             shader.SetUniform($"light.intensity", Intensity);
         }
-        
+
         public static DirectionalLight DefaultSun = new DirectionalLight
         {
             Direction = new Vector3(-0.30f, -1.00f, -0.50f).Normalized(),
-            Ambient   = Vector3.One * 0.8f,
-            Diffuse   = Vector3.One * 0.2f,
-            Specular  = Vector3.One * 0.1f,
+            Ambient = Vector3.One * 0.8f,
+            Diffuse = Vector3.One * 0.2f,
+            Specular = Vector3.One * 0.1f,
             Intensity = 1.0f
         };
     }

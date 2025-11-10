@@ -1,7 +1,7 @@
 using FainEngine_v2.Extensions;
 using System.Numerics;
 
-namespace FainEngine_v2.Core.GameObjects;
+namespace FainEngine_v2.Entities;
 
 public class Transform
 {

@@ -1,4 +1,4 @@
-﻿using FainEngine_v2.Core.GameObjects;
+﻿using FainEngine_v2.Entities;
 using FainEngine_v2.Rendering.BoundingShapes;
 using FainEngine_v2.Utils;
 using System.Numerics;

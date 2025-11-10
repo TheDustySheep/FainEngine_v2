@@ -7,7 +7,7 @@ namespace FainEngine_v2.Rendering.Materials
         protected GL _gl;
         protected uint _handle;
         public uint Handle => _handle;
-        
+
         protected abstract TextureTarget Target { get; }
 
         public TextureObject()

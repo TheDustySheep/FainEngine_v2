@@ -1,21 +1,24 @@
 ﻿using FainEngine_v2.Rendering.Materials;
-using System.Numerics;
+using FainEngine_v2.Resources;
+using FainEngine_v2.UI.Fonts;
+using FainEngine_v2.Utils;
 using SixLabors.Fonts;
 using SixLabors.Fonts.Unicode;
-using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Drawing.Processing;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
+using System.Numerics;
 
-namespace FainEngine_v2.UI.Fonts;
+namespace FainEngine_v2.UI.FontRendering;
 
 public class FontAtlas : IFontAtlas
 {
     public float LineHeight => _fontSize;
-    private Font _font;
-    private int _padding;
-    private int _atlasSize;
-    private float _fontSize;
+    private readonly Font _font;
+    private readonly int _padding;
+    private readonly int _atlasSize;
+    private readonly float _fontSize;
 
     public FontMapping Glyphs { get; private set; } = new FontMapping();
     public Texture2D AtlasTexture { get; private set; }

@@ -15,7 +15,7 @@ public sealed class FrameBuffer : IFrameBuffer, IDisposable
     public FrameBuffer(int width, int height)
     {
         _gl = GameGraphics.GL;
-        Width  = (uint)width;
+        Width = (uint)width;
         Height = (uint)height;
 
         _gl.CreateFramebuffers(1, out _fbo);

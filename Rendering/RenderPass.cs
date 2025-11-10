@@ -2,6 +2,6 @@
 
 public enum RenderPass
 {
-    Opaque      = 0,
+    Opaque = 0,
     Transparent = 100,
 }

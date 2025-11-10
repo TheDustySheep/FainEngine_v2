@@ -1,7 +1,7 @@
-﻿using System.Collections.Concurrent;
+﻿using Silk.NET.OpenGL;
+using System.Collections.Concurrent;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using Silk.NET.OpenGL;
 
 namespace FainEngine_v2.Rendering.Meshing;
 

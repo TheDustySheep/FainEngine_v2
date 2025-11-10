@@ -22,7 +22,7 @@ public abstract class AMesh<TVertexType, TIndexType> : IMesh
     public AMesh()
     {
         _gl = GameGraphics.GL;
-        EBO = new BufferObject<TIndexType> (BufferTargetARB.ElementArrayBuffer);
+        EBO = new BufferObject<TIndexType>(BufferTargetARB.ElementArrayBuffer);
         VBO = new BufferObject<TVertexType>(BufferTargetARB.ArrayBuffer);
         VAO = new VertexArrayObject<TVertexType, TIndexType>(_gl, VBO, EBO);
     }

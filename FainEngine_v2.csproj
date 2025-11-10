@@ -68,6 +68,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\FainEngine\FainEngine.Utils\FainEngine_v2.Utils.csproj" />
     <ProjectReference Include="..\FainEngine_v2.UI\FainEngine_v2.UI.csproj" />
   </ItemGroup>
 

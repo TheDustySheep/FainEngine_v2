@@ -7,19 +7,13 @@ namespace FainEngine_v2.UI.FontRendering;
 
 public class FontController : IFontController
 {
-    public FontController()
-    {
-        IFontController.Instance = this;
-    }
-
-    private Dictionary<string, string> _filePaths = new Dictionary<string, string>()
+    private readonly Dictionary<string, string> _filePaths = new Dictionary<string, string>()
     {
         { "default", @"Resources/Fonts/Tinos/Tinos-Regular.ttf" },
         { "tinos-regular", @"Resources/Fonts/Tinos/Tinos-Regular.ttf" }
     };
 
-    private Dictionary<(string, int), FontAtlas> _fonts = new();
-    public UIMaterial? UIMaterial = null;
+    private readonly Dictionary<(string, int), FontAtlas> _fonts = new();
 
     public bool RequestFontAtlas(string fontName, int fontSize, [NotNullWhen(true)] out FontAtlas? atlas)
     {
@@ -33,11 +27,10 @@ public class FontController : IFontController
             Debug.WriteLine($"Font File not Found: {fontName}");
             return false;
         }
-        
+
         // Load a new atlas
         atlas = new FontAtlas(filePath, fontSize);
         _fonts[(fontName.ToLower(), fontSize)] = atlas;
-        UIMaterial = new UIMaterial(ResourceLoader.LoadShader(@"Resources/UI"), atlas.AtlasTexture);
         return true;
     }
 

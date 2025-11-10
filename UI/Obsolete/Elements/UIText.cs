@@ -1,9 +1,4 @@
-﻿using FainEngine_v2.UI.Fonts;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Numerics;
-
-namespace FainEngine_v2.UI.Obsolete.Elements;
+﻿namespace FainEngine_v2.UI.Obsolete.Elements;
 /*
 public class UIText : UIElement
 {
@@ -42,10 +37,10 @@ public class UIText : UIElement
         }
     }
 
-    public UIText(UICanvas canvas, string text)
+    public UIText(UICanvas _canvas, string text)
     {
         _text = text;
-        _font = canvas.Atlas;
+        _font = _canvas.Atlas;
 
         TextColour = Color.Black;
 
@@ -160,7 +155,7 @@ public class UIText : UIElement
         return new Vector2(xMax, ySum);
     }
 
-    internal override IEnumerable<UIVertex> GenerateVerts(DrawNode node)
+    internal override IEnumerable<UIVertex> GenerateMesh(DrawNode node)
     {
         Vector2 min = new Vector2(node.XOffset, node.YOffset);
         Vector2 max = new Vector2(node.XSize, node.YSize) + min;

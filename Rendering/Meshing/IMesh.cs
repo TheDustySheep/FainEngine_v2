@@ -1,8 +1,4 @@
-﻿using FainEngine_v2.Core;
-using FainEngine_v2.Rendering.BoundingShapes;
-using Silk.NET.OpenGL;
-using System.Numerics;
-using System.Runtime.InteropServices;
+﻿using FainEngine_v2.Rendering.BoundingShapes;
 
 namespace FainEngine_v2.Rendering.Meshing;
 

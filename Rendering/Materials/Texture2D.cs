@@ -1,5 +1,4 @@
-﻿using FainEngine_v2.Core;
-using Silk.NET.OpenGL;
+﻿using Silk.NET.OpenGL;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
@@ -56,10 +55,10 @@ public class Texture2D : Texture
         Height = height;
 
         _gl.TextureStorage2D(
-            _handle, 
+            _handle,
             1,
-            internalFormat, 
-            (uint)width, 
+            internalFormat,
+            (uint)width,
             (uint)height);
 
         //_gl.TexImage2D(
@@ -110,14 +109,14 @@ public class Texture2D : Texture
         {
             _gl.TextureSubImage2D(
                 _handle,
-                level:   0,
+                level: 0,
                 xoffset: bounds.Left,
                 yoffset: bounds.Top,
-                width:   (uint)bounds.Width,
-                height:  (uint)bounds.Height,
-                format:  PixelFormat.Rgba,
-                type:    PixelType.UnsignedByte,
-                pixels:  ptr
+                width: (uint)bounds.Width,
+                height: (uint)bounds.Height,
+                format: PixelFormat.Rgba,
+                type: PixelType.UnsignedByte,
+                pixels: ptr
             );
         }
     }

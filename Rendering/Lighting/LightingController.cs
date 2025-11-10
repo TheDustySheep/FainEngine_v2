@@ -1,5 +1,4 @@
-﻿using FainEngine_v2.Core;
-using FainEngine_v2.Rendering.Materials;
+﻿using FainEngine_v2.Rendering.Materials;
 
 namespace FainEngine_v2.Rendering.Lighting
 {

@@ -1,4 +1,3 @@
-using FainEngine_v2.Core;
 using Silk.NET.OpenGL;
 
 namespace FainEngine_v2.Rendering.Materials;
@@ -24,9 +23,9 @@ public abstract class Texture : TextureObject, IDisposable
     {
         if (textureIndex >= MAX_TEXTURE_COUNT)
             throw new Exception($"Texture out of range {textureIndex}/{MAX_TEXTURE_COUNT}");
-    
+
         var textureSlot = TextureUnit.Texture0 + (int)textureIndex;
-    
+
         _gl.ActiveTexture(textureSlot);
         _gl.BindTexture(Target, _handle);
     }

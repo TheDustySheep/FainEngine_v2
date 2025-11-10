@@ -1,7 +1,7 @@
 ﻿using FainEngine_v2.Rendering.Materials;
 using FainEngine_v2.Rendering.RenderObjects;
 
-namespace FainCraft.Resources.Shaders.PostProcessing
+namespace FainEngine_v2.Rendering.PostProcessing
 {
     public class PostProcessMaterial : Material
     {

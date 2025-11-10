@@ -1,13 +1,5 @@
 ﻿using Silk.NET.OpenGL;
-using SixLabors.ImageSharp.Memory;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace FainEngine_v2.Rendering.Meshing
 {
@@ -15,7 +7,7 @@ namespace FainEngine_v2.Rendering.Meshing
     {
         public uint Handle => _handle;
         private readonly uint _handle;
-        
+
         private readonly GL _gl;
 
         private readonly uint _bufferSize;
@@ -67,7 +59,7 @@ namespace FainEngine_v2.Rendering.Meshing
             _gl.ClearNamedBufferSubData(
                 _handle,
                 SizedInternalFormat.R8ui,
-                0, 
+                0,
                 _bufferSize,
                 PixelFormat.RedInteger,
                 PixelType.UnsignedByte,

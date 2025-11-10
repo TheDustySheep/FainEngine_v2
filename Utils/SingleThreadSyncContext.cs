@@ -6,7 +6,7 @@ namespace FainEngine_v2.Utils
     {
         private readonly BlockingCollection<(SendOrPostCallback, object?)> _queue = new();
 
-        public SingleThreadSynchronizationContext(bool setContext=true)
+        public SingleThreadSynchronizationContext(bool setContext = true)
         {
             if (setContext)
                 SetSynchronizationContext(this);

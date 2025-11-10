@@ -1,6 +1,4 @@
-﻿using System.Collections.Concurrent;
-
-namespace FainEngine_v2.Utils.Threading;
+﻿namespace FainEngine_v2.Utils.Threading;
 
 using System;
 using System.Collections.Concurrent;

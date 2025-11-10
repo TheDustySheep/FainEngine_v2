@@ -78,7 +78,7 @@ namespace FainEngine_v2.Collections
     {
         public int MaxItems { get; set; } = int.MaxValue;
         public readonly ConcurrentBag<T> Bag = new();
-        private Func<T> _factory;
+        private readonly Func<T> _factory;
 
         public ObjectPoolFactory(Func<T> factory)
         {

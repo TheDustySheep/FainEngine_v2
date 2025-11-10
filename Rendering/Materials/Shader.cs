@@ -31,7 +31,7 @@ public class Shader : IDisposable
 
     ~Shader()
     {
-        Dispose(); 
+        Dispose();
     }
 
     public void Use()

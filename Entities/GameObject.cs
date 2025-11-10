@@ -1,6 +1,4 @@
-﻿using FainEngine_v2.Core.GameObjects;
-
-namespace FainEngine_v2.Entities;
+﻿namespace FainEngine_v2.Entities;
 public abstract class GameObject : IEntity
 {
     public Transform Transform = new();

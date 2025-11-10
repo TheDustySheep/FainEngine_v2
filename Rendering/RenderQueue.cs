@@ -1,17 +1,12 @@
 ﻿using FainEngine_v2.Rendering.Materials;
 using FainEngine_v2.Rendering.Meshing;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FainEngine_v2.Rendering
 {
     internal class RenderQueue
     {
-        Dictionary<RenderPass, Dictionary<Material, List<RenderInstance>>> _queue;
+        readonly Dictionary<RenderPass, Dictionary<Material, List<RenderInstance>>> _queue;
 
         public RenderQueue()
         {
@@ -27,7 +22,7 @@ namespace FainEngine_v2.Rendering
             var pass = mat.RenderPass;
 
             var queue = _queue[pass];
-            
+
             if (!queue.TryGetValue(mat, out var list))
             {
                 list = new List<RenderInstance>();

@@ -1,7 +1,6 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using FainEngine_v2.Rendering.Meshing;
 using Silk.NET.Assimp;
 using Silk.NET.OpenGL;
 using System.Numerics;
@@ -9,7 +8,7 @@ using AssimpMesh = Silk.NET.Assimp.Mesh;
 using Material = Silk.NET.Assimp.Material;
 using Texture = FainEngine_v2.Rendering.Materials.Texture;
 
-namespace FainEngine_v2.Rendering;
+namespace FainEngine_v2.Rendering.Meshing;
 
 public class Model : IDisposable
 {

@@ -207,7 +207,7 @@ public static class AABBResolver
         if (b1.Delta.X == 0.0f)
         {
             Entry.X = -INF;
-            Exit.X  =  INF;
+            Exit.X = INF;
         }
         else
         {
@@ -218,7 +218,7 @@ public static class AABBResolver
         if (b1.Delta.Y == 0.0f)
         {
             Entry.Y = -INF;
-            Exit.Y  =  INF;
+            Exit.Y = INF;
         }
         else
         {
@@ -229,7 +229,7 @@ public static class AABBResolver
         if (b1.Delta.Z == 0.0f)
         {
             Entry.Z = -INF;
-            Exit.Z  =  INF;
+            Exit.Z = INF;
         }
         else
         {

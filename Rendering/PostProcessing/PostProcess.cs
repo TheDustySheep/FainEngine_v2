@@ -1,5 +1,4 @@
-﻿using FainCraft.Resources.Shaders.PostProcessing;
-using FainEngine_v2.Entities;
+﻿using FainEngine_v2.Entities;
 using FainEngine_v2.Rendering.Materials;
 using FainEngine_v2.Rendering.Meshing;
 using FainEngine_v2.Rendering.RenderObjects;
@@ -12,8 +11,8 @@ namespace FainEngine_v2.Rendering.PostProcessing
     public class PostProcess : IEntity
     {
         public RenderTexture rt;
-        CustomVertexMesh<Vertex, int> mesh;
-        Material mat;
+        readonly CustomVertexMesh<Vertex, int> mesh;
+        readonly Material mat;
 
         public PostProcess(Shader shader)
         {

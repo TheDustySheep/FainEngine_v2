@@ -1,14 +1,15 @@
-﻿using FainEngine_v2.Rendering.BoundingShapes;
+﻿using FainEngine_v2.Entities;
+using FainEngine_v2.Rendering.BoundingShapes;
 using FainEngine_v2.Rendering.Cameras;
 using FainEngine_v2.Rendering.Lighting;
 using FainEngine_v2.Rendering.Materials;
 using FainEngine_v2.Rendering.Meshing;
 using FainEngine_v2.Rendering.PostProcessing;
+using FainEngine_v2.UI;
 using Silk.NET.Maths;
 using Silk.NET.OpenGL;
 using Silk.NET.Windowing;
 using System.Numerics;
-using FainEngine_v2.UI;
 
 namespace FainEngine_v2.Rendering;
 public static class GameGraphics
@@ -22,15 +23,15 @@ public static class GameGraphics
 
     private static IWindow? _window;
     public static IWindow Window => _window ?? throw new Exception("Window Not Set");
-    
+
     public static float WindowAspect => Window.FramebufferSize.X / (float)Window.FramebufferSize.Y;
     #endregion
 
     private readonly static RenderQueue renderQueue = new RenderQueue();
     private static PostProcess? _postProcess;
-    private static HashSet<UICanvas> Canvases = new();
+    private static readonly HashSet<UIController> UIControllers = new();
 
-    private static ILightingController lightingController = new LightingController();
+    private static readonly ILightingController lightingController = new LightingController();
 
     internal static void SetGL(GL gl, IWindow window)
     {
@@ -74,11 +75,22 @@ public static class GameGraphics
         _postProcess?.Draw();
 
         // GenerateVertices OldUI
-        foreach (var canvas in Canvases.OrderBy(i => i.Priority))
+        GL.Enable(EnableCap.DepthTest);
+        GL.DepthFunc(DepthFunction.Lequal);
+        GL.DepthMask(true);
+        GL.Clear(ClearBufferMask.DepthBufferBit);
+
+        GL.Enable(EnableCap.Blend);
+        GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+
+        foreach (var canvas in UIControllers)
         {
             canvas.Draw(camera);
             debug.UICalls++;
         }
+
+        GL.Disable(EnableCap.Blend);
+        GL.Disable(EnableCap.DepthTest);
 
         RenderDebugVariables.DrawCallDebugData.Value = debug;
     }
@@ -127,13 +139,13 @@ public static class GameGraphics
         _postProcess = postProcess;
     }
 
-    public static void RegisterCanvas(UICanvas canvas)
+    public static void RegisterController(UIController controller)
     {
-        Canvases.Add(canvas);
+        UIControllers.Add(controller);
     }
 
-    public static void UnregisterCanvas(UICanvas canvas)
+    public static void UnregisterController(UIController controller)
     {
-        Canvases.Remove(canvas);
+        UIControllers.Remove(controller);
     }
 }

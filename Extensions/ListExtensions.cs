@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace FainEngine_v2.Extensions
+﻿namespace FainEngine_v2.Extensions
 {
     public static class ListExtensions
     {

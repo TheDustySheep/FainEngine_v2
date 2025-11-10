@@ -1,10 +1,10 @@
 ﻿namespace FainEngine_v2.Utils;
 public class WriteOverQueue<T>
 {
-    T[] _values;
+    readonly T[] _values;
     int _count;
     int _pointer;
-    int _capacity;
+    readonly int _capacity;
 
     public int Count => _count;
 

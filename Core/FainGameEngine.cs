@@ -28,7 +28,7 @@ public class FainGameEngine
             ContextProfile.Core,
             ContextFlags.ForwardCompatible,
             new APIVersion(4, 6));
-        
+
         window = Window.Create(options);
 
         window.Load += OnLoad;
@@ -76,7 +76,7 @@ public class FainGameEngine
     private void OnUpdate(double deltaTime)
     {
         GameTime.Tick((float)deltaTime);
-        
+
         MainThreadDispatcher.ExecutePending();
 
         // Fixed update loop

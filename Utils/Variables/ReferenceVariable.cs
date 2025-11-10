@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace FainEngine_v2.Utils.Variables
+﻿namespace FainEngine_v2.Utils.Variables
 {
     public class ReferenceVariable<T> where T : struct
     {
@@ -34,7 +28,7 @@ namespace FainEngine_v2.Utils.Variables
 
         private event Action<T>? _event;
 
-        public void   RegisterCallback(Action<T> action) => _event += action;
+        public void RegisterCallback(Action<T> action) => _event += action;
 
         public void UnregisterCallback(Action<T> action) => _event -= action;
     }

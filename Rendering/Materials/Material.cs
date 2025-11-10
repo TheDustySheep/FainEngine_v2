@@ -31,7 +31,7 @@ public class Material
         shader.SetUniform("viewPos", mat.Inverse().Translation);
         shader.SetUniform("screenSize", (Vector2)GameGraphics.Window.Size);
         shader.SetUniform("cam_near", cam.Z_Near);
-        shader.SetUniform("cam_far" , cam.Z_Far);        
+        shader.SetUniform("cam_far", cam.Z_Far);
     }
 
     public void SetProjectionMatrix(Matrix4x4 mat)

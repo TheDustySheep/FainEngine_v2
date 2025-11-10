@@ -27,7 +27,7 @@ public class PriorityHashQueue<TElement, TPriority>
             if (_hash.Remove(element))
                 return true;
         }
-        element  = default!;
+        element = default!;
         priority = default!;
         return false;
     }
