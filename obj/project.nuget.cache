@@ -1,0 +1,43 @@
+{
+  "version": 2,
+  "dgSpecHash": "yNoMVWUoKCA=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Sean\\source\\repos\\FainEngine_v2\\FainEngine_v2.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Sean\\.nuget\\packages\\csvhelper\\33.0.1\\csvhelper.33.0.1.nupkg.sha512",
+    "C:\\Users\\Sean\\.nuget\\packages\\libtessdotnet\\1.1.15\\libtessdotnet.1.1.15.nupkg.sha512",
+    "C:\\Users\\Sean\\.nuget\\packages\\microsoft.dotnet.platformabstractions\\3.1.6\\microsoft.dotnet.platformabstractions.3.1.6.nupkg.sha512",
+    "C:\\Users\\Sean\\.nuget\\packages\\microsoft.extensions.dependencymodel\\8.0.0\\microsoft.extensions.dependencymodel.8.0.0.nupkg.sha512",
+    "C:\\Users\\Sean\\.nuget\\packages\\silk.net.assimp\\2.22.0\\silk.net.assimp.2.22.0.nupkg.sha512",
+    "C:\\Users\\Sean\\.nuget\\packages\\silk.net.core\\2.22.0\\silk.net.core.2.22.0.nupkg.sha512",
+    "C:\\Users\\Sean\\.nuget\\packages\\silk.net.glfw\\2.22.0\\silk.net.glfw.2.22.0.nupkg.sha512",
+    "C:\\Users\\Sean\\.nuget\\packages\\silk.net.input\\2.22.0\\silk.net.input.2.22.0.nupkg.sha512",
+    "C:\\Users\\Sean\\.nuget\\packages\\silk.net.input.common\\2.22.0\\silk.net.input.common.2.22.0.nupkg.sha512",
+    "C:\\Users\\Sean\\.nuget\\packages\\silk.net.input.glfw\\2.22.0\\silk.net.input.glfw.2.22.0.nupkg.sha512",
+    "C:\\Users\\Sean\\.nuget\\packages\\silk.net.maths\\2.22.0\\silk.net.maths.2.22.0.nupkg.sha512",
+    "C:\\Users\\Sean\\.nuget\\packages\\silk.net.opengl\\2.22.0\\silk.net.opengl.2.22.0.nupkg.sha512",
+    "C:\\Users\\Sean\\.nuget\\packages\\silk.net.windowing\\2.22.0\\silk.net.windowing.2.22.0.nupkg.sha512",
+    "C:\\Users\\Sean\\.nuget\\packages\\silk.net.windowing.common\\2.22.0\\silk.net.windowing.common.2.22.0.nupkg.sha512",
+    "C:\\Users\\Sean\\.nuget\\packages\\silk.net.windowing.glfw\\2.22.0\\silk.net.windowing.glfw.2.22.0.nupkg.sha512",
+    "C:\\Users\\Sean\\.nuget\\packages\\sixlabors.fonts\\2.1.3\\sixlabors.fonts.2.1.3.nupkg.sha512",
+    "C:\\Users\\Sean\\.nuget\\packages\\sixlabors.imagesharp\\3.1.8\\sixlabors.imagesharp.3.1.8.nupkg.sha512",
+    "C:\\Users\\Sean\\.nuget\\packages\\sixlabors.imagesharp.drawing\\2.1.6\\sixlabors.imagesharp.drawing.2.1.6.nupkg.sha512",
+    "C:\\Users\\Sean\\.nuget\\packages\\stbimagesharp\\2.30.15\\stbimagesharp.2.30.15.nupkg.sha512",
+    "C:\\Users\\Sean\\.nuget\\packages\\ultz.native.assimp\\5.4.1\\ultz.native.assimp.5.4.1.nupkg.sha512",
+    "C:\\Users\\Sean\\.nuget\\packages\\ultz.native.glfw\\3.4.0\\ultz.native.glfw.3.4.0.nupkg.sha512"
+  ],
+  "logs": [
+    {
+      "code": "NU1902",
+      "level": "Warning",
+      "message": "Package 'SixLabors.ImageSharp' 3.1.8 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-rxmq-m78w-7wmc",
+      "projectPath": "C:\\Users\\Sean\\source\\repos\\FainEngine_v2\\FainEngine_v2.csproj",
+      "warningLevel": 1,
+      "filePath": "C:\\Users\\Sean\\source\\repos\\FainEngine_v2\\FainEngine_v2.csproj",
+      "libraryId": "SixLabors.ImageSharp",
+      "targetGraphs": [
+        "net9.0"
+      ]
+    }
+  ]
+}
