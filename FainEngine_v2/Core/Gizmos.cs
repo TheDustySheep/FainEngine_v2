@@ -33,9 +33,11 @@ public static class Gizmos
                 return;
 
             VAO.Bind();
-            GL.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Line);
-            GL.DrawElements(PrimitiveType.Triangles, (uint)EBO.Count, DrawElementsType.UnsignedInt, (void*)0);
-            GL.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Fill);
+            _GL.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Line);
+            _GL.DrawElements(PrimitiveType.Triangles, (uint)EBO.Count, DrawElementsType.UnsignedInt, (void*)0);
+            _GL.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Fill);
+
+            ThrowOnError("Drawing Gizmo Mesh");
         }
     }
 

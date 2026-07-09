@@ -1,9 +1,8 @@
-using FainEngine_v2.Core;
 using Silk.NET.OpenGL;
 
 namespace FainEngine_v2.Rendering.Meshing;
 
-public class BufferObject<TDataType> : IDisposable where TDataType : unmanaged
+public class BufferObject<TDataType> : GLObject where TDataType : unmanaged
 {
     public readonly uint Handle;
 
@@ -12,14 +11,12 @@ public class BufferObject<TDataType> : IDisposable where TDataType : unmanaged
 
     private readonly BufferTargetARB _bufferType;
     private readonly VertexBufferObjectUsage _bufferUsage;
-    private readonly GL _GL;
 
     public BufferObject(
         BufferTargetARB bufferType,
         VertexBufferObjectUsage bufferUsage = VertexBufferObjectUsage.StaticDraw
     )
     {
-        _GL = GameGraphics.GL;
         _bufferType = bufferType;
         _bufferUsage = bufferUsage;
 
@@ -42,6 +39,7 @@ public class BufferObject<TDataType> : IDisposable where TDataType : unmanaged
                 data,
                 _bufferUsage
             );
+            ThrowOnError("Setting Buffer Data");
         }
         else
         {
@@ -50,40 +48,26 @@ public class BufferObject<TDataType> : IDisposable where TDataType : unmanaged
                 IntPtr.Zero,
                 data
             );
+            ThrowOnError("Setting Existing Buffer Data");
         }
     }
 
     public void Clear()
     {
         Count = 0;
+        Capacity = 0;
 
         _GL.NamedBufferData(
             Handle,
             ReadOnlySpan<TDataType>.Empty,
             _bufferUsage
         );
+        ThrowOnError("Clearing Buffer Data");
     }
 
-    private bool _disposed;
-    public void Dispose()
+    protected override void Release()
     {
-        if (_disposed)
-            return;
-
-        _disposed = true;
-
-        GLDisposalService.Enqueue(() => _GL.DeleteBuffer(Handle));
-
-        GC.SuppressFinalize(this);
-    }
-
-    ~BufferObject()
-    {
-        if (_disposed)
-            return;
-
-        _disposed = true;
-
-        GLDisposalService.Enqueue(() => _GL.DeleteBuffer(Handle));
+        _GL.DeleteBuffer(Handle);
+        ThrowOnError("Releasing Buffer");
     }
 }

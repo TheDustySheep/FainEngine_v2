@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FainEngine_v2.Utils")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4ffba335b3ce2c37886b63968fa2159e93d827f3")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bedafe1e9f04bf670f5bae38702f186ceab69c40")]
 [assembly: System.Reflection.AssemblyProductAttribute("FainEngine_v2.Utils")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FainEngine_v2.Utils")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

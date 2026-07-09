@@ -46,6 +46,11 @@ namespace FainEngine_v2.Rendering
             return _queue[RenderPass.Transparent];
         }
 
+        public Dictionary<Material, List<RenderInstance>> Overlay()
+        {
+            return _queue[RenderPass.Overlay];
+        }
+
         public void Clear()
         {
             foreach (var item in _queue)

@@ -1,15 +1,14 @@
+using FainEngine_v2.Core;
 using FainEngine_v2.Rendering.BoundingShapes;
 using Silk.NET.OpenGL;
 using System.Runtime.InteropServices;
 
 namespace FainEngine_v2.Rendering.Meshing;
 
-public class AMesh<TVertexType, TIndexType> : IMesh
+public class AMesh<TVertexType, TIndexType> : GLObject, IMesh
     where TVertexType : unmanaged
     where TIndexType : unmanaged
 {
-    protected readonly GL GL;
-
     protected readonly BufferObject<TVertexType> VBO;
     protected readonly BufferObject<TIndexType> EBO;
     protected readonly VertexArrayObject<TVertexType, TIndexType> VAO;
@@ -22,14 +21,13 @@ public class AMesh<TVertexType, TIndexType> : IMesh
 
     public AMesh()
     {
-        GL = GameGraphics.GL;
-
         VBO = new BufferObject<TVertexType>(BufferTargetARB.ArrayBuffer);
         EBO = new BufferObject<TIndexType>(BufferTargetARB.ElementArrayBuffer);
 
-        VAO = new VertexArrayObject<TVertexType, TIndexType>(GL, VBO, EBO);
+        VAO = new VertexArrayObject<TVertexType, TIndexType>(VBO, EBO);
 
-        VertexAttributes.SetVertexAttributes(GL, VAO);
+        VertexAttributes.SetVertexAttributes(_GL, VAO);
+        ThrowOnError("Setting Vertex Attributes");
     }
 
     public void SetData(List<TVertexType> vertices, List<TIndexType> triangles)
@@ -76,15 +74,17 @@ public class AMesh<TVertexType, TIndexType> : IMesh
             return;
 
         VAO.Bind();
-        GL.DrawElements(
+
+        _GL.DrawElements(
             PrimitiveType.Triangles, 
-            (uint)EBO.Count, 
+            (uint)EBO.Count,
             DrawElementsType.UnsignedInt, 
             (void*)0
         );
+        ThrowOnError("Drawing Mesh");
     }
 
-    public void Dispose()
+    protected override void Release()
     {
         VAO.Dispose();
         VBO.Dispose();

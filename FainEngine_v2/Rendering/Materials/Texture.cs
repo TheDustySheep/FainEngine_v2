@@ -26,19 +26,19 @@ public abstract class Texture : TextureObject, IDisposable
 
         var textureSlot = TextureUnit.Texture0 + (int)textureIndex;
 
-        _gl.ActiveTexture(textureSlot);
-        _gl.BindTexture(Target, _handle);
+        _GL.ActiveTexture(textureSlot);
+        _GL.BindTexture(Target, _handle);
     }
 
     protected void SetParameters()
     {
-        _gl.TextureParameter(_handle, TextureParameterName.TextureWrapS, (int)WrapMode);
-        _gl.TextureParameter(_handle, TextureParameterName.TextureWrapT, (int)WrapMode);
-        _gl.TextureParameter(_handle, TextureParameterName.TextureMinFilter, (int)FilterMode);
-        _gl.TextureParameter(_handle, TextureParameterName.TextureMagFilter, (int)FilterMode);
-        _gl.TextureParameter(_handle, TextureParameterName.TextureBaseLevel, 0);
-        _gl.TextureParameter(_handle, TextureParameterName.TextureMaxLevel, 8);
-        _gl.GenerateTextureMipmap(_handle);
+        _GL.TextureParameter(_handle, TextureParameterName.TextureWrapS, (int)WrapMode);
+        _GL.TextureParameter(_handle, TextureParameterName.TextureWrapT, (int)WrapMode);
+        _GL.TextureParameter(_handle, TextureParameterName.TextureMinFilter, (int)FilterMode);
+        _GL.TextureParameter(_handle, TextureParameterName.TextureMagFilter, (int)FilterMode);
+        _GL.TextureParameter(_handle, TextureParameterName.TextureBaseLevel, 0);
+        _GL.TextureParameter(_handle, TextureParameterName.TextureMaxLevel, 8);
+        _GL.GenerateTextureMipmap(_handle);
     }
 
     protected GLEnum GetFilterMode()

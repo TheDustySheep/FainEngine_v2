@@ -40,15 +40,20 @@ public static class GameGraphics
 
     public static void Render()
     {
+
         // Bind Frame Buffer
         _postProcess?.Bind();
+        ThrowOnGLError("Binding Post process");
 
         // Render Opaque
+        GL.Enable(EnableCap.CullFace);
         GL.Enable(EnableCap.DepthTest);
         GL.ClearColor(52.9f / 100f, 80.8f / 100f, 92.2f / 100f, 0);
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         GL.DepthFunc(DepthFunction.Less);
         GL.DepthMask(true);
+        ThrowOnGLError("Setting all the starting stuff");
+
 
         ICamera camera = ICamera.Main;
         Frustum frustum = camera.Frustum;
@@ -56,42 +61,83 @@ public static class GameGraphics
         DrawCallDebugData debug = new();
 
         // Render Opaque
+        ThrowOnGLError("Pre-Opaque Pass");
         debug.OpaqueCalls = RenderPass(camera, frustum, renderQueue.Opaque());
+        ThrowOnGLError("Post-Opaque Pass");
 
         // Render Transparent
         GL.DepthMask(false);
         GL.Enable(EnableCap.Blend);
         GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+        ThrowOnGLError("Pre-Transparent Pass");
         debug.TransparentCalls = RenderPass(camera, frustum, renderQueue.Transparent());
+        ThrowOnGLError("Post-Transparent Pass");
         GL.Disable(EnableCap.Blend);
         GL.DepthMask(true);
 
-        // Clear the render Queue
-        renderQueue.Clear();
-
         // GenerateVertices onto the main screen
+        ThrowOnGLError("Pre-Clear framebuffer");
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
         _postProcess?.Draw();
+        ThrowOnGLError("Post-Processing Drawing");
+        GL.Clear(ClearBufferMask.DepthBufferBit); 
+        GL.DepthMask(true);
 
         // GenerateVertices OldUI
-        GL.Enable(EnableCap.DepthTest);
-        GL.DepthFunc(DepthFunction.Lequal);
-        GL.DepthMask(true);
-        GL.Clear(ClearBufferMask.DepthBufferBit);
-
+        GL.Disable(EnableCap.CullFace);
+        GL.Disable(EnableCap.DepthTest);
         GL.Enable(EnableCap.Blend);
         GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
 
-        //foreach (var canvas in UIControllers)
-        //{
-        //    canvas.Draw(camera);
-        //    debug.UICalls++;
-        //}
-
+        ThrowOnGLError("Pre-Overlay");
+        debug.UICalls = OverlayRenderPass(renderQueue.Overlay());
+        ThrowOnGLError("Post-Overlay");
         GL.Disable(EnableCap.Blend);
-        GL.Disable(EnableCap.DepthTest);
 
         RenderDebugVariables.DrawCallDebugData.Value = debug;
+
+        // Clear the render Queue
+        renderQueue.Clear();
+    }
+
+    public static void ThrowOnGLError(string details)
+    {
+        var error = GL.GetError();
+        if (error == GLEnum.NoError)
+            return;
+
+        throw new Exception($"OpenGL Error [{error}] Details: {details}");
+    }
+
+    private static uint OverlayRenderPass(Dictionary<Material, List<RenderInstance>> pass)
+    {
+        var cameraProjection = Matrix4x4.CreateOrthographicOffCenter(
+            0, 
+            Window.Size.X,
+            Window.Size.Y,
+            0,
+            -1, 
+            1
+        );
+
+        uint drawCalls = 0;
+        foreach ((var mat, var queue) in pass)
+        {
+            mat.Use();
+            mat.SetUniforms();
+            mat.SetProjectionMatrix(cameraProjection);
+
+            foreach (var render in queue)
+            {
+                IMesh mesh = render.Mesh;
+                Matrix4x4 modelMatrix = render.ModelMatrix;
+                mat.SetModelMatrix(modelMatrix);
+                mesh.Draw();
+                drawCalls++;
+            }
+        }
+
+        return drawCalls;
     }
 
     private static uint RenderPass(ICamera camera, Frustum frustum, Dictionary<Material, List<RenderInstance>> pass)

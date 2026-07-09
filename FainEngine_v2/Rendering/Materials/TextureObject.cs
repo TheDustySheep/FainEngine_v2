@@ -2,23 +2,21 @@
 
 namespace FainEngine_v2.Rendering.Materials
 {
-    public abstract class TextureObject : IDisposable
+    public abstract class TextureObject : GLObject
     {
-        protected GL _gl;
         protected uint _handle;
         public uint Handle => _handle;
 
         protected abstract TextureTarget Target { get; }
 
-        public TextureObject()
+        public TextureObject() : base()
         {
-            _gl = GameGraphics.GL;
-            _handle = _gl.GenTexture();
+            _handle = _GL.GenTexture();
         }
 
-        public void Dispose()
+        protected override void Release()
         {
-            _gl.DeleteTexture(_handle);
+            _GL.DeleteTexture(_handle);
         }
     }
 }

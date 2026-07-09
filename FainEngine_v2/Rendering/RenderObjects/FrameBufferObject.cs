@@ -1,34 +1,31 @@
 ﻿using Silk.NET.OpenGL;
 
 namespace FainEngine_v2.Rendering.RenderObjects;
-public class FrameBufferObject : IDisposable
+public class FrameBufferObject : GLObject, IDisposable
 {
     protected uint _handle;
-    protected GL _gl;
 
     public unsafe FrameBufferObject()
     {
-        _gl = GameGraphics.GL;
-
-        _gl.CreateFramebuffers(1, out _handle);
+        _GL.CreateFramebuffers(1, out _handle);
     }
 
     public void Bind()
     {
-        _gl.BindFramebuffer(FramebufferTarget.Framebuffer, _handle);
+        _GL.BindFramebuffer(FramebufferTarget.Framebuffer, _handle);
     }
 
     public void CheckStatus()
     {
-        var fboStatus = _gl.CheckFramebufferStatus(FramebufferTarget.Framebuffer);
+        var fboStatus = _GL.CheckFramebufferStatus(FramebufferTarget.Framebuffer);
         if (fboStatus != GLEnum.FramebufferComplete)
         {
             Console.WriteLine($"Frame Buffer Error {fboStatus}");
         }
     }
 
-    public void Dispose()
+    protected override void Release()
     {
-        _gl.DeleteFramebuffer(_handle);
+        _GL.DeleteFramebuffer(_handle);
     }
 }

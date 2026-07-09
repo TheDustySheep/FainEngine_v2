@@ -4,26 +4,29 @@ using System.Numerics;
 
 namespace FainEngine_v2.Rendering.Materials;
 
-public class Shader : IDisposable
+public class Shader : GLObject
 {
     private readonly uint _handle;
-    private readonly GL _GL;
 
     public Shader(string vertexSrc, string fragmentSrc)
     {
-        _GL = GameGraphics.GL;
-
         uint vertex = LoadShader(ShaderType.VertexShader, vertexSrc);
         uint fragment = LoadShader(ShaderType.FragmentShader, fragmentSrc);
         _handle = _GL.CreateProgram();
+
         _GL.AttachShader(_handle, vertex);
+        ThrowOnError($"Attaching Vertex Shader: {vertexSrc}");
+
         _GL.AttachShader(_handle, fragment);
+        ThrowOnError($"Attaching Fragment Shader: {fragmentSrc}");
+
         _GL.LinkProgram(_handle);
         _GL.GetProgram(_handle, ProgramPropertyARB.LinkStatus, out var status);
         if (status == 0)
         {
             throw new Exception($"Program failed to link with error: {_GL.GetProgramInfoLog(_handle)}");
         }
+
         _GL.DetachShader(_handle, vertex);
         _GL.DetachShader(_handle, fragment);
         _GL.DeleteShader(vertex);
@@ -33,50 +36,38 @@ public class Shader : IDisposable
     public void Use()
     {
         _GL.UseProgram(_handle);
+        ThrowOnError("Binding Shader");
     }
 
-    private int GetUniformLocation(string name) => _GL.GetUniformLocation(_handle, name);
-
-    public void SetUniform(string name, int value)
+    private int GetUniformLocation(string name)
     {
-        int location = GetUniformLocation(name);
-        _GL.ProgramUniform1(_handle, location, value);
+        int loc = _GL.GetUniformLocation(_handle, name);
+        //if (loc == -1)
+            //Console.WriteLine($"Unable to locate shader uniform: {name}");
+
+        ThrowOnError($"Uniform Location: {name}");
+        return loc;
     }
 
-    public void SetUniform(string name, uint value)
+    private void SetUniformValue<T>(string name, T value, Action<uint, int, T> set)
     {
-        int location = GetUniformLocation(name);
-        _GL.ProgramUniform1(_handle, location, value);
+        int loc = GetUniformLocation(name);
+        set.Invoke(_handle, loc, value);
+        ThrowOnError($"Setting {typeof(T)}");
     }
 
-    public void SetUniform(string name, float value)
-    {
-        int location = GetUniformLocation(name);
-        _GL.ProgramUniform1(_handle, location, value);
-    }
-
-    public void SetUniform(string name, Vector2 value)
-    {
-        int location = GetUniformLocation(name);
-        _GL.ProgramUniform2(_handle, location, value);
-    }
-
-    public void SetUniform(string name, Vector3 value)
-    {
-        int location = GetUniformLocation(name);
-        _GL.ProgramUniform3(_handle, location, value);
-    }
-
-    public void SetUniform(string name, Vector4 value)
-    {
-        int location = GetUniformLocation(name);
-        _GL.ProgramUniform4(_handle, location, value);
-    }
+    public void SetUniform(string name,  int value)    => SetUniformValue(name, value, _GL.ProgramUniform1);
+    public void SetUniform(string name, uint value)    => SetUniformValue(name, value, _GL.ProgramUniform1);
+    public void SetUniform(string name, float value)   => SetUniformValue(name, value, _GL.ProgramUniform1);
+    public void SetUniform(string name, Vector2 value) => SetUniformValue(name, value, _GL.ProgramUniform2);
+    public void SetUniform(string name, Vector3 value) => SetUniformValue(name, value, _GL.ProgramUniform3);
+    public void SetUniform(string name, Vector4 value) => SetUniformValue(name, value, _GL.ProgramUniform4);
 
     public unsafe void SetUniform(string name, Matrix4x4 value)
     {
         int location = GetUniformLocation(name);
         _GL.ProgramUniformMatrix4(_handle, location, 1, false, (float*)&value);
+        ThrowOnError("Setting Matrix 4x4");
     }
 
     private uint LoadShader(ShaderType type, string src)
@@ -93,26 +84,8 @@ public class Shader : IDisposable
         return handle;
     }
 
-    private bool _disposed;
-    public void Dispose()
+    protected override void Release()
     {
-        if (_disposed)
-            return;
-
-        _disposed = true;
-
-        GLDisposalService.Enqueue(() => _GL.DeleteProgram(_handle));
-
-        GC.SuppressFinalize(this);
-    }
-
-    ~Shader()
-    {
-        if (_disposed)
-            return;
-
-        _disposed = true;
-
-        GLDisposalService.Enqueue(() => _GL.DeleteProgram(_handle));
+        _GL.DeleteProgram(_handle);
     }
 }

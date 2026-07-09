@@ -155,7 +155,7 @@ public class Model : IDisposable
             }
             if (!skip)
             {
-                var texture = new Texture2D(GL, Directory, type);
+                var texture = new Texture2D(_GL, Directory, type);
                 texture.Path = path;
                 textures.AddClass(texture);
                 _texturesLoaded.AddClass(texture);

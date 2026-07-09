@@ -4,12 +4,10 @@ using System.Runtime.CompilerServices;
 
 namespace FainEngine_v2.Rendering.Meshing
 {
-    public class ShaderStorageBufferObject<T> : IDisposable where T : unmanaged
+    public class ShaderStorageBufferObject<T> : GLObject where T : unmanaged
     {
         public uint Handle => _handle;
         private readonly uint _handle;
-
-        private readonly GL _GL;
 
         private readonly uint _bufferSize;
         private readonly uint _elementCount;
@@ -19,7 +17,6 @@ namespace FainEngine_v2.Rendering.Meshing
             _elementCount = elementCount;
             _bufferSize = (uint)(Unsafe.SizeOf<T>() * elementCount);
 
-            _GL = GameGraphics.GL;
             _handle = _GL.CreateBuffer();
 
             _GL.NamedBufferStorage(_handle, _bufferSize, (void*)0, storageFlags);
@@ -61,27 +58,9 @@ namespace FainEngine_v2.Rendering.Meshing
                 (void*)0);
         }
 
-        private bool _disposed;
-        public void Dispose()
+        protected override void Release()
         {
-            if (_disposed)
-                return;
-
-            _disposed = true;
-
-            GLDisposalService.Enqueue(() => _GL.DeleteBuffer(_handle));
-
-            GC.SuppressFinalize(this);
-        }
-
-        ~ShaderStorageBufferObject()
-        {
-            if (_disposed)
-                return;
-
-            _disposed = true;
-
-            GLDisposalService.Enqueue(() => _GL.DeleteBuffer(_handle));
+            _GL.DeleteBuffer(_handle);
         }
     }
 }

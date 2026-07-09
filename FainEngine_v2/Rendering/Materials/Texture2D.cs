@@ -70,7 +70,7 @@ public class Texture2D : Texture
         Width = width;
         Height = height;
 
-        _gl.TextureStorage2D(
+        _GL.TextureStorage2D(
             _handle,
             1,
             internalFormat,
@@ -102,7 +102,7 @@ public class Texture2D : Texture
 
     private void UploadBitmap(SKBitmap bitmap)
     {
-        _gl.TextureStorage2D(
+        _GL.TextureStorage2D(
             _handle,
             1,
             SizedInternalFormat.Rgba8,
@@ -112,7 +112,7 @@ public class Texture2D : Texture
 
         ReadOnlySpan<byte> pixels = FlipVertically(bitmap.Bytes, bitmap.Width, bitmap.Height);
 
-        _gl.TextureSubImage2D(
+        _GL.TextureSubImage2D(
             _handle,
             0,
             0, 0,
@@ -128,7 +128,7 @@ public class Texture2D : Texture
     {
         byte[] pixels = new byte[Width * Height * 4];
 
-        _gl.GetTextureSubImage(
+        _GL.GetTextureSubImage(
             _handle,
             0,
             0, 0, 0,
@@ -165,6 +165,6 @@ public class Texture2D : Texture
 
     public void FrameBufferTexture(FramebufferAttachment attachment)
     {
-        _gl.FramebufferTexture2D(FramebufferTarget.Framebuffer, attachment, Target, _handle, 0);
+        _GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, attachment, Target, _handle, 0);
     }
 }

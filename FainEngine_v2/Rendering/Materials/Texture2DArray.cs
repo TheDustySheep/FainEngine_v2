@@ -21,7 +21,7 @@ public class Texture2DArray : Texture
         int tileHeight = img.Height / (int)atlasSize;
         int depth = (int)(atlasSize * atlasSize);
 
-        _gl.TextureStorage3D(
+        _GL.TextureStorage3D(
             _handle,
             1,
             SizedInternalFormat.Rgba8,
@@ -55,7 +55,7 @@ public class Texture2DArray : Texture
 
                 fixed (byte* ptr = &data[srcOffset])
                 {
-                    _gl.TextureSubImage3D(
+                    _GL.TextureSubImage3D(
                         _handle,
                         0,
                         0,

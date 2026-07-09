@@ -89,8 +89,6 @@ public class FainGameEngine
         Gizmos.Update();
 
         GameInputs.Reset();
-
-        GLDisposalService.ExecuteDispose();
     }
 
     private void OnRender(double deltaTime)
@@ -98,8 +96,10 @@ public class FainGameEngine
         if (_gl is null)
             return;
 
+        GameGraphics.ThrowOnGLError("Start Game Engine Loop");
         GameGraphics.Render();
         Render();
+        GameGraphics.ThrowOnGLError("End Game Engine Render");
     }
 
     private void OnClose()

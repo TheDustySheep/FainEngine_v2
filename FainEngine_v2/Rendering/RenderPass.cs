@@ -4,4 +4,5 @@ public enum RenderPass
 {
     Opaque = 0,
     Transparent = 100,
+    Overlay = 200,
 }
