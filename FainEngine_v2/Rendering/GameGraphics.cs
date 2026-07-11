@@ -116,8 +116,8 @@ public static class GameGraphics
             Window.Size.X,
             Window.Size.Y,
             0,
-            -1, 
-            1
+            -1000, 
+            1000
         );
 
         uint drawCalls = 0;
