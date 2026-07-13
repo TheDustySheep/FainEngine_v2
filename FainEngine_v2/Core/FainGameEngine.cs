@@ -99,7 +99,7 @@ public class FainGameEngine
         MainThreadDispatcher.ExecutePending();
 
         // Fixed update loop
-        while (gameTime.TickFixedUpdate())
+        while (gameTime != null && gameTime.TickFixedUpdate())
             FixedUpdate();
 
         // Draw loop

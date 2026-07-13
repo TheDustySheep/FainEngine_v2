@@ -145,7 +145,7 @@ public class GameGraphics : IGameGraphics
             mat.Use();
 
             if (_postProcess != null)
-                mat.SetRenderTexture(_postProcess.rt);
+                mat.SetRenderTexture(_postProcess._rt);
 
             mat.SetUniforms();
             mat.SetProjectionMatrix(camera.ProjectionMatrix);

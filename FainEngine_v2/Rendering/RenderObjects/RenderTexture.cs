@@ -12,7 +12,7 @@ public sealed class RenderTexture : GLObject, IFrameBuffer, IDisposable
     public readonly int Height;
     public readonly int Width;
 
-    public unsafe RenderTexture(int width, int height)
+    public RenderTexture(int width, int height)
     {
         Width = width;
         Height = height;

@@ -12,7 +12,7 @@ namespace FainEngine_v2.Rendering.PostProcessing
 {
     public class PostProcess : IEntity
     {
-        public RenderTexture rt;
+        public RenderTexture _rt;
         readonly AMesh<Vertex, int> _mesh;
         readonly Material _material;
 
@@ -26,10 +26,10 @@ namespace FainEngine_v2.Rendering.PostProcessing
             _window = DependencyInjector.Resolve<IWindow>();
             _graphics = DependencyInjector.Resolve<IGameGraphics>();
 
-            rt = new RenderTexture(_window.FramebufferSize.X, _window.FramebufferSize.Y);
+            _rt = new RenderTexture(_window.FramebufferSize.X, _window.FramebufferSize.Y);
             _mesh = new AMesh<Vertex, int>();
             _mesh.SetData(FULL_SCREEN_VERTS, TRIANGLES);
-            _material = new PostProcessMaterial(shader, rt);
+            _material = new PostProcessMaterial(shader, _rt);
 
             _graphics.SetPostProcess(this);
             _graphics.OnResized += ResizeRenderTexture;
@@ -42,8 +42,8 @@ namespace FainEngine_v2.Rendering.PostProcessing
 
         private void ResizeRenderTexture(int x, int y)
         {
-            rt?.Dispose();
-            rt = new RenderTexture(x, y);
+            _rt?.Dispose();
+            _rt = new RenderTexture(x, y);
         }
 
         static readonly Vertex[] FULL_SCREEN_VERTS = new Vertex[]
@@ -68,7 +68,7 @@ namespace FainEngine_v2.Rendering.PostProcessing
 
         internal void Bind()
         {
-            rt.Bind();
+            _rt.Bind();
         }
 
         internal void Draw()
@@ -81,7 +81,7 @@ namespace FainEngine_v2.Rendering.PostProcessing
 
         public void Dispose()
         {
-            rt.Dispose();
+            _rt.Dispose();
             _mesh.Dispose();
             _material.Dispose();
         }
