@@ -20,6 +20,7 @@ namespace FainEngine_v2.Rendering.Meshing
             _handle = _GL.CreateBuffer();
 
             _GL.NamedBufferStorage(_handle, _bufferSize, (void*)0, storageFlags);
+            ThrowOnError("Allocating buffer storage");
         }
 
         public void SetData(ReadOnlySpan<T> data)
@@ -28,6 +29,7 @@ namespace FainEngine_v2.Rendering.Meshing
                 return;
 
             _GL.NamedBufferSubData(_handle, 0, data);
+            ThrowOnError("Setting buffer data");
         }
 
         public void FillByte(byte value)
@@ -39,11 +41,13 @@ namespace FainEngine_v2.Rendering.Meshing
                 PixelType.UnsignedByte,
                 ref value
             );
+            ThrowOnError("Setting buffer data");
         }
 
         public void Bind(uint bindingPoint)
         {
             _GL.BindBufferBase(BufferTargetARB.ShaderStorageBuffer, bindingPoint, _handle);
+            ThrowOnError("Binding buffer");
         }
 
         public unsafe void Clear()
@@ -56,11 +60,12 @@ namespace FainEngine_v2.Rendering.Meshing
                 PixelFormat.RedInteger,
                 PixelType.UnsignedByte,
                 (void*)0);
+            ThrowOnError("Clearing buffer data");
         }
 
         protected override void Release()
         {
-            _GL.DeleteBuffer(_handle);
+            GLDisposalService.Delete(_handle, GLObjectType.Buffer);
         }
     }
 }

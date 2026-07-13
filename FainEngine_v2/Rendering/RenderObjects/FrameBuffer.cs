@@ -4,7 +4,6 @@ using Silk.NET.OpenGL;
 namespace FainEngine_v2.Rendering.RenderObjects;
 public sealed class FrameBuffer : GLObject, IFrameBuffer, IDisposable
 {
-    private readonly GL _GL;
     private readonly uint _fbo;
     private readonly uint _rbo;
     public Texture2D ColorTexture { get; }
@@ -37,8 +36,8 @@ public sealed class FrameBuffer : GLObject, IFrameBuffer, IDisposable
 
     protected override void Release()
     {
-        _GL.DeleteFramebuffer(_fbo);
-        _GL.DeleteRenderbuffer(_rbo);
+        GLDisposalService.Delete(_fbo, GLObjectType.Framebuffer);
+        GLDisposalService.Delete(_rbo, GLObjectType.Renderbuffer);
         ColorTexture.Dispose();
     }
 }

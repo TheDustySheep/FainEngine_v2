@@ -26,6 +26,6 @@ public class FrameBufferObject : GLObject, IDisposable
 
     protected override void Release()
     {
-        _GL.DeleteFramebuffer(_handle);
+        GLDisposalService.Delete(_handle, GLObjectType.Framebuffer);
     }
 }

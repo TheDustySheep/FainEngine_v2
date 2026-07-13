@@ -2,7 +2,7 @@
 
 namespace FainEngine_v2.Collections
 {
-    public class ConcurrentHashQueue<T>
+    public class ConcurrentHashQueue<T> where T : notnull
     {
         private readonly ConcurrentDictionary<T, byte> _dictionary = new ConcurrentDictionary<T, byte>();
 

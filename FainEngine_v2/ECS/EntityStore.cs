@@ -166,7 +166,7 @@ public class EntityStore
         _locations[e.Id] = (dstArch, dstIndex);
     }
 
-    // Destroy entity
+    // Delete entity
     public void Destroy(Entity e)
     {
         if (!_locations.TryGetValue(e.Id, out var loc)) return;

@@ -31,7 +31,7 @@ public class WorldSpaceMesh<TVertexType, TIndexType> : AMesh<TVertexType, TIndex
 
         for (int i = 1; i < vertices.Length; i++)
         {
-            Vector3 pos = _vertexPosition.Invoke(vertices[0]);
+            Vector3 pos = _vertexPosition.Invoke(vertices[i]);
             min = Vector3.Min(min, pos);
             max = Vector3.Max(max, pos);
         }

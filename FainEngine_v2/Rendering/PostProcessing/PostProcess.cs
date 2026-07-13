@@ -2,7 +2,9 @@
 using FainEngine_v2.Rendering.Materials;
 using FainEngine_v2.Rendering.Meshing;
 using FainEngine_v2.Rendering.RenderObjects;
+using FainEngine_v2.Utils;
 using Silk.NET.OpenGL;
+using Silk.NET.Windowing;
 using System.Numerics;
 using Shader = FainEngine_v2.Rendering.Materials.Shader;
 
@@ -14,21 +16,28 @@ namespace FainEngine_v2.Rendering.PostProcessing
         readonly AMesh<Vertex, int> _mesh;
         readonly Material _material;
 
+        readonly IGameGraphics _graphics;
+        readonly IWindow _window;
+        readonly GL _GL;
+
         public PostProcess(Shader shader)
         {
-            rt = new RenderTexture(GameGraphics.Window.FramebufferSize.X, GameGraphics.Window.FramebufferSize.Y);
+            _GL = DependencyInjector.Resolve<GL>();
+            _window = DependencyInjector.Resolve<IWindow>();
+            _graphics = DependencyInjector.Resolve<IGameGraphics>();
+
+            rt = new RenderTexture(_window.FramebufferSize.X, _window.FramebufferSize.Y);
             _mesh = new AMesh<Vertex, int>();
             _mesh.SetData(FULL_SCREEN_VERTS, TRIANGLES);
             _material = new PostProcessMaterial(shader, rt);
 
-            GameGraphics.SetPostProcess(this);
-
-            GameGraphics.OnResized += ResizeRenderTexture;
+            _graphics.SetPostProcess(this);
+            _graphics.OnResized += ResizeRenderTexture;
         }
 
         ~PostProcess()
         {
-            GameGraphics.OnResized -= ResizeRenderTexture;
+            _graphics.OnResized -= ResizeRenderTexture;
         }
 
         private void ResizeRenderTexture(int x, int y)
@@ -64,10 +73,17 @@ namespace FainEngine_v2.Rendering.PostProcessing
 
         internal void Draw()
         {
-            GameGraphics.GL.Disable(EnableCap.DepthTest);
+            _GL.Disable(EnableCap.DepthTest);
             _material.Use();
             _material.SetUniforms();
             _mesh.Draw();
+        }
+
+        public void Dispose()
+        {
+            rt.Dispose();
+            _mesh.Dispose();
+            _material.Dispose();
         }
     }
 }

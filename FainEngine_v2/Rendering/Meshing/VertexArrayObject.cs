@@ -62,6 +62,6 @@ public class VertexArrayObject<TVertexType, TIndexType> : GLObject
 
     protected override void Release()
     {
-        _GL.DeleteVertexArray(_handle);
+        GLDisposalService.Delete(_handle, GLObjectType.VertexArray);
     }
 }

@@ -43,7 +43,7 @@ public class Shader : GLObject
     {
         int loc = _GL.GetUniformLocation(_handle, name);
         //if (loc == -1)
-            //Console.WriteLine($"Unable to locate shader uniform: {name}");
+            //Console.WriteLine($"Unable to locate _shader uniform: {name}");
 
         ThrowOnError($"Uniform Location: {name}");
         return loc;
@@ -78,7 +78,7 @@ public class Shader : GLObject
         string infoLog = _GL.GetShaderInfoLog(handle);
         if (!string.IsNullOrWhiteSpace(infoLog))
         {
-            throw new Exception($"Error compiling shader of type {type}, failed with error {infoLog}");
+            throw new Exception($"Error compiling _shader of type {type}, failed with error {infoLog}");
         }
 
         return handle;
@@ -86,6 +86,6 @@ public class Shader : GLObject
 
     protected override void Release()
     {
-        _GL.DeleteProgram(_handle);
+        GLDisposalService.Delete(_handle, GLObjectType.Program);
     }
 }

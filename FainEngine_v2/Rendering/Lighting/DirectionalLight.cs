@@ -12,7 +12,7 @@ namespace FainEngine_v2.Rendering.Lighting
         public Vector3 Specular;
         public float Intensity;
 
-        // Helper function to send to shader
+        // Helper function to send to _shader
         public void ApplyToShader(Shader shader)
         {
             shader.SetUniform($"light.direction", Direction);

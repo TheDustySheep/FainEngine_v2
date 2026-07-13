@@ -3,45 +3,54 @@ using FainEngine_v2.Extensions;
 using FainEngine_v2.Rendering.Cameras;
 using FainEngine_v2.Rendering.Lighting;
 using FainEngine_v2.Rendering.RenderObjects;
+using FainEngine_v2.Utils;
+using Silk.NET.Windowing;
 using System.Numerics;
 
 namespace FainEngine_v2.Rendering.Materials;
 
 public class Material
 {
-    protected Shader shader;
+    protected Shader _shader;
 
     protected readonly TextureSlot?[] Textures = new TextureSlot?[Texture.MAX_TEXTURE_COUNT];
 
     public RenderPass RenderPass = RenderPass.Opaque;
 
+    private readonly IGameTime _gameTime;
+    private readonly IGameGraphics _graphics;
+    private readonly IWindow _window;
+
     public Material(Shader shader)
     {
-        this.shader = shader;
+        _shader = shader;
+        _window   = DependencyInjector.Resolve<IWindow>();
+        _gameTime = DependencyInjector.Resolve<IGameTime>();
+        _graphics = DependencyInjector.Resolve<IGameGraphics>();
     }
 
     public void Use()
     {
-        shader.Use();
+        _shader.Use();
     }
 
     public void SetViewMatrix(Matrix4x4 mat, ICamera cam)
     {
-        shader.SetUniform("uView", mat);
-        shader.SetUniform("viewPos", mat.Inverse().Translation);
-        shader.SetUniform("screenSize", (Vector2)GameGraphics.Window.Size);
-        shader.SetUniform("cam_near", cam.Z_Near);
-        shader.SetUniform("cam_far", cam.Z_Far);
+        _shader.SetUniform("uView", mat);
+        _shader.SetUniform("viewPos", mat.Inverse().Translation);
+        _shader.SetUniform("screenSize", (Vector2)_window.Size);
+        _shader.SetUniform("cam_near", cam.Z_Near);
+        _shader.SetUniform("cam_far", cam.Z_Far);
     }
 
     public void SetProjectionMatrix(Matrix4x4 mat)
     {
-        shader.SetUniform("uProjection", mat);
+        _shader.SetUniform("uProjection", mat);
     }
 
     public void SetModelMatrix(Matrix4x4 mat)
     {
-        shader.SetUniform("uModel", mat);
+        _shader.SetUniform("uModel", mat);
     }
 
     public virtual void SetRenderTexture(RenderTexture texture) { }
@@ -60,13 +69,13 @@ public class Material
             texSlot.Texture.Use(i);
         }
 
-        shader.SetUniform("time", GameTime.TotalTime);
+        _shader.SetUniform("time", _gameTime.TotalTime);
         SetAdditionalUniforms();
     }
 
     internal void SetLighting(ILightingController lightingController)
     {
-        lightingController.SetLights(shader);
+        lightingController.SetLights(_shader);
     }
 
     protected virtual void SetAdditionalUniforms() { }
@@ -76,7 +85,7 @@ public class Material
         Use();
         int index = FindTextureIndex(textureName);
         Textures[index] = new TextureSlot() { Texture = texture, Name = textureName };
-        shader.SetUniform(textureName, index);
+        _shader.SetUniform(textureName, index);
     }
 
     private int FindTextureIndex(string textureName)
@@ -103,6 +112,11 @@ public class Material
         throw new IndexOutOfRangeException($"Texture limit of {Texture.MAX_TEXTURE_COUNT} exceeded");
     }
 
+    public void Dispose()
+    {
+        _shader.Dispose();
+    }
+    
     protected class TextureSlot
     {
         public required Texture Texture;

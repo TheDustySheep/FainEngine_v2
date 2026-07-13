@@ -16,7 +16,7 @@ namespace FainEngine_v2.Rendering.Materials
 
         protected override void Release()
         {
-            _GL.DeleteTexture(_handle);
+            GLDisposalService.Delete(_handle, GLObjectType.Texture);
         }
     }
 }

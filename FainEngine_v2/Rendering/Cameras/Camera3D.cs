@@ -7,14 +7,16 @@ using Plane = FainEngine_v2.Rendering.BoundingShapes.Plane;
 namespace FainEngine_v2.Rendering.Cameras;
 public class Camera3D : ICamera
 {
-    readonly Transform transform;
+    readonly Transform _transform;
+    readonly IGameGraphics _gameGraphics;
 
     public Camera3D(Transform transform)
     {
-        this.transform = transform;
+        _transform = transform;
+        _gameGraphics = DependencyInjector.Resolve<IGameGraphics>();
     }
 
-    public Matrix4x4 ViewMatrix => transform.ViewMatrix;
+    public Matrix4x4 ViewMatrix => _transform.ViewMatrix;
 
     private Matrix4x4 projectionMatrix = Matrix4x4.Identity;
     public Matrix4x4 ProjectionMatrix => projectionMatrix;
@@ -30,16 +32,16 @@ public class Camera3D : ICamera
             float fovY = MathUtils.DegreesToRadians(FOV);
             float zFar = Z_Far;
             float zNear = Z_Near;
-            float aspect = GameGraphics.WindowAspect;
+            float aspect = _gameGraphics.WindowAspect;
 
             float halfVSide = zFar * MathF.Tan(fovY * .5f);
             float halfHSide = halfVSide * aspect;
-            Vector3 frontMultFar = zFar * transform.Forward;
+            Vector3 frontMultFar = zFar * _transform.Forward;
 
-            Vector3 globalPos = transform.GlobalPosition;
-            Vector3 forward = transform.Forward;
-            Vector3 right = transform.Right;
-            Vector3 up = transform.Up;
+            Vector3 globalPos = _transform.GlobalPosition;
+            Vector3 forward = _transform.Forward;
+            Vector3 right = _transform.Right;
+            Vector3 up = _transform.Up;
 
             Frustum frustum = new Frustum
             {
@@ -62,6 +64,6 @@ public class Camera3D : ICamera
 
     private void UpdateMatrix()
     {
-        projectionMatrix = Matrix4x4.CreateScale(1, 1, -1) * Matrix4x4.CreatePerspectiveFieldOfView(MathUtils.DegreesToRadians(FOV), GameGraphics.WindowAspect, Z_Near, Z_Far);
+        projectionMatrix = Matrix4x4.CreateScale(1, 1, -1) * Matrix4x4.CreatePerspectiveFieldOfView(MathUtils.DegreesToRadians(FOV), _gameGraphics.WindowAspect, Z_Near, Z_Far);
     }
 }

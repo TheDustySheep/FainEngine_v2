@@ -1,15 +1,21 @@
 ﻿using FainEngine_v2.Rendering;
 using FainEngine_v2.Resources;
+using FainEngine_v2.Utils;
 using FainEngine_v2.Utils.Threading;
 using Silk.NET.Maths;
 using Silk.NET.OpenGL;
 using Silk.NET.Windowing;
+using System;
 
 namespace FainEngine_v2.Core;
 public class FainGameEngine
 {
-    private readonly IWindow window;
-    private GL? _gl;
+    protected readonly IWindow window;
+    protected GameTime? gameTime;
+    protected GameInputs? gameInputs;
+    protected GameGraphics? graphics;
+
+    private GL? _GL;
 
     public FainGameEngine(
         int windowWidth = 1600,
@@ -30,6 +36,7 @@ public class FainGameEngine
             new APIVersion(4, 6));
 
         window = Window.Create(options);
+        DependencyInjector.RegisterSingleton(window);
 
         window.Load += OnLoad;
         window.Update += OnUpdate;
@@ -52,35 +59,47 @@ public class FainGameEngine
 
     private void OnResize(Vector2D<int> newSize)
     {
-        _gl?.Viewport(newSize);
-        GameGraphics.OnResize(newSize);
+        _GL?.Viewport(newSize);
+        graphics?.OnResize(newSize);
     }
 
     private void OnLoad()
     {
-        _gl = GL.GetApi(window);
+        _GL = GL.GetApi(window);
+        DependencyInjector.RegisterSingleton(_GL);
 
-        _gl.Enable(EnableCap.CullFace);
-        _gl.FrontFace(FrontFaceDirection.CW);
-        _gl.CullFace(TriangleFace.Back);
+        gameTime = new GameTime();
+        gameInputs = new GameInputs(window);
 
-        _gl.Enable(EnableCap.Multisample);
+        DependencyInjector.RegisterSingleton<IGameTime>(gameTime);
+        DependencyInjector.RegisterSingleton<IGameInputs>(gameInputs);
 
-        GameGraphics.SetGL(_gl, window);
-        ResourceLoader.SetGL(_gl);
+        // Register Graphics
+        graphics = new GameGraphics(_GL, window);
+        DependencyInjector.RegisterSingleton<IGameGraphics>(graphics);
+
+        // GL Setup
+        _GL.Enable(EnableCap.CullFace);
+        _GL.FrontFace(FrontFaceDirection.CW);
+        _GL.CullFace(TriangleFace.Back);
+
+        _GL.Enable(EnableCap.Multisample);
+
+        ResourceLoader.SetGL(_GL);
+        GLDisposalService.Init(_GL);
+
         Gizmos.Init();
-        GameInputs.SetWindow(window);
         Load();
     }
 
     private void OnUpdate(double deltaTime)
     {
-        GameTime.Tick((float)deltaTime);
+        gameTime?.Tick((float)deltaTime);
 
         MainThreadDispatcher.ExecutePending();
 
         // Fixed update loop
-        while (GameTime.TickFixedUpdate())
+        while (gameTime.TickFixedUpdate())
             FixedUpdate();
 
         // Draw loop
@@ -88,18 +107,20 @@ public class FainGameEngine
 
         Gizmos.Update();
 
-        GameInputs.Reset();
+        gameInputs?.Reset();
+
+        GLDisposalService.Collect();
     }
 
     private void OnRender(double deltaTime)
     {
-        if (_gl is null)
+        if (_GL is null)
             return;
 
-        GameGraphics.ThrowOnGLError("Start Game Engine Loop");
-        GameGraphics.Render();
+        graphics?.ThrowOnGLError("Start Game Engine Loop");
+        graphics?.Render();
         Render();
-        GameGraphics.ThrowOnGLError("End Game Engine Render");
+        graphics?.ThrowOnGLError("End Game Engine Render");
     }
 
     private void OnClose()

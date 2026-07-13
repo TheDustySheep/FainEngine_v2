@@ -11,9 +11,14 @@ public class TestModel : IEntity
 {
     readonly Material material;
     readonly Model model;
+    readonly IGameTime gameTime;
+    readonly IGameGraphics graphics;
 
     public TestModel()
     {
+        gameTime = DependencyInjector.Resolve<IGameTime>();
+        graphics = DependencyInjector.Resolve<IGameGraphics>();
+
         var shader = ResourceLoader.LoadShader("Resources/DefaultShader");
         material = new Material(shader);
         model = ResourceLoader.LoadModel("cube.model");
@@ -21,10 +26,10 @@ public class TestModel : IEntity
 
     public void Update()
     {
-        var difference = (float)(GameTime.TotalTime * 100);
+        var difference = (float)(gameTime.TotalTime * 100);
 
         var modelMat = Matrix4x4.CreateRotationY(MathUtils.DegreesToRadians(difference)) * Matrix4x4.CreateRotationX(MathUtils.DegreesToRadians(difference));
 
-        GameGraphics.DrawMesh(model.Meshes[0], material, modelMat);
+        graphics.DrawMesh(model.Meshes[0], material, modelMat);
     }
 }

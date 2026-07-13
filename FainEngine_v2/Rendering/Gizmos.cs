@@ -1,13 +1,14 @@
-﻿using FainEngine_v2.Rendering;
+﻿using FainEngine_v2.Core;
 using FainEngine_v2.Rendering.Materials;
 using FainEngine_v2.Rendering.Meshing;
 using FainEngine_v2.Resources;
+using FainEngine_v2.Utils;
 using Silk.NET.Maths;
 using Silk.NET.OpenGL;
 using System.Numerics;
 using Color = System.Drawing.Color;
 
-namespace FainEngine_v2.Core;
+namespace FainEngine_v2.Rendering;
 public static class Gizmos
 {
     private struct Vertex
@@ -20,7 +21,7 @@ public static class Gizmos
     {
         public GizmoMesh() : base(i => i.Position)
         {
-            Bounds = new Rendering.BoundingShapes.BoundingBox()
+            Bounds = new BoundingShapes.BoundingBox()
             {
                 Max = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue),
                 Min = new Vector3(float.MinValue, float.MinValue, float.MinValue)
@@ -46,11 +47,13 @@ public static class Gizmos
     static GizmoMesh? Mesh;
 
     static Material? material;
+    static IGameGraphics? _graphics;
 
     internal static void Init()
     {
         Mesh = new GizmoMesh();
         material = new Material(ResourceLoader.LoadShader("Resources/GizmoShader"));
+        _graphics = DependencyInjector.Resolve<IGameGraphics>();
     }
 
     internal static void Update()
@@ -60,7 +63,7 @@ public static class Gizmos
 
         Mesh.SetData(Vertices, Triangles);
 
-        GameGraphics.DrawMesh(Mesh, material, Matrix4x4.Identity);
+        _graphics?.DrawMesh(Mesh, material, Matrix4x4.Identity);
 
         Vertices.Clear();
         Triangles.Clear();
@@ -111,8 +114,8 @@ public static class Gizmos
         float offset = 0.001f;
 
         Matrix4x4 mat =
-            Matrix4x4.CreateScale(1 + (offset * 2)) *
-            Matrix4x4.CreateTranslation((Vector3)pos + (Vector3.One * -offset));
+            Matrix4x4.CreateScale(1 + offset * 2) *
+            Matrix4x4.CreateTranslation((Vector3)pos + Vector3.One * -offset);
 
         uint vertCount = (uint)Vertices.Count;
         for (int face = 0; face < 6; face++)

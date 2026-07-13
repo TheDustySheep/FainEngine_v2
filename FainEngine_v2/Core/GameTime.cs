@@ -1,17 +1,17 @@
 ﻿namespace FainEngine_v2.Core;
-public static class GameTime
+public class GameTime : IGameTime
 {
-    public static float TotalTime { get; private set; } = 0f;
-    public static float DeltaTime { get; private set; } = 0f;
-    public static long TotalTicks { get; private set; }
+    public float TotalTime { get; private set; } = 0f;
+    public float DeltaTime { get; private set; } = 0f;
+    public long TotalTicks { get; private set; }
 
-    public static float FixedDeltaTimeActual { get; private set; } = FixedDeltaTime;
+    public float FixedDeltaTimeActual { get; private set; } = FixedDeltaTime;
     public const float FixedDeltaTime = 1f / 20f;
 
-    private static float _lastFixedUpdate = 0f;
-    private static float _fixedUpdateTotalTime = 0f;
+    private float _lastFixedUpdate = 0f;
+    private float _fixedUpdateTotalTime = 0f;
 
-    internal static bool TickFixedUpdate()
+    internal bool TickFixedUpdate()
     {
         if (_fixedUpdateTotalTime < TotalTime)
         {
@@ -31,7 +31,7 @@ public static class GameTime
         }
     }
 
-    internal static void Tick(float deltaTime)
+    internal void Tick(float deltaTime)
     {
         DeltaTime = deltaTime;
         TotalTime += deltaTime;

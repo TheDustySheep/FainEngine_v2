@@ -21,7 +21,7 @@ public class Transform
         {
             if (parentNode == this)
             {
-                Console.WriteLine("Cannot set self as parent of self transform");
+                Console.WriteLine("Cannot set self as parent of self _transform");
                 return;
             }
             parentNode = parentNode.Parent;

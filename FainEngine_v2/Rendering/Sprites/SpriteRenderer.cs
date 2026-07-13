@@ -1,6 +1,7 @@
 ﻿using FainEngine_v2.Entities;
 using FainEngine_v2.Rendering.Materials;
 using FainEngine_v2.Rendering.Meshing;
+using FainEngine_v2.Utils;
 using System.Numerics;
 
 namespace FainEngine_v2.Rendering.Sprites;
@@ -11,6 +12,7 @@ public class SpriteRenderer
     private bool _isDirty = true;
 
     private readonly List<Sprite> _sprites = new();
+    private readonly IGameGraphics _graphics;
 
     public SpriteRenderer(Shader shader, Texture2D baseTexture)
     {
@@ -18,6 +20,7 @@ public class SpriteRenderer
         _mesh = new AMesh<SpriteVertex, int>();
         _mesh.ClipBounds = false;
         _material = new SpriteMaterial(shader, baseTexture);
+        _graphics = DependencyInjector.Resolve<IGameGraphics>();
     }
 
     private SpriteVertex[] _verts = Array.Empty<SpriteVertex>();
@@ -91,7 +94,7 @@ public class SpriteRenderer
         if (_isDirty)
             RebuildMesh();
 
-        GameGraphics.DrawMesh(
+        _graphics.DrawMesh(
             _mesh,
             _material,
             Matrix4x4.Identity

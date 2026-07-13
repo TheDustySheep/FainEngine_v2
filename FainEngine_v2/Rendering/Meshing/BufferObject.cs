@@ -1,4 +1,6 @@
 using Silk.NET.OpenGL;
+using System.Runtime.InteropServices;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace FainEngine_v2.Rendering.Meshing;
 
@@ -30,44 +32,33 @@ public class BufferObject<TDataType> : GLObject where TDataType : unmanaged
     {
         Count = data.Length;
 
-        if (data.Length > Capacity)
+        if (data.Length > Capacity || 
+            data.Length < Capacity * 0.5f)
         {
+            _GL.NamedBufferData(Handle, data, _bufferUsage);
             Capacity = data.Length;
+            ThrowOnError("Allocating Buffer");
+        }
 
-            _GL.NamedBufferData(
-                Handle,
-                data,
-                _bufferUsage
-            );
-            ThrowOnError("Setting Buffer Data");
-        }
-        else
-        {
-            _GL.NamedBufferSubData(
-                Handle,
-                IntPtr.Zero,
-                data
-            );
-            ThrowOnError("Setting Existing Buffer Data");
-        }
+        _GL.NamedBufferSubData(Handle, IntPtr.Zero, data);
     }
+
 
     public void Clear()
     {
         Count = 0;
-        Capacity = 0;
+        //Capacity = 0;
 
-        _GL.NamedBufferData(
-            Handle,
-            ReadOnlySpan<TDataType>.Empty,
-            _bufferUsage
-        );
-        ThrowOnError("Clearing Buffer Data");
+        //_GL.NamedBufferData(
+        //    Handle,
+        //    ReadOnlySpan<TDataType>.Empty,
+        //    _bufferUsage
+        //);
+        //ThrowOnError("Clearing Buffer Data");
     }
 
     protected override void Release()
     {
-        _GL.DeleteBuffer(Handle);
-        ThrowOnError("Releasing Buffer");
+        GLDisposalService.Delete(Handle, GLObjectType.Buffer);
     }
 }

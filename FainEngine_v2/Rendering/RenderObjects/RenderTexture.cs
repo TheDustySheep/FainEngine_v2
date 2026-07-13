@@ -39,7 +39,7 @@ public sealed class RenderTexture : GLObject, IFrameBuffer, IDisposable
 
     protected override void Release()
     {
-        _GL.DeleteFramebuffer(_fbo);
+        GLDisposalService.Delete(_fbo, GLObjectType.Framebuffer);
         ColorTexture.Dispose();
         DepthTexture.Dispose();
     }

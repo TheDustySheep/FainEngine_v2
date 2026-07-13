@@ -49,16 +49,22 @@ public static class ResourceLoader
         if (_gl is null)
             throw new Exception("OpenGL is not set");
 
+        // Make path absolute relative to exe location
+        if (!Path.IsPathRooted(folder))
+        {
+            folder = Path.Combine(AppContext.BaseDirectory, folder);
+        }
+
         string[] files = Directory.GetFiles(folder);
 
         string? vertFile = files.FirstOrDefault(i => i.EndsWith(".vert"));
         string? fragFile = files.FirstOrDefault(i => i.EndsWith(".frag"));
 
         if (vertFile is null)
-            throw new FileNotFoundException($"Vertex shader not found in folder: {folder}");
+            throw new FileNotFoundException($"Vertex _shader not found in folder: {folder}");
 
         if (fragFile is null)
-            throw new FileNotFoundException($"Fragment shader not found in folder: {folder}");
+            throw new FileNotFoundException($"Fragment _shader not found in folder: {folder}");
 
         string vertSRC = LoadShaderWithIncludes(vertFile);
         string fragSRC = LoadShaderWithIncludes(fragFile);
@@ -110,7 +116,7 @@ public static class ResourceLoader
                 }
                 else
                 {
-                    // Treat as relative to current shader directory
+                    // Treat as relative to current _shader directory
                     fullIncludePath = Path.Combine(shaderDir, includePath);
                 }
 

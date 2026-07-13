@@ -1,94 +1,49 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace FainEngine_v2.Utils;
 
-namespace FainEngine_v2.Utils
+public static class DependencyInjector
 {
-    public static class DependencyInjector
+    private static readonly Dictionary<Type, Func<object>> _factories = new();
+    private static readonly Dictionary<Type, object> _singletons = new();
+
+    public static T RegisterSingleton<T>() where T : new()
     {
-        private static readonly Dictionary<Type, Func<object>> _registrations = new();
-        private static readonly Dictionary<Type, object> _singletons = new();
+        var instance = new T();
+        _singletons[typeof(T)] = instance;
+        return instance;
+    }
 
-        /// <summary>
-        /// Register a singleton by type
-        /// </summary>
-        public static TService RegisterSingleton<TService, TImplementation>()
-            where TImplementation : TService, new()
+    public static T RegisterSingleton<T>(T instance) where T : notnull
+    {
+        _singletons[typeof(T)] = instance;
+        return instance;
+    }
+
+    public static void RegisterFactory<T>() where T : new()
+    {
+        _factories[typeof(T)] = () => new T();
+    }
+
+    public static void RegisterFactory<T>(Func<T> factory) where T : notnull
+    {
+        _factories[typeof(T)] = () => factory();
+    }
+
+    public static T Resolve<T>()
+    {
+        var type = typeof(T);
+
+        if (_singletons.TryGetValue(type, out var instance))
         {
-            _registrations[typeof(TService)] = () =>
-            {
-                if (!_singletons.ContainsKey(typeof(TService)))
-                {
-                    _singletons[typeof(TService)] = new TImplementation();
-                }
-                return _singletons[typeof(TService)];
-            };
-
-            return (TService)_registrations[typeof(TService)]();
+            return (T)instance;
         }
 
-        /// <summary>
-        /// Register a singleton by factory
-        /// </summary>
-        public static TService RegisterSingleton<TService>(Func<TService> factory)
+        if (_factories.TryGetValue(type, out var factory))
         {
-            _registrations[typeof(TService)] = () =>
-            {
-                if (!_singletons.ContainsKey(typeof(TService)))
-                {
-                    _singletons[typeof(TService)] = factory.Invoke()!;
-                }
-                return _singletons[typeof(TService)];
-            };
-
-            return (TService)_registrations[typeof(TService)]();
+            var obj = factory();
+            _singletons[type] = obj; // lazy singleton
+            return (T)obj;
         }
 
-        /// <summary>
-        /// Register a singleton by factory
-        /// </summary>
-        public static TService RegisterSingleton<TService>(TService service)
-        {
-            _registrations[typeof(TService)] = () =>
-            {
-                if (!_singletons.ContainsKey(typeof(TService)))
-                {
-                    _singletons[typeof(TService)] = service!;
-                }
-                return _singletons[typeof(TService)];
-            };
-
-            return (TService)_registrations[typeof(TService)]();
-        }
-
-        /// <summary>
-        /// Register a transient (new instance each time) by type
-        /// </summary>
-        public static TService RegisterTransient<TService, TImplementation>()
-            where TImplementation : TService, new()
-        {
-            _registrations[typeof(TService)] = () => new TImplementation();
-            return (TService)_registrations[typeof(TService)]();
-        }
-
-        /// <summary>
-        /// Register a transient by factory
-        /// </summary>
-        public static TService RegisterTransient<TService>(Func<TService> factory)
-        {
-            _registrations[typeof(TService)] = () => factory.Invoke()!;
-            return (TService)_registrations[typeof(TService)]();
-        }
-
-        /// <summary>
-        /// Resolve a dependency
-        /// </summary>
-        public static TService Resolve<TService>()
-        {
-            if (_registrations.TryGetValue(typeof(TService), out var creator))
-            {
-                return (TService)creator();
-            }
-            throw new InvalidOperationException($"Service {typeof(TService)} not registered");
-        }
+        throw new InvalidOperationException($"Service of type {type} not registered.");
     }
 }
