@@ -96,7 +96,7 @@ public class FainGameEngine
     {
         gameTime?.Tick((float)deltaTime);
 
-        MainThreadDispatcher.ExecutePending();
+        MainThreadDispatcher.Execute();
 
         // Fixed update loop
         while (gameTime != null && gameTime.TickFixedUpdate())
